@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://d3e4f5g6h7i8j"]
+
+[ext_resource type="Script" uid="uid://d3ifpac5jqt5u" path="res://features/actor/actor.gd" id="1_12345"]
+[ext_resource type="PackedScene" uid="uid://b1x2y3v4a5s6d" path="res://components/health_component.tscn" id="2_abcde"]
+[ext_resource type="PackedScene" uid="uid://c7d8faf0a1b2c" path="res://components/stats_component.tscn" id="3_ghijk"]
+
+[node name="BaseActor" type="CharacterBody2D"]
+script = ExtResource("1_12345")
+
+[node name="Visuals" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-20, -25, 20, -25, 20, 25, -20, 25)
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_abcde")]
+
+[node name="StatsComponent" parent="." instance=ExtResource("3_ghijk")]

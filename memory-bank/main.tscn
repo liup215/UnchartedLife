@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://ujuhqrlww3mr"]
+
+[ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://cq6rh160m8f1v" path="res://features/enemy/goblin.tscn" id="2_goblin"]
+[ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="3_hud"]
+[ext_resource type="Script" uid="uid://qhuvoa0s7ean" path="res://main_game_manager.gd" id="4_manager"]
+[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="5_system_menu"]
+
+[node name="Main" type="Node2D"]
+process_mode = 3
+script = ExtResource("4_manager")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.180392, 0.4, 0.188235, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(300, 300)
+
+[node name="Goblin" parent="." instance=ExtResource("2_goblin")]
+position = Vector2(600, 300)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="SystemMenu" parent="." instance=ExtResource("5_system_menu")]

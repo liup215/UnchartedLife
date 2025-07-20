@@ -1,0 +1,43 @@
+# Godot-specific ignores
+.godot/
+!.godot/icon.svg
+!.godot/icon.svg.import
+!.godot/project.godot
+!.godot/project.binary
+
+# User-specific save files
+/saves/
+/user/
+
+# Mono/C# builds
+.mono/
+/bin/
+/obj/
+
+# Export templates
+export_presets.cfg
+*.binary
+*.pck
+*.zip
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.pkg
+*.exe
+*.html
+
+# IDE-specific files
+.vscode/
+.vs/
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db

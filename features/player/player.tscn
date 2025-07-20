@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbscgytmkqyn7"]
+
+[ext_resource type="PackedScene" uid="uid://d3e4f5g6h7i8j" path="res://features/actor/base_actor.tscn" id="1_abcde"]
+[ext_resource type="Script" uid="uid://b7mvf6axkwtiv" path="res://features/player/player.gd" id="2_fghij"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_abcde"]
+radius = 25.0
+height = 70.0
+
+[node name="Player" instance=ExtResource("1_abcde")]
+script = ExtResource("2_fghij")
+groups=["player", "saveable"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="2"]
+shape = SubResource("CapsuleShape2D_abcde")
+
+[node name="Camera2D" type="Camera2D" parent="."]
