@@ -14,6 +14,6 @@ func _on_start_game_pressed(text: String = ""):
 
     # This is a new game, so clear any previous session data
     PlayerData.player_name = player_name
-    PlayerData.current_save_slot_id = ""
+    PlayerData.current_slot = ""
     
     get_tree().change_scene_to_file("res://main.tscn")

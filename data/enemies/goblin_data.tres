@@ -1,8 +1,17 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=2 format=3 uid="uid://dsabhk1hi5pca"]
+[gd_resource type="Resource" script_class="ActorData" load_steps=2 format=3]
 
-[ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/actor_data.gd" id="1_abcde"]
+[ext_resource type="Script" path="res://data/actor_data.gd" id="1_goblin_data"]
 
 [resource]
-script = ExtResource("1_abcde")
-max_health = 50
-move_speed = 150.0
+script = ExtResource("1_goblin_data")
+# Base Physiological Indicators
+max_hp = 50
+base_metabolic_rate = 0.05
+neural_response_speed = 0.5
+muscle_coordination = 0.8
+move_speed = 120.0
+# Bio-Energy Attributes
+max_atp = 20
+atp_conversion_rate = 3.0
+hemo_energy_capacity = 0
+entropy_energy_threshold = 0

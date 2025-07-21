@@ -1,42 +1,59 @@
 # actor.gd
-# The base script for all "living" entities in the game.
-# It requires a HealthComponent and a StatsComponent to be present as children.
-class_name Actor
+# The base script for all actors in the game (Player, Enemies, etc.).
+# It provides common functionality and component references.
 extends CharacterBody2D
 
+class_name Actor
+
+# Signals
+signal actor_health_changed(current_health: int, max_health: int)
+signal actor_died()
+signal inventory_item_added(item_data: ItemData) # Example for future use
+
+# Components
 @onready var stats_component: StatsComponent = $StatsComponent
 @onready var health_component: HealthComponent = $HealthComponent
+@onready var atp_component: ATPComponent = $ATPComponent
 @onready var visuals: Polygon2D = $Visuals
 
 func _ready():
-    # Ensure components are valid
-    assert(stats_component, "StatsComponent is missing from Actor.")
-    assert(health_component, "HealthComponent is missing from Actor.")
+    # This function is meant to be called by child classes AFTER they have
+    # assigned their specific ActorData to the stats_component.
+    if stats_component.data:
+        # Initialize components with data from the resource
+        health_component.set_max_health(stats_component.get_max_health())
+        atp_component.set_max_atp(stats_component.get_max_atp())
+        
+        # Connect signals from components to the actor's own signals
+        health_component.health_changed.connect(
+            func(current, max): actor_health_changed.emit(current, max)
+        )
+        health_component.died.connect(
+            func(): actor_died.emit()
+        )
+    else:
+        printerr("Actor _ready() called, but no ActorData was assigned to StatsComponent.")
 
-    # Connect to the health component's signals
-    health_component.died.connect(_on_died)
-    health_component.health_changed.connect(_on_health_changed)
+# --- Public API ---
 
-func take_damage(damage_amount: int):
-    if health_component.current_health == 0:
-        return # Already dead, no need to process damage
+func take_damage(amount: int):
+    health_component.take_damage(amount)
 
-    health_component.take_damage(damage_amount)
+# --- Save/Load Interface ---
+# Child classes are expected to implement these if they are saveable.
 
-func _on_health_changed(current_health: int, max_health: int):
-    EventBus.actor_health_changed.emit(self, current_health, max_health)
+func save_data() -> Dictionary:
+    # Base implementation can be extended by children
+    return {
+        "position_x": position.x,
+        "position_y": position.y,
+        "current_health": health_component.current_health
+    }
 
-func _on_died():
-    EventBus.actor_died.emit(self)
-
-    # Immediately disable further processing and collision.
-    set_physics_process(false)
-    set_process(false)
-    if get_node_or_null("CollisionShape2D"):
-        get_node("CollisionShape2D").disabled = true
-
-    # In a real game, you would handle death logic here,
-    # like playing an animation, dropping loot, before finally freeing the node.
-    # For now, we just free it after a short delay to allow animations to play.
-    var timer = get_tree().create_timer(1.0)
-    timer.timeout.connect(queue_free)
+func load_data(data: Dictionary):
+    # Base implementation can be extended by children
+    position.x = data.get("position_x", position.x)
+    position.y = data.get("position_y", position.y)
+    
+    var loaded_health = data.get("current_health", health_component.max_health)
+    health_component.current_health = loaded_health

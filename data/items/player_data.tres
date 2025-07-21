@@ -1,8 +1,17 @@
 [gd_resource type="Resource" script_class="ActorData" load_steps=2 format=3 uid="uid://c4f0aopwydvmk"]
 
-[ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/actor_data.gd" id="1_abcde"]
+[ext_resource type="Script" path="res://data/actor_data.gd" id="1_abcde"]
 
 [resource]
 script = ExtResource("1_abcde")
-max_health = 150
+# Base Physiological Indicators
+max_hp = 150
+base_metabolic_rate = 0.1
+neural_response_speed = 1.0
+muscle_coordination = 1.0
 move_speed = 250.0
+# Bio-Energy Attributes
+max_atp = 100
+atp_conversion_rate = 5.0
+hemo_energy_capacity = 100
+entropy_energy_threshold = 100

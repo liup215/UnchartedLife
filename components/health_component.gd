@@ -31,3 +31,9 @@ func set_max_health(new_max: int, heal_to_full: bool = true):
     else:
         # Ensure current health doesn't exceed the new max
         self.current_health = min(current_health, max_health)
+
+func get_current_health() -> int:
+    return current_health
+
+func get_max_health() -> int:
+    return max_health

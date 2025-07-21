@@ -28,7 +28,7 @@ func _on_continue_pressed():
     # Load the most recent save file
     var latest_slot = SaveManager.get_latest_slot_id()
     if not latest_slot.is_empty():
-        PlayerData.current_save_slot_id = latest_slot
+        PlayerData.current_slot = latest_slot
         if SaveManager.load_game(latest_slot):
             get_tree().change_scene_to_file("res://main.tscn")
         else:

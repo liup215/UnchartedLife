@@ -92,3 +92,29 @@ All game data (stats, items, skills) will be defined using custom `Resource` scr
 - **Pattern:** A single resource, **Glucose**, serves as the foundation for both the energy system (actions, skills) and the economic system (currency, crafting).
 - **Implementation:** A global `PlayerData` singleton will track the player's current Glucose total. All systems that consume or award resources will interface with this singleton.
 - **Benefit:** Tightly couples the game's economy with its core gameplay loop, making every economic decision a strategic gameplay decision.
+
+## 8. Biological Energy Management System
+- **Pattern:** A scientifically-grounded energy system that models real cellular metabolism through ATP-glucose interactions.
+- **Implementation:** 
+  - `ATPComponent` manages real-time ATP levels with float precision for accurate per-frame calculations
+  - Player metabolism dynamically adjusts glucose consumption based on ATP demand
+  - Tiered energy consumption: Rest (2 ATP/sec) → Walking (5 ATP/sec) → Sprinting (11 ATP/sec)
+  - Demand-driven glucose conversion: only consumes glucose when ATP < max capacity
+- **Benefit:** Creates authentic biological resource management that educates players about cellular energy processes while providing strategic gameplay depth.
+
+## 9. Activity-Responsive Metabolism Pattern
+- **Pattern:** Energy consumption rates that dynamically scale with player activity intensity, reflecting real biological energy demands.
+- **Implementation:**
+  - Multi-parameter metabolism calculation based on movement state and sprint status
+  - ATP recovery rate precisely matches consumption rate to maintain system balance
+  - Basal metabolic rate continues independently for basic cellular maintenance
+- **Benefit:** Provides realistic energy management challenges that mirror actual biological constraints, forcing strategic decisions about movement and resource conservation.
+
+## 10. Component-Based Biological Systems
+- **Pattern:** Modular biological components that can be composed to create complex energy management behaviors.
+- **Implementation:**
+  - `ATPComponent`: Handles ATP storage, consumption, and recovery with signal-based communication
+  - `HealthComponent`: Manages health with getter methods for consistent UI integration  
+  - `StatsComponent`: Provides biological parameter access through data resources
+  - Float-based precision for accurate real-time biological calculations
+- **Benefit:** Enables easy extension and modification of biological systems while maintaining clean separation of concerns and reusability across different actor types.
