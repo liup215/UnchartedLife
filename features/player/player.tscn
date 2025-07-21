@@ -8,10 +8,11 @@ radius = 25.0
 height = 70.0
 
 [node name="Player" instance=ExtResource("1_abcde")]
+collision_layer = 2
+collision_mask = 4
 script = ExtResource("2_fghij")
-groups=["player", "saveable"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="2"]
+[node name="CollisionShape2D" parent="." index="3"]
 shape = SubResource("CapsuleShape2D_abcde")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." owner="."]

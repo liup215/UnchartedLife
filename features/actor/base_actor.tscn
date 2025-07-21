@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c7d8faf0a1b2c" path="res://components/stats_component.tscn" id="3_ghijk"]
 
 [node name="BaseActor" type="CharacterBody2D"]
+motion_mode = 1
 script = ExtResource("1_12345")
 
 [node name="Visuals" type="Polygon2D" parent="."]
@@ -13,3 +14,5 @@ polygon = PackedVector2Array(-20, -25, 20, -25, 20, 25, -20, 25)
 [node name="HealthComponent" parent="." instance=ExtResource("2_abcde")]
 
 [node name="StatsComponent" parent="." instance=ExtResource("3_ghijk")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." owner="."]

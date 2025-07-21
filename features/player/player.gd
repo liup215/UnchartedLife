@@ -8,6 +8,14 @@ func _ready():
     stats_component.data = load("res://data/items/player_data.tres")
     # Call the parent's _ready function to initialize health etc.
     super()
+    
+    # Programmatically add to groups to ensure timing is correct.
+    add_to_group("player")
+    add_to_group("saveable")
+    
+    # Now that the actor and its components are ready, initialize health.
+    health_component.set_max_health(stats_component.get_max_health())
+    
     # Set player color
     visuals.color = Color.DODGER_BLUE
     
@@ -35,8 +43,8 @@ func load_data(data: Dictionary):
     position.y = data.get("position_y", position.y)
     
     # Set health, ensuring it doesn't exceed max health
-    var loaded_health = data.get("current_health", health_component.get_max_health())
-    health_component.set_health(loaded_health)
+    var loaded_health = data.get("current_health", health_component.max_health)
+    health_component.current_health = loaded_health
     
     # We also need to update the HUD after loading
     # The health_changed signal will do this automatically when we set health.

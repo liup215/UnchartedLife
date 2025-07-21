@@ -13,10 +13,6 @@ func _ready():
     assert(stats_component, "StatsComponent is missing from Actor.")
     assert(health_component, "HealthComponent is missing from Actor.")
 
-    # Initialize health from stats data
-    var max_health_from_stats = stats_component.get_max_health()
-    health_component.set_max_health(max_health_from_stats)
-
     # Connect to the health component's signals
     health_component.died.connect(_on_died)
     health_component.health_changed.connect(_on_health_changed)
