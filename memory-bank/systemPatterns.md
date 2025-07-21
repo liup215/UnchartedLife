@@ -77,3 +77,18 @@ All game data (stats, items, skills) will be defined using custom `Resource` scr
 - **`ActorData.gd` (extends `Resource`):** `base_stats`, `initial_health`, etc.
 - **`ItemData.gd` (extends `Resource`):** `item_name`, `icon`, `effects`.
 - The `StatsComponent` in `base_actor.tscn` will have an `export var data: ActorData` to link the data file. This makes creating new character types as simple as creating a new data resource.
+
+## 5. Chunk-Based Map Streaming
+- **Pattern:** The game world is divided into a grid of chunks, each represented by a separate scene file (`.tscn`). A manager loads and unloads these chunks based on player proximity.
+- **Implementation:** The `MapManager` autoload singleton tracks the player's position, calculates the current chunk coordinate, and instances/frees chunk scenes as needed.
+- **Benefit:** Allows for massive game worlds with minimal memory footprint and fast initial load times.
+
+## 6. Dual System (Player/Vehicle)
+- **Pattern:** The player's capabilities are split between two distinct but interconnected entities: the biological **Player Character** and the mechanical **Vehicle**.
+- **Implementation:** The Player node will manage biological stats (HP, ATP, etc.), while a separate Vehicle node (to be created) will manage mechanical stats (Armor, Mobility). The two will interact through well-defined interfaces.
+- **Benefit:** Creates deep, strategic gameplay where players must balance the development of both systems.
+
+## 7. Unified Resource (Glucose as Energy/Currency)
+- **Pattern:** A single resource, **Glucose**, serves as the foundation for both the energy system (actions, skills) and the economic system (currency, crafting).
+- **Implementation:** A global `PlayerData` singleton will track the player's current Glucose total. All systems that consume or award resources will interface with this singleton.
+- **Benefit:** Tightly couples the game's economy with its core gameplay loop, making every economic decision a strategic gameplay decision.

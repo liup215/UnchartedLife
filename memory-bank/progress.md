@@ -26,16 +26,30 @@
 - [x] Change system menu to be full-screen.
 - [x] Debug and resolve all scene hierarchy and loading issues.
 
-## Phase 3: Core Gameplay Systems (Next)
+## Phase 3: World & Map System (Complete)
 
-- [ ] Design an expanded Stats System (e.g., attack, defense, crit).
-- [ ] Design an Inventory System for managing items.
-- [ ] Design an Equipment System for equipping items to modify stats.
-- [ ] Design a Skill System for character abilities.
-- [ ] Implement the expanded Stats System.
-- [ ] Implement the Inventory data structure and backend logic.
-- [ ] Implement the Equipment data structure and backend logic.
-- [ ] Implement the Skill data structure and backend logic.
-- [ ] Create UI for the Inventory screen.
-- [ ] Create UI for the Equipment screen.
-- [ ] Create UI for the Skills screen.
+- [x] Debugged and fixed complex collision and AI behavior issues.
+- [x] Resolved node initialization order and group lookup timing problems.
+- [x] Designed a chunk-based dynamic map loading system.
+- [x] Created a `TileSet` resource from image assets.
+- [x] Implemented a `MapManager` singleton to handle loading map chunks.
+- [x] Integrated the `MapManager` to load the initial map chunk based on player position.
+
+## Phase 4: Core Gameplay & Biology Systems (Current)
+
+- [ ] **Implement Glucose-ATP System:**
+    - [ ] Refactor `ActorData` to include new biological stats (`max_hp`, `max_atp`, etc.).
+    - [ ] Create `ATPComponent` to manage ATP logic.
+    - [ ] Implement passive Glucose consumption based on metabolic rate.
+    - [ ] Update HUD to display Glucose and ATP.
+- [ ] **Implement Player-Vehicle Separation:**
+    - [ ] Create a base `Vehicle` scene.
+    - [ ] Implement logic for player to enter/exit vehicle.
+    - [ ] Separate player and vehicle stats and controls.
+- [ ] **Implement Core Combat Loop:**
+    - [ ] Implement secondary weapon combo system.
+    - [ ] Implement main weapon charging system.
+    - [ ] Implement basic "Just Frame" mechanic.
+- [ ] **Implement Virtual Lab (First Pass):**
+    - [ ] Create the basic UI for the lab.
+    - [ ] Implement the "Virtual Microscope" feature for viewing item details.
