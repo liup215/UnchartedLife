@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 [autoload]
 
 EventBus="*res://systems/event_bus.gd"
+MapManager="*res://features/map/map_manager.gd"
 PlayerData="*res://data/player_data_global.gd"
 SaveManager="*res://systems/save_manager.gd"
 
@@ -27,6 +28,11 @@ SaveManager="*res://systems/save_manager.gd"
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="viewport"
+
+[groups]
+
+player="&\"player\""
+saveable="&\"saveable\""
 
 [input]
 
@@ -39,11 +45,6 @@ toggle_menu=[Object(InputEventKey,"resource_local_to_scene":false,"resource_name
 2d_physics/layer_2="player"
 2d_physics/layer_3="enemy"
 2d_physics/layer_4="items"
-
-[groups]
-
-player="&\"player\""
-saveable="&\"saveable\""
 
 [rendering]
 

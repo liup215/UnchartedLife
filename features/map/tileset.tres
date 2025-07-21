@@ -1,0 +1,43 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://b1a2s3d4f5g6h"]
+
+[ext_resource type="Texture2D" uid="uid://cmqyp5jyn1p5q" path="res://assets/tilesets/[A]Grass_pipo.png" id="1_grass"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+resource_name = "Grass"
+texture = ExtResource("1_grass")
+texture_region_size = Vector2i(32, 32)
+7:5/0 = 0
+5:24/0 = 0
+5:24/0/terrain_set = 0
+5:24/0/terrain = 0
+5:25/0 = 0
+5:25/0/terrain_set = 0
+5:25/0/terrain = 0
+5:26/0 = 0
+5:26/0/terrain_set = 0
+5:26/0/terrain = 0
+6:24/0 = 0
+6:24/0/terrain_set = 0
+6:24/0/terrain = 0
+6:25/0 = 0
+6:25/0/terrain_set = 0
+6:25/0/terrain = 0
+6:26/0 = 0
+6:26/0/terrain_set = 0
+6:26/0/terrain = 0
+7:24/0 = 0
+7:24/0/terrain_set = 0
+7:24/0/terrain = 0
+7:25/0 = 0
+7:25/0/terrain_set = 0
+7:25/0/terrain = 0
+7:26/0 = 0
+7:26/0/terrain_set = 0
+7:26/0/terrain = 0
+
+[resource]
+tile_size = Vector2i(32, 32)
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Terrain 0"
+terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_1")
