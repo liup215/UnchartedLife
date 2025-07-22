@@ -47,7 +47,7 @@ func _get_chunk_coords_from_position(position: Vector2) -> Vector2i:
 
 func _load_chunk(coords: Vector2i):
     if not CHUNK_SCENES.has(coords):
-        print("MapManager: No scene found for chunk coordinates: ", coords)
+        # print("MapManager: No scene found for chunk coordinates: ", coords)
         return
 
     var scene_path = CHUNK_SCENES[coords]

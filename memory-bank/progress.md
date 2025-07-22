@@ -54,12 +54,16 @@
     - [x] Balance ATP recovery rate to match consumption rate exactly.
     - [x] Create realistic energy management system with resource pressure.
 
-## Phase 5: Enhanced Gameplay Systems (Next)
+## Phase 5: Enhanced Gameplay Systems (In Progress)
 
-- [ ] **Implement Player-Vehicle Separation:**
-    - [ ] Create a base `Vehicle` scene.
-    - [ ] Implement logic for player to enter/exit vehicle.
-    - [ ] Separate player and vehicle stats and controls.
+- [x] **Implement Player-Vehicle System:**
+    - [x] Create a base `Vehicle` scene.
+    - [x] Implement logic for player to enter/exit vehicle.
+    - [x] Separate player and vehicle stats and controls.
+    - [x] Implement `RigidBody2D` physics for the vehicle for realistic collisions.
+    - [x] Implement tank-style controls (forward/backward movement, left/right turning).
+    - [x] Implement robust safe-exiting mechanism to prevent physics glitches.
+    - [x] Ensure AI correctly tracks the player inside the vehicle.
 - [ ] **Implement Core Combat Loop:**
     - [ ] Implement secondary weapon combo system.
     - [ ] Implement main weapon charging system.
@@ -86,9 +90,11 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Real-time Resource Management**: Live glucose and ATP tracking via HUD
 - **Biological Accuracy**: System reflects real cellular energy processes
 - **Strategic Depth**: Players must balance speed vs energy conservation
+- **Vehicle System**: Robust vehicle implementation with `RigidBody2D` physics, tank-style controls, and a safe enter/exit mechanism.
 
 ### Technical Excellence ✅
 - **Float Precision Energy**: Accurate per-frame energy calculations  
 - **Component Architecture**: Modular, extensible energy system design
 - **Data-Driven Balance**: Easy tweaking of metabolic rates and conversion ratios
 - **Performance Optimized**: Efficient real-time metabolism processing
+- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues with a multi-step, frame-aware exiting sequence.

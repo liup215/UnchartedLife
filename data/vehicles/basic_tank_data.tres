@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="VehicleData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/vehicle_data.gd" id="1_vehicle_data"]
+
+[resource]
+script = ExtResource("1_vehicle_data")
+vehicle_name = "Basic Tank"
+armor_value = 100
+max_speed = 150.0
+glucose_consumption_rate = 2.0
+weight = 1000.0
+fuel_efficiency = 1.0
+acceleration_cost_multiplier = 1.5
+turn_speed = 2.0
+acceleration = 300.0
+deceleration = 400.0

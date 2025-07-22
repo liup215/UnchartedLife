@@ -30,12 +30,12 @@ class_name ActorData
 
 # --- Helper Functions ---
 func get_max_health() -> int:
-    return max_hp
+	return max_hp
 
 func get_max_atp() -> int:
-    return max_atp
+	return max_atp
 
 # We will keep a move_speed function for now for compatibility with existing code,
 # but it will be derived from vehicle stats later.
 func get_move_speed() -> float:
-    return move_speed
+	return move_speed

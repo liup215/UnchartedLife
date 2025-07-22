@@ -3,103 +3,214 @@
 # It extends the base Actor class.
 extends "res://features/actor/actor.gd"
 
+# Player states
+enum PlayerState {
+	ON_FOOT,        # Normal walking state
+	IN_VEHICLE      # Inside a vehicle
+}
+
+# Vehicle interaction
+var current_state: PlayerState = PlayerState.ON_FOOT
+var current_vehicle: Node2D = null  # Will be Vehicle when available
+var nearby_vehicle: Node2D = null   # Vehicle player can interact with
+var interaction_ui_visible: bool = false
+
 func _ready():
-    # Assign the specific data resource for the player.
-    stats_component.data = load("res://data/items/player_data.tres")
-    # Call the parent's _ready function to initialize health etc.
-    super()
-    
-    # Programmatically add to groups to ensure timing is correct.
-    add_to_group("player")
-    add_to_group("saveable")
-    
-    # Set player color
-    visuals.color = Color.DODGER_BLUE
-    
-    # After becoming ready, claim any pending save data
-    SaveManager.claim_data_for_node(self)
+	# Assign the specific data resource for the player.
+	stats_component.data = load("res://data/items/player_data.tres")
+	# Call the parent's _ready function to initialize health etc.
+	super()
+	# Programmatically add to groups to ensure timing is correct.
+	add_to_group("player")
+	add_to_group("saveable")
+	# Set player color
+	visuals.color = Color.DODGER_BLUE
+	# After becoming ready, claim any pending save data
+	SaveManager.claim_data_for_node(self)
 
 # Player-specific logic will go here, such as input handling.
-func _physics_process(delta: float):
-    # --- Input and Movement ---
-    var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-    var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
-    
-    # Calculate movement speed based on sprinting state
-    var base_speed = stats_component.get_move_speed()
-    var movement_speed = base_speed
-    
-    if is_sprinting and direction.length() > 0:
-        movement_speed = base_speed * 1.8  # 80% speed increase when sprinting
-    
-    velocity = direction * movement_speed
-    move_and_slide()
-    
-    # --- Biological Processes ---
-    _process_metabolism(delta, is_sprinting)
+func _physics_process(delta: float) -> void:
+	# Handle vehicle interaction input
+	if Input.is_action_just_pressed("enter_vehicle"):  # E key
+		await _handle_vehicle_interaction()
+
+	# Different behavior based on current state
+	match current_state:
+		PlayerState.ON_FOOT:
+			_handle_on_foot_logic(delta)
+		PlayerState.IN_VEHICLE:
+			_handle_in_vehicle_logic(delta)
+
+func _handle_on_foot_logic(delta: float):
+	# --- Input and Movement ---
+	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
+
+	# Calculate movement speed based on sprinting state
+	var base_speed = stats_component.get_move_speed()
+	var movement_speed = base_speed
+
+	if is_sprinting and direction.length() > 0:
+		movement_speed = base_speed * 1.8  # 80% speed increase when sprinting
+
+	velocity = direction * movement_speed
+	move_and_slide()
+
+	# --- Biological Processes ---
+	_process_metabolism(delta, is_sprinting)
+
+func _handle_in_vehicle_logic(delta: float):
+	# 进入载具后，player位置随vehicle同步
+	if current_vehicle:
+		global_position = current_vehicle.global_position
+	# When in vehicle, player only does basal metabolism
+	# Vehicle handles movement and glucose consumption
+	_process_basal_metabolism(delta)
+
+func _handle_vehicle_interaction():
+	if current_state == PlayerState.ON_FOOT:
+		# Try to enter nearby vehicle
+		if nearby_vehicle and nearby_vehicle.has_method("can_be_entered") and nearby_vehicle.can_be_entered():
+			var result = nearby_vehicle.enter_vehicle(self)
+			if typeof(result) == TYPE_OBJECT and result.has_method("is_valid") and result.is_valid():
+				result = await result
+			if result:
+				current_vehicle = nearby_vehicle
+				current_state = PlayerState.IN_VEHICLE
+				var vehicle_name = "Unknown"
+				if nearby_vehicle.vehicle_data and nearby_vehicle.vehicle_data.has_method("get"):
+					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
+				elif nearby_vehicle.vehicle_data:
+					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
+				print("Entered vehicle: ", vehicle_name)
+	elif current_state == PlayerState.IN_VEHICLE:
+		# Try to exit current vehicle
+		if current_vehicle and current_vehicle.has_method("exit_vehicle"):
+			var result = await current_vehicle.exit_vehicle()
+			if typeof(result) == TYPE_OBJECT and result.has_method("is_valid") and result.is_valid():
+				result = await result
+			if result:
+				current_vehicle = null
+				current_state = PlayerState.ON_FOOT
+				print("Exited vehicle")
+
+func _process_basal_metabolism(delta: float):
+	if not stats_component.data:
+		return
+
+	# Only basal ATP consumption when in vehicle
+	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
+	atp_component.consume_atp(base_atp_consumption)
+
+	# ATP Recovery
+	if atp_component.current_atp < atp_component.max_atp:
+		var atp_to_recover = base_atp_consumption
+		var conversion_rate = stats_component.data.atp_conversion_rate
+		if conversion_rate > 0:
+			var glucose_for_atp = atp_to_recover / conversion_rate
+			if PlayerData.glucose >= glucose_for_atp:
+				PlayerData.glucose -= glucose_for_atp
+				atp_component.recover_atp(atp_to_recover)
+
+	# Basal metabolic rate (reduced in vehicle - player is resting)
+	var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.2  # Even more reduced in vehicle
+	if PlayerData.glucose > 0:
+		PlayerData.glucose -= basal_glucose_cost
+
+# --- Vehicle Interaction Interface ---
+# These methods are called by vehicles when player enters/exits interaction range
+func show_vehicle_interaction(vehicle: Node2D):
+	nearby_vehicle = vehicle
+	interaction_ui_visible = true
+	# TODO: Show UI prompt "Press E to enter vehicle"
+	print("Vehicle nearby: ", vehicle.get_interaction_text())
+
+func hide_vehicle_interaction():
+	nearby_vehicle = null
+	interaction_ui_visible = false
+	# TODO: Hide UI prompt
+
+# Called by vehicle when player enters
+func set_in_vehicle_state(in_vehicle: bool):
+	# Hide/show player visual representation
+	visuals.visible = not in_vehicle
+	# Disable/enable all CollisionShape2D nodes
+	for child in get_children():
+		if child is CollisionShape2D:
+			child.disabled = in_vehicle
+	# 兼容旧逻辑（如有分组碰撞层需求可补充）
+	set_collision_layer_value(1, not in_vehicle)
+	set_collision_mask_value(1, not in_vehicle)
+	# 不禁用physics_process，保证AI能持续检测player
+
+# 新增：用于临时禁用/启用碰撞体（下车安全点检测用）
+func set_collision_enabled(enable: bool):
+	for child in get_children():
+		if child is CollisionShape2D:
+			child.disabled = not enable
 
 func _process_metabolism(delta: float, is_sprinting: bool = false):
-    if not stats_component.data:
-        return
+	if not stats_component.data:
+		return
 
-    # 1. ATP Consumption (Rest + Movement + Sprinting)
-    var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
-    var movement_atp_consumption = 0.0
-    var sprint_atp_consumption = 0.0
-    
-    # Check if player is moving (has input)
-    var is_moving = velocity.length() > 10.0  # Threshold to detect movement
-    if is_moving:
-        movement_atp_consumption = 3.0 * delta  # Additional 3 ATP/sec during movement
-        
-        # Extra consumption when sprinting
-        if is_sprinting:
-            sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
-    
-    var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
-    atp_component.consume_atp(total_atp_consumption)
+	# 1. ATP Consumption (Rest + Movement + Sprinting)
+	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
+	var movement_atp_consumption = 0.0
+	var sprint_atp_consumption = 0.0
 
-    # 2. Glucose-Based ATP Recovery (matches actual ATP consumption rate)
-    if atp_component.current_atp < atp_component.max_atp:
-        # ATP recovery should match the consumption rate to maintain balance
-        # This ensures glucose consumption reflects the actual energy demand
-        var atp_to_recover = total_atp_consumption  # Match the consumption rate
-        
-        # Calculate the glucose cost for that much ATP
-        var conversion_rate = stats_component.data.atp_conversion_rate
-        if conversion_rate > 0:
-            var glucose_for_atp = atp_to_recover / conversion_rate
-            
-            # Check if we have enough glucose
-            if PlayerData.glucose >= glucose_for_atp:
-                PlayerData.glucose -= glucose_for_atp
-                atp_component.recover_atp(atp_to_recover)
-            else:
-                # Out of glucose! Cannot recover ATP - this will lead to ATP depletion
-                pass
-    
-    # 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
-    # This continues even when ATP is full, representing basic cellular maintenance
-    var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.3  # Reduced to 30% of original rate
-    if PlayerData.glucose > 0:
-        PlayerData.glucose -= basal_glucose_cost
+	# Check if player is moving (has input)
+	var is_moving = velocity.length() > 10.0  # Threshold to detect movement
+	if is_moving:
+		movement_atp_consumption = 3.0 * delta  # Additional 3 ATP/sec during movement
+
+	# Extra consumption when sprinting
+	if is_sprinting:
+		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
+
+	var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
+	atp_component.consume_atp(total_atp_consumption)
+
+	# 2. Glucose-Based ATP Recovery (matches actual ATP consumption rate)
+	if atp_component.current_atp < atp_component.max_atp:
+		# ATP recovery should match the consumption rate to maintain balance
+		# This ensures glucose consumption reflects the actual energy demand
+		var atp_to_recover = total_atp_consumption  # Match the consumption rate
+
+		# Calculate the glucose cost for that much ATP
+		var conversion_rate = stats_component.data.atp_conversion_rate
+		if conversion_rate > 0:
+			var glucose_for_atp = atp_to_recover / conversion_rate
+
+			# Check if we have enough glucose
+			if PlayerData.glucose >= glucose_for_atp:
+				PlayerData.glucose -= glucose_for_atp
+				atp_component.recover_atp(atp_to_recover)
+			else:
+				# Out of glucose! Cannot recover ATP - this will lead to ATP depletion
+				pass
+
+	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
+	# This continues even when ATP is full, representing basic cellular maintenance
+	var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.3  # Reduced to 30% of original rate
+	if PlayerData.glucose > 0:
+		PlayerData.glucose -= basal_glucose_cost
 
 # --- Save/Load Interface ---
 
 func save_data() -> Dictionary:
-    return {
-        "position_x": position.x,
-        "position_y": position.y,
-        "current_health": health_component.current_health
-    }
+	return {
+		"position_x": position.x,
+		"position_y": position.y,
+		"current_health": health_component.current_health
+	}
 
 func load_data(data: Dictionary):
-    position.x = data.get("position_x", position.x)
-    position.y = data.get("position_y", position.y)
-    
-    # Set health, ensuring it doesn't exceed max health
-    var loaded_health = data.get("current_health", health_component.max_health)
-    health_component.current_health = loaded_health
-    
-    # We also need to update the HUD after loading
-    # The health_changed signal will do this automatically when we set health.
+	position.x = data.get("position_x", position.x)
+	position.y = data.get("position_y", position.y)
+
+	# Set health, ensuring it doesn't exceed max health
+	var loaded_health = data.get("current_health", health_component.max_health)
+	health_component.current_health = loaded_health
+
+	# We also need to update the HUD after loading
+	# The health_changed signal will do this automatically when we set health.

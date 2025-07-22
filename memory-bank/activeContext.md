@@ -1,16 +1,14 @@
-# Active Context: Godot ARPG Architecture
+# Active Context: Godot ARPG - Vehicle System Implementation
 
 ## Current Focus
-The primary focus is on establishing a solid architectural foundation for the Godot ARPG project. We have just finalized the core design patterns and project structure.
+The primary focus has been on implementing a robust and physically accurate player-vehicle interaction system. This involved significant refactoring of the vehicle's physics model and creating a safe enter/exit mechanism.
 
 ## Key Decisions Made
-1.  **Hybrid Architecture Model:** We will use a combination of inheritance and composition. A `base_actor` scene will provide shared functionality for all characters (player, enemies), while specific behaviors will be added as modular components. This decision was made to balance code reusability with flexibility.
-2.  **Data-Driven Design:** Game data (stats, items, etc.) will be managed using Godot's `Resource` system. This decouples data from code, empowering designers and simplifying content creation.
-3.  **Component-Based Scenes:** Entities will be built from small, reusable component scenes (e.g., `HealthComponent`, `AIComponent`).
-4.  **Global Event Bus:** Decoupled systems will communicate via a global `EventBus` (Autoload singleton) to minimize hard dependencies.
-5.  **Feature-First Directory Structure:** The project's file system will be organized by feature (e.g., `/features/player`, `/features/inventory`) to keep related files together.
+1.  **Vehicle Physics Model:** Switched from `CharacterBody2D` to `RigidBody2D` for all vehicles. This was a critical decision to resolve physics issues where enemies could push the vehicle. The new model provides more realistic interactions but required a complete overhaul of the movement logic.
+2.  **Control Scheme:** Implemented a "tank-style" control scheme for the `RigidBody2D` vehicle, where forward/backward inputs apply force and left/right inputs control angular rotation. This provides a more authentic feel for a heavy vehicle.
+3.  **Safe Exiting Protocol:** Developed a multi-step, frame-aware process for exiting the vehicle to prevent physics glitches. This includes finding a safe, non-overlapping position, and temporarily disabling collisions and freezing the vehicle's physics state using `sleeping` and `await`.
+4.  **AI and Player Synchronization:** Maintained the existing AI tracking system. The player node, while in the vehicle, continuously syncs its `global_position` to the vehicle. This ensures that the enemy AI, which tracks the player node, correctly follows the vehicle.
 
 ## Next Steps
-1.  **Create `progress.md`:** Finalize the initial memory bank setup by creating the progress tracking document.
-2.  **Present the Plan:** Summarize the complete architectural plan to the user for final approval.
-3.  **Transition to Implementation:** Once the plan is approved, the next logical step is to move into "Act Mode" to begin creating the directory structure and core scripts as defined in `systemPatterns.md`.
+1.  **Finalize Vehicle System:** The core mechanics are now in place. The immediate next step is to ensure all edge cases are handled and the system is stable.
+2.  **Implement Core Combat Loop:** With the vehicle system complete, the project can now move on to implementing the core combat mechanics as outlined in the `progress.md` file. This will be the next major feature development phase.

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://basic_tank"]
+
+[ext_resource type="PackedScene" path="res://features/vehicle/base_vehicle.tscn" id="1_base_vehicle"]
+
+[node name="BasicTank" instance=ExtResource("1_base_vehicle")]
