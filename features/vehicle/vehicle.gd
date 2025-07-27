@@ -12,6 +12,7 @@ class_name Vehicle
 @onready var interaction_ui: Control = $InteractionUI
 @onready var interaction_label: Label = $InteractionUI/InteractionLabel
 @onready var vehicle_camera: Camera2D = $Camera2D
+@onready var combat_component: CombatComponent = $CombatComponent
 
 # Vehicle state
 var occupied: bool = false
@@ -27,15 +28,23 @@ func _ready():
 		visuals.color = Color.DARK_GRAY
 		visuals.size = Vector2(48, 64)
 
- # Ensure the stats component has the data it needs
+	# Ensure the stats component has the data it needs
 	if stats_component:
 		stats_component.vehicle_data = vehicle_data
 		stats_component.recalculate_stats()
+
+	# Set owner_node for combat_component
+	if combat_component:
+		combat_component.owner_node = self
+
+	# Initialize combat weapons
+	_initialize_weapons()
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
 		_handle_vehicle_movement(delta)
 		_consume_fuel(delta)
+		_handle_combat_input()
 	else:
 		# Auto-dampening when idle or overloaded
 		linear_damp = 8
@@ -154,7 +163,7 @@ func exit_vehicle() -> bool:
 		vehicle_camera.enabled = false
 	if player_camera:
 		player_camera.enabled = true
-	player_camera = null
+		player_camera = null
 
 	# Place player at the vehicle's position and re-enable them
 	if ejected_player:
@@ -169,3 +178,51 @@ func get_interaction_text() -> String:
 		return "Press E to enter " + (vehicle_data.vehicle_name if vehicle_data else "Vehicle")
 	else:
 		return "Vehicle occupied"
+
+func _handle_combat_input():
+	if not combat_component:
+		return
+
+	# Main weapon charging
+	if Input.is_action_just_pressed("main_attack"):
+		combat_component.start_main_charge()
+	elif Input.is_action_just_released("main_attack"):
+		combat_component.stop_main_charge()
+		combat_component.fire_main_weapons()
+
+	# Light attack combos
+	if Input.is_action_just_pressed("light_attack"):
+		combat_component.perform_light_attack()
+
+func _initialize_weapons():
+	print("Initializing vehicle weapons...")
+	if not combat_component:
+		return
+
+	# Add main weapons
+	for i in range(1, 3):
+		var mount_name = "MainWeaponMount%d" % i
+		if has_node(mount_name):
+			var mount = get_node(mount_name)
+			var weapon_component = preload("res://components/weapon_component.tscn").instantiate()
+			mount.add_child(weapon_component)
+			# Load default heavy cannon
+			var weapon_data = preload("res://data/vehicles/components/heavy_cannon.tres")
+			weapon_component.weapon_data = weapon_data
+			combat_component.add_main_weapon(weapon_component)
+
+	# Add secondary weapons
+	for i in range(1, 4):
+		var mount_name = "SecondaryWeaponMount%d" % i
+		if has_node(mount_name):
+			var mount = get_node(mount_name)
+			var weapon_component = preload("res://components/weapon_component.tscn").instantiate()
+			mount.add_child(weapon_component)
+			# Load default light machine gun
+			var weapon_data = preload("res://data/vehicles/components/light_machine_gun.tres").duplicate()
+			weapon_data.weapon_name = "Light Machine Gun %d" % i
+			print("Adding secondary weapon:", weapon_data.weapon_name)
+			weapon_component.weapon_data = weapon_data
+			print("Weapon data set for:", weapon_component.weapon_data.weapon_name)
+			combat_component.add_secondary_weapon(weapon_component)
+	print("Vehicle weapons initialized.")

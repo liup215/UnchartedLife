@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="VehicleData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="VehicleData" load_steps=3 format=3 uid="uid://cdbxd4u1pa2lh"]
 
 [ext_resource type="Script" path="res://data/vehicle_data.gd" id="1_v"]
 [ext_resource type="Resource" path="res://data/vehicles/components/default_tank_engine.tres" id="2_e"]
@@ -17,9 +17,8 @@ base_resistances = {
 level = 1
 experience = 0
 energy_points = 20
-engine_slots = [ExtResource("2_e")]
-main_cannon_slots = []
-sub_weapon_slots = []
-se_slots = []
-skills = []
-scene = null
+engine_slots = Array[Resource]([ExtResource("2_e")])
+main_cannon_slots = Array[Resource]([])
+sub_weapon_slots = Array[Resource]([])
+se_slots = Array[Resource]([])
+skills = Array[Resource]([])

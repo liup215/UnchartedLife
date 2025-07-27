@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://e5dy5ow2xsdx"]
+[gd_scene load_steps=6 format=3 uid="uid://e5dy5ow2xsdx"]
 
 [ext_resource type="Script" uid="uid://dulkygutgbg8g" path="res://features/vehicle/vehicle.gd" id="1_vehicle"]
 [ext_resource type="Script" uid="uid://kpdca02bwa2y" path="res://components/vehicle_stats_component.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://cdu3i0f21grj" path="res://components/combat_component.gd" id="3_combat"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(64, 48)
@@ -96,3 +97,21 @@ vertical_alignment = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 enabled = false
+
+[node name="CombatComponent" type="Node" parent="."]
+script = ExtResource("3_combat")
+
+[node name="MainWeaponMount1" type="Node2D" parent="."]
+position = Vector2(-20, 0)
+
+[node name="MainWeaponMount2" type="Node2D" parent="."]
+position = Vector2(20, 0)
+
+[node name="SecondaryWeaponMount1" type="Node2D" parent="."]
+position = Vector2(-10, 30)
+
+[node name="SecondaryWeaponMount2" type="Node2D" parent="."]
+position = Vector2(10, 30)
+
+[node name="SecondaryWeaponMount3" type="Node2D" parent="."]
+position = Vector2(0, 35)

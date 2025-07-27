@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://bsfwef2t8sd0a"]
+
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/components/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_name = "重型加农炮"
+weapon_type = 0
+weight = 150.0
+energy_cost = 10
+damage = 100.0
+damage_type = 0
+rate_of_fire = 1.0
+ammo_capacity = 10
+max_charge_level = 5
+charge_time = 3.0
+atp_cost_per_level = 15.0

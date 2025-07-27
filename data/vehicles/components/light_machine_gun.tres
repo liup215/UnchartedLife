@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://cvc30g5d6sxx3"]
+
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/components/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_name = "轻机枪"
+weapon_type = 1
+weight = 150.0
+energy_cost = 2
+damage = 25.0
+damage_type = 0
+rate_of_fire = 1.0
+ammo_capacity = 100
+max_charge_level = 1
+charge_time = 0.1
+atp_cost_per_level = 1.0

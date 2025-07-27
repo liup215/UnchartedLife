@@ -65,9 +65,10 @@
     - [x] Simplify exit mechanism by removing collisions between player and vehicle.
     - [x] Ensure AI correctly tracks the player inside the vehicle.
     - [x] Implement comprehensive HUD integration for real-time vehicle status display.
-- [ ] **Implement Core Combat Loop:**
-    - [ ] Implement secondary weapon combo system.
-    - [ ] Implement main weapon charging system.
+- [x] **Implement Core Combat Loop:**
+    - [x] Implement secondary weapon combo system.
+    - [x] Implement main weapon charging system.
+    - [x] Fix weapon data duplication bug for multiple secondary weapons.
     - [ ] Implement basic "Just Frame" mechanic.
 - [ ] **Implement Virtual Lab (First Pass):**
     - [ ] Create the basic UI for the lab.

@@ -12,6 +12,9 @@ enum PlayerState {
 func get_current_state() -> int:
 	return current_state
 
+# Combat state
+var combat_component: CombatComponent = null
+
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
 var current_vehicle: Node2D = null  # Will be Vehicle when available
@@ -30,12 +33,20 @@ func _ready():
 	visuals.color = Color.DODGER_BLUE
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
+	
+	# Initialize combat component
+	combat_component = CombatComponent.new()
+	combat_component.owner_node = self
+	add_child(combat_component)
 
 # Player-specific logic will go here, such as input handling.
 func _physics_process(delta: float) -> void:
 	# Handle vehicle interaction input
 	if Input.is_action_just_pressed("enter_vehicle"):  # E key
 		await _handle_vehicle_interaction()
+
+	# Handle combat input
+	_handle_combat_input()
 
 	# Different behavior based on current state
 	match current_state:
@@ -208,3 +219,18 @@ func load_data(data: Dictionary):
 
 	# We also need to update the HUD after loading
 	# The health_changed signal will do this automatically when we set health.
+
+func _handle_combat_input():
+	if not combat_component or current_state != PlayerState.ON_FOOT:
+		return
+		
+	# Main weapon charging
+	if Input.is_action_just_pressed("main_attack"):
+		combat_component.start_main_charge()
+	elif Input.is_action_just_released("main_attack"):
+		combat_component.stop_main_charge()
+		combat_component.fire_main_weapons()
+	
+	# Light attack combos
+	if Input.is_action_just_pressed("light_attack"):
+		combat_component.perform_light_attack()

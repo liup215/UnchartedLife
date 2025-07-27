@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://du8v15ckma8p8"]
 
 [ext_resource type="PackedScene" uid="uid://e5dy5ow2xsdx" path="res://features/vehicle/base_vehicle.tscn" id="1_base_vehicle"]
-[ext_resource type="Resource" path="res://data/vehicles/basic_tank_data.tres" id="2_data"]
+[ext_resource type="Resource" uid="uid://cdbxd4u1pa2lh" path="res://data/vehicles/basic_tank_data.tres" id="2_data"]
 
 [node name="BasicTank" instance=ExtResource("1_base_vehicle")]
 vehicle_data = ExtResource("2_data")
