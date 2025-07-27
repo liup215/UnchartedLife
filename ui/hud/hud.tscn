@@ -93,3 +93,25 @@ grow_vertical = 2
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TankStatusContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TankNameLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Tank: -"
+
+[node name="TankSpeedLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+layout_mode = 2
+text = "Speed: -"
+
+[node name="TankDefenseLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+layout_mode = 2
+text = "Defense: -"
+
+[node name="TankLoadLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+layout_mode = 2
+text = "Load: -"

@@ -5,7 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://cq6rh160m8f1v" path="res://features/enemy/goblin.tscn" id="3_goblin"]
 [ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="5_menu"]
-[ext_resource type="PackedScene" uid="uid://c8h7g6f5e4d3s" path="res://features/vehicle/basic_tank.tscn" id="6_tank"]
+[ext_resource type="PackedScene" 
+uid="uid://du8v15ckma8p8"
+path="res://features/vehicle/basic_tank.tscn" id="6_tank"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_mgr")

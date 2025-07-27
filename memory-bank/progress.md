@@ -61,9 +61,10 @@
     - [x] Implement logic for player to enter/exit vehicle.
     - [x] Separate player and vehicle stats and controls.
     - [x] Implement `RigidBody2D` physics for the vehicle for realistic collisions.
-    - [x] Implement tank-style controls (forward/backward movement, left/right turning).
-    - [x] Implement robust safe-exiting mechanism to prevent physics glitches.
+    - [x] Implement tank-style controls (forward/backward movement, realistic reverse steering).
+    - [x] Simplify exit mechanism by removing collisions between player and vehicle.
     - [x] Ensure AI correctly tracks the player inside the vehicle.
+    - [x] Implement comprehensive HUD integration for real-time vehicle status display.
 - [ ] **Implement Core Combat Loop:**
     - [ ] Implement secondary weapon combo system.
     - [ ] Implement main weapon charging system.
@@ -90,11 +91,11 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Real-time Resource Management**: Live glucose and ATP tracking via HUD
 - **Biological Accuracy**: System reflects real cellular energy processes
 - **Strategic Depth**: Players must balance speed vs energy conservation
-- **Vehicle System**: Robust vehicle implementation with `RigidBody2D` physics, tank-style controls, and a safe enter/exit mechanism.
+- **Vehicle System**: Robust vehicle implementation with `RigidBody2D` physics, tank-style controls, and a simplified enter/exit mechanism based on a non-collision design.
 
 ### Technical Excellence ✅
 - **Float Precision Energy**: Accurate per-frame energy calculations  
 - **Component Architecture**: Modular, extensible energy system design
 - **Data-Driven Balance**: Easy tweaking of metabolic rates and conversion ratios
 - **Performance Optimized**: Efficient real-time metabolism processing
-- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues with a multi-step, frame-aware exiting sequence.
+- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.

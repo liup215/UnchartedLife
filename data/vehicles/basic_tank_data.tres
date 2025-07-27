@@ -1,16 +1,25 @@
-[gd_resource type="Resource" script_class="VehicleData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="VehicleData" load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://data/vehicle_data.gd" id="1_vehicle_data"]
+[ext_resource type="Script" path="res://data/vehicle_data.gd" id="1_v"]
+[ext_resource type="Resource" path="res://data/vehicles/components/default_tank_engine.tres" id="2_e"]
 
 [resource]
-script = ExtResource("1_vehicle_data")
+script = ExtResource("1_v")
 vehicle_name = "Basic Tank"
-armor_value = 100
-max_speed = 150.0
-glucose_consumption_rate = 2.0
-weight = 1000.0
-fuel_efficiency = 1.0
-acceleration_cost_multiplier = 1.5
-turn_speed = 2.0
-acceleration = 300.0
-deceleration = 400.0
+description = "A reliable, all-purpose combat vehicle."
+base_weight = 1500.0
+base_defense = 50
+base_resistances = {
+"acid": 0.0,
+"electric": 0.05,
+"fire": 0.1
+}
+level = 1
+experience = 0
+energy_points = 20
+engine_slots = [ExtResource("2_e")]
+main_cannon_slots = []
+sub_weapon_slots = []
+se_slots = []
+skills = []
+scene = null

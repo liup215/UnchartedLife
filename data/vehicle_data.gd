@@ -1,60 +1,49 @@
 # vehicle_data.gd
-# A resource that holds all the defining data for a vehicle.
-# This allows for easy creation of new vehicle types by creating new .tres files.
+# Defines the core chassis of a vehicle. It acts as a container for various components
+# and holds the vehicle's base stats, level, and upgrade potential.
 extends Resource
-
 class_name VehicleData
 
-# --- Basic Vehicle Properties ---
-@export_group("基础属性")
-## The name of this vehicle type
-@export var vehicle_name: String = "Basic Tank"
-## The vehicle's armor value for damage resistance
-@export var armor_value: int = 100
-## Maximum movement speed of the vehicle
-@export var max_speed: float = 150.0
-## Base glucose consumption per second when running
-@export var glucose_consumption_rate: float = 2.0
-## Vehicle weight affects acceleration and fuel efficiency
-@export var weight: float = 1000.0
+# --- Core Identity & Base Stats ---
+@export_group("Core Properties")
+## The unique name of this vehicle chassis.
+@export var vehicle_name: String = "Default Chassis"
+## A description of the chassis.
+@export_multiline var description: String = "A standard-issue vehicle chassis."
+## The base weight of the empty chassis.
+@export var base_weight: float = 1000.0
+## The base defense value of the chassis.
+@export var base_defense: int = 10
+## Base resistances of the chassis.
+@export var base_resistances: Dictionary = {"fire": 0.0, "electric": 0.0, "acid": 0.0}
 
-@export_group("能效属性")
-## Multiplier for glucose consumption based on speed (higher = more efficient)
-@export var fuel_efficiency: float = 1.0
-## Additional consumption when accelerating
-@export var acceleration_cost_multiplier: float = 1.5
+# --- Upgrade & Progression ---
+@export_group("Upgrades & Progression")
+## The current level of the vehicle.
+@export var level: int = 1
+## The current experience points.
+@export var experience: int = 0
+## Energy points used to equip powerful components or unlock skills.
+@export var energy_points: int = 10
 
-@export_group("操控属性")
-## How quickly the vehicle can turn
-@export var turn_speed: float = 2.0
-## How quickly the vehicle accelerates to max speed
-@export var acceleration: float = 300.0
-## How quickly the vehicle decelerates
-@export var deceleration: float = 400.0
+# --- Component Slots ---
+# These arrays will hold the actual Resource files for each component.
+@export_group("Component Slots")
+## Array for EngineData resources. Can be expanded via upgrades.
+@export var engine_slots: Array[Resource] = []
+## Array for main cannon WeaponData resources.
+@export var main_cannon_slots: Array[Resource] = []
+## Array for sub-weapon WeaponData resources.
+@export var sub_weapon_slots: Array[Resource] = []
+## Array for SpecialEquipmentData (SE) resources.
+@export var se_slots: Array[Resource] = []
 
-# --- Helper Functions ---
-func get_max_speed() -> float:
-    return max_speed
+# --- Skills ---
+@export_group("Skills")
+## Array for unlocked VehicleSkillData resources.
+@export var skills: Array[Resource] = []
 
-func get_glucose_consumption_at_speed(current_speed: float, is_accelerating: bool = false) -> float:
-    # Base consumption
-    var consumption = glucose_consumption_rate
-    
-    # Speed-based consumption (more speed = more fuel)
-    var speed_ratio = current_speed / max_speed
-    consumption += glucose_consumption_rate * speed_ratio * (2.0 - fuel_efficiency)
-    
-    # Acceleration penalty
-    if is_accelerating:
-        consumption *= acceleration_cost_multiplier
-    
-    return consumption
-
-func get_turn_speed() -> float:
-    return turn_speed
-
-func get_acceleration() -> float:
-    return acceleration
-    
-func get_deceleration() -> float:
-    return deceleration
+# --- Visuals ---
+@export_group("Visuals")
+## The scene file (.tscn) for this vehicle's visual representation.
+@export var scene: PackedScene

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EngineData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/components/engine_data.gd" id="1_x"]
+
+[resource]
+script = ExtResource("1_x")
+engine_name = "T-55 Standard Engine"
+weight = 500.0
+max_load = 2500.0
+power_output = 800.0
+glucose_efficiency = 0.8

@@ -31,14 +31,29 @@
 - **Vehicles:** Implemented as `RigidBody2D`. This was a deliberate choice to solve collision issues where `CharacterBody2D` enemies could push the vehicle. `RigidBody2D` is only affected by physics forces, not by `move_and_slide()` from other bodies.
 - **Top-Down Physics:** For the top-down perspective, `RigidBody2D` vehicles have their `gravity_scale` set to `0` to prevent them from falling. Movement is controlled by applying forces (`apply_central_force`) and managing angular velocity for turning.
 
-### Safe Exiting Mechanism
-- To prevent physics glitches (like the vehicle being "flung" away) when the player exits, a robust multi-step process is used:
-    1.  **Find Safe Position:** A `find_safe_exit_position` function checks multiple offset points around the vehicle to find a spot where the player's collision shape won't overlap with any other physics body.
-    2.  **Temporarily Disable Collisions:** Both the player's and the vehicle's collision shapes are temporarily disabled during the exit sequence.
-    3.  **Temporarily Freeze Vehicle Physics:** The vehicle's `sleeping` state is set to `true` to completely freeze it for a single frame.
-    4.  **Sequence with `await`:** The process is managed using `await get_tree().process_frame` to ensure physics states are updated correctly across frames before re-enabling collisions.
-    5.  **Failsafe Push:** As a final failsafe, if a collision is still detected after re-enabling physics, the player is pushed slightly further away from the vehicle to resolve the overlap without moving the vehicle.
-
 ### AI Targeting
 - **Persistent Tracking:** The enemy AI (`goblin.gd`) tracks the player by getting a reference to the node in the "player" group.
 - **Position Sync:** Because the player node's `global_position` is continuously updated to match the vehicle's position while occupied, the enemy AI correctly tracks and follows the vehicle, even though the player's physical body is disabled. This provides a simple and effective way for AI to target the player regardless of their state.
+
+### Physics Layers
+The project uses specific physics layers to manage collisions:
+- **Layer 1 (Default):** General purpose, currently unused for specific game elements.
+- **Layer 2 (Actors):** Used for the Player and Enemies.
+- **Layer 3 (World):** Used for static world geometry like walls and obstacles.
+- **Layer 4 (Unused):** Reserved for future use.
+- **Layer 5 (Vehicles):** Used for all vehicle bodies.
+- **Layer 6 (Interaction):** Used for `Area2D` nodes that detect interaction ranges (e.g., entering a vehicle).
+
+**Collision Matrix:**
+- **Player (Layer 2):** Collides with Layer 3 (World). Does not collide with Vehicles.
+- **Vehicle (Layer 5):** Collides with Layer 3 (World). Does not collide with Players or Enemies.
+- **Vehicle InteractionArea (Layer 6):** Scans for Layer 2 (Actors) to enable interaction prompts.
+
+### Vehicle Controls
+Vehicles use a `RigidBody2D` with a custom script for tank-style controls.
+- **Movement:** Force is applied based on `Vector2.UP` as the forward direction.
+- **Turning:** Angular velocity is applied for turning.
+  - Turning is only possible when the vehicle is moving forward or backward.
+  - When reversing, the steering controls are inverted for realistic behavior.
+- **Camera:** The vehicle's camera is configured to not rotate with the vehicle, providing a fixed world-view orientation.
+- **Rendering:** The player (`z_index = 20`) is always rendered on top of the vehicle (`z_index = 10`).

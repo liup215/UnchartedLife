@@ -9,6 +9,9 @@ enum PlayerState {
 	IN_VEHICLE      # Inside a vehicle
 }
 
+func get_current_state() -> int:
+	return current_state
+
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
 var current_vehicle: Node2D = null  # Will be Vehicle when available
@@ -138,16 +141,7 @@ func set_in_vehicle_state(in_vehicle: bool):
 	for child in get_children():
 		if child is CollisionShape2D:
 			child.disabled = in_vehicle
-	# 兼容旧逻辑（如有分组碰撞层需求可补充）
-	set_collision_layer_value(1, not in_vehicle)
-	set_collision_mask_value(1, not in_vehicle)
-	# 不禁用physics_process，保证AI能持续检测player
-
-# 新增：用于临时禁用/启用碰撞体（下车安全点检测用）
-func set_collision_enabled(enable: bool):
-	for child in get_children():
-		if child is CollisionShape2D:
-			child.disabled = not enable
+	# The player's physics process is not disabled, so AI can still track them.
 
 func _process_metabolism(delta: float, is_sprinting: bool = false):
 	if not stats_component.data:
