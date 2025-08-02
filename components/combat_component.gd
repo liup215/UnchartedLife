@@ -15,7 +15,7 @@ var secondary_weapons: Array = []
 var is_main_charging: bool = false
 var combo_counter: int = 0
 var last_combo_time: float = 0.0
-var combo_reset_time: float = 5.0  # Time window to continue combo
+var combo_reset_time: float = 0.5  # Time window to continue combo
 
 # ATP component reference
 var atp_component: Node = null
@@ -82,9 +82,9 @@ func _on_weapon_ammo_updated(_current_ammo: int):
 func start_main_charge():
 	if is_main_charging or main_weapons.is_empty():
 		return
-		
+
 	is_main_charging = true
-	
+
 	# Start charging all main weapons
 	for weapon in main_weapons:
 		if weapon:
@@ -93,9 +93,9 @@ func start_main_charge():
 func stop_main_charge():
 	if not is_main_charging:
 		return
-		
+
 	is_main_charging = false
-	
+
 	# Stop charging all main weapons
 	for weapon in main_weapons:
 		if weapon:
@@ -104,37 +104,38 @@ func stop_main_charge():
 func fire_main_weapons():
 	if main_weapons.is_empty():
 		return
-		
+
 	# Get the highest charge level among all weapons
 	var max_charge = 0
 	for weapon in main_weapons:
 		if weapon and weapon.current_charge > max_charge:
 			max_charge = weapon.current_charge
-	
+
 	if max_charge <= 0:
 		return
-	
+
 	# Calculate total ATP cost
 	var total_atp_cost = 0.0
 	for weapon in main_weapons:
 		if weapon:
 			total_atp_cost += weapon.get_atp_cost()
-	
+
 	# Check if we have enough ATP
 	if atp_component and atp_component.get_current_atp() < total_atp_cost:
 		return  # Not enough energy
-	
+
 	# Consume ATP
 	if atp_component:
 		atp_component.consume_atp(total_atp_cost)
-	
+
 	# Fire weapons that match the max charge level
 	var fired_count = 0
+	var effect_node = owner_node.get_node("WeaponEffect") if owner_node and owner_node.has_node("WeaponEffect") else null
 	for weapon in main_weapons:
 		if weapon and weapon.current_charge == max_charge:
-			weapon.fire()
+			weapon.fire(effect_node)
 			fired_count += 1
-	
+
 	# Emit signal
 	emit_signal("weapons_fired", "main", fired_count, max_charge)
 	emit_signal("combat_action_performed", "main_fire", total_atp_cost)
@@ -144,34 +145,39 @@ func perform_light_attack():
 	var current_time = Time.get_ticks_msec() / 1000.0
 	if current_time - last_combo_time > combo_reset_time:
 		combo_counter = 0
-	
+
 	combo_counter += 1
 	last_combo_time = current_time
 	emit_signal("combo_updated", combo_counter)
-	
+
 	# Determine how many secondary weapons to fire based on combo
 	var weapons_to_fire = min(combo_counter, secondary_weapons.size())
-	
+
 	# Calculate ATP cost
 	var total_atp_cost = 0.0
 
 	for i in range(weapons_to_fire):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
 			total_atp_cost += secondary_weapons[i].get_atp_cost()
-	
+
 	# Check if we have enough ATP
 	if atp_component and atp_component.get_current_atp() < total_atp_cost:
 		return  # Not enough energy
-	
+
 	# Consume ATP
 	if atp_component:
 		atp_component.consume_atp(total_atp_cost)
-	
-	# Fire the weapons
 
+	# Fire the weapons
+	var effect_node = owner_node.get_node("WeaponEffect") if owner_node and owner_node.has_node("WeaponEffect") else null
 	for i in range(weapons_to_fire):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
-			secondary_weapons[i].fire()
+			secondary_weapons[i].fire(effect_node)
+			# Add a short delay between shots
+			await get_tree().create_timer(0.2).timeout
+	# 如果连击数达到最大值，则重置
+	if combo_counter >= secondary_weapons.size():
+		reset_combo()
 	
 	# Emit signal
 	emit_signal("weapons_fired", "secondary", weapons_to_fire, 1)
@@ -192,7 +198,7 @@ func get_total_secondary_weapon_damage() -> float:
 	var total_damage = 0.0
 	var weapons_to_count = min(combo_counter, secondary_weapons.size())
 	weapons_to_count = max(weapons_to_count, 3)
-	
+
 	for i in range(weapons_to_count):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
 			total_damage += secondary_weapons[i].weapon_data.damage

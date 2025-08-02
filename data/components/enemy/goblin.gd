@@ -35,7 +35,8 @@ func _physics_process(_delta: float):
 		var distance_to_player = global_position.distance_to(player.global_position)
 		
 		if distance_to_player < detection_radius:
-			current_state = State.CHASE
+			# current_state = State.CHASE
+			pass
 		else:
 			current_state = State.WANDER
 	else:
@@ -61,5 +62,9 @@ func _on_wander_timer_timeout():
 		_update_wander_direction()
 
 func _update_wander_direction():
-	# Create a new random direction vector
+# Create a new random direction vector
 	wander_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+
+# Override take_damage to ensure the parent's method is called
+func take_damage(amount: int):
+	super.take_damage(amount)

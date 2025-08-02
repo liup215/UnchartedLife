@@ -23,7 +23,7 @@ func _ready():
 func start_charging():
 	if not weapon_data or is_charging:
 		return
-		
+
 	is_charging = true
 	charge_start_time = Time.get_ticks_msec()
 	current_charge = 0
@@ -32,9 +32,13 @@ func start_charging():
 func stop_charging():
 	is_charging = false
 
-func fire():
+func fire(effect_node: Node = null):
 	if not weapon_data:
 		return
+
+	var target_pos = get_global_mouse_position()
+	var origin_pos = global_position
+
 	if weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
 		if current_charge <= 0 or current_ammo <= 0:
 			return
@@ -46,9 +50,16 @@ func fire():
 		# Reset charge
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
-	elif weapon_data.weapon_type == WeaponData.WeaponType.SUB_WEAPON:
-		# 副炮直接发射，不判断聚能和弹药
+	else: # SUB_WEAPON
+	# 副炮发射子弹
 		emit_signal("weapon_fired", weapon_data, 1)
+
+	# 统一调用 weapon_data.fire
+	if effect_node:
+		weapon_data.fire(origin_pos, target_pos, effect_node)
+	else:
+	# Fallback if no effect node is provided (though it should be)
+		weapon_data.fire(origin_pos, target_pos, get_tree().current_scene)
 
 func _process(_delta):
 	if is_charging and weapon_data:

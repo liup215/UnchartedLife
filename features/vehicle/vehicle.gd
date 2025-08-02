@@ -13,6 +13,7 @@ class_name Vehicle
 @onready var interaction_label: Label = $InteractionUI/InteractionLabel
 @onready var vehicle_camera: Camera2D = $Camera2D
 @onready var combat_component: CombatComponent = $CombatComponent
+@onready var _animated_sprite = $AnimatedSprite2D
 
 # Vehicle state
 var occupied: bool = false
@@ -39,16 +40,45 @@ func _ready():
 
 	# Initialize combat weapons
 	_initialize_weapons()
+	_show_all_weapon_effects()
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
 		_handle_vehicle_movement(delta)
 		_consume_fuel(delta)
 		_handle_combat_input()
+		# get weapon effects
+		var weapon_effects = get_tree().get_nodes_in_group("weapon_effects")
+		for effect in weapon_effects:
+			effect.look_at(get_global_mouse_position())
 	else:
 		# Auto-dampening when idle or overloaded
 		linear_damp = 8
 		angular_damp = 8
+
+# 只展示一个统一的武器效果节点
+func _show_all_weapon_effects():
+	if not combat_component:
+		return
+
+	# 确保只创建一个效果节点
+	var effect_name = "WeaponEffect"
+	if has_node(effect_name):
+		return
+
+	# 找到第一个可用的视觉效果场景
+	var effect_scene = null
+	for weapon in combat_component.main_weapons + combat_component.secondary_weapons:
+		if weapon and weapon.weapon_data and weapon.weapon_data.visual_effect:
+			effect_scene = weapon.weapon_data.visual_effect
+			break
+	
+	if effect_scene:
+		var effect = effect_scene.instantiate()
+		effect.name = effect_name
+		effect.rotation_degrees = -90
+		add_child(effect)
+		effect.add_to_group("weapon_effects")
 
 func _handle_vehicle_movement(_delta: float):
 	# Only allow forward/backward movement and turning
@@ -72,24 +102,29 @@ func _handle_vehicle_movement(_delta: float):
 		var forward = Vector2.UP.rotated(rotation)
 		var force = forward * stats_component.final_acceleration * move_input
 		apply_central_force(force)
+		_animated_sprite.play("moving")
 		# Speed Limiter
 		if linear_velocity.length() > stats_component.final_max_speed:
 			linear_velocity = linear_velocity.normalized() * stats_component.final_max_speed
+		
 
-	# Turning (Only allow turning while moving)
-	if turn_input != 0:
-		# Invert turning direction when reversing for realistic steering
+	# Turning (Only allow turning while moving forward or backward)
+	if turn_input != 0 and move_input != 0:
+		# Allow turning when moving (forward or backward)
 		var effective_turn_speed = stats_component.final_max_speed / 150.0 # Example formula
+		# Invert turning direction when reversing for realistic steering
 		if move_input < 0:
 			angular_velocity = effective_turn_speed * -turn_input
 		else:
 			angular_velocity = effective_turn_speed * turn_input
-
+	
 	# Auto-dampening at low speed
 	if move_input == 0:
+		_animated_sprite.stop()
 		linear_damp = 8
 	else:
 		linear_damp = 2
+	
 
 func _consume_fuel(_delta: float):
 	# More detailed fuel consumption based on engine efficiency
@@ -171,6 +206,12 @@ func exit_vehicle() -> bool:
 		if ejected_player.has_method("set_in_vehicle_state"):
 			ejected_player.set_in_vehicle_state(false)
 
+	# reset all weapon effects
+	var weapon_effects = get_tree().get_nodes_in_group("weapon_effects")
+
+	print("Vehicle rotation: ", rotation_degrees)
+	for effect in weapon_effects:
+		effect.rotation_degrees = -90
 	return true
 
 func get_interaction_text() -> String:

@@ -67,8 +67,8 @@ func recalculate_stats():
 	if can_move and total_weight > 0:
 		# These formulas are placeholders and can be tuned for game balance.
 		var power_to_weight_ratio = total_power_output / total_weight
-		final_max_speed = power_to_weight_ratio * 50.0 # Tuning factor
-		final_acceleration = power_to_weight_ratio * 100.0 # Tuning factor
+		final_max_speed = power_to_weight_ratio * 500.0 # Tuning factor
+		final_acceleration = power_to_weight_ratio * 5000.0 # Tuning factor
 	else:
 		final_max_speed = 0
 		final_acceleration = 0

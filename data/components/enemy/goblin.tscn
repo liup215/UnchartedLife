@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cq6rh160m8f1v"]
 
 [ext_resource type="PackedScene" uid="uid://d3e4f5g6h7i8j" path="res://features/actor/base_actor.tscn" id="1_pqrst"]
-[ext_resource type="Script" uid="uid://dxgaylgn8m30c" path="res://features/enemy/goblin.gd" id="2_uvwxy"]
+[ext_resource type="Script" uid="uid://dxgaylgn8m30c" path="res://data/components/enemy/goblin.gd" id="2_uvwxy"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_12345"]
 radius = 30.0

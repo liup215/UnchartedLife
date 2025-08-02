@@ -66,9 +66,14 @@
     - [x] Ensure AI correctly tracks the player inside the vehicle.
     - [x] Implement comprehensive HUD integration for real-time vehicle status display.
 - [x] **Implement Core Combat Loop:**
-    - [x] Implement secondary weapon combo system.
+    - [x] Implement secondary weapon combo system with asynchronous, rhythmic firing.
     - [x] Implement main weapon charging system.
     - [x] Fix weapon data duplication bug for multiple secondary weapons.
+    - [x] Implement a centralized weapon effect system for vehicles.
+    - [x] Implement projectile system using `Area2D` for non-physical collision.
+    - [x] Implement dynamic, animated damage numbers on actors.
+    - [x] Implement projectile hit effects (explosions).
+    - [x] Implement a generic actor death sequence (animation and cleanup).
     - [ ] Implement basic "Just Frame" mechanic.
 - [ ] **Implement Virtual Lab (First Pass):**
     - [ ] Create the basic UI for the lab.
@@ -93,6 +98,8 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Biological Accuracy**: System reflects real cellular energy processes
 - **Strategic Depth**: Players must balance speed vs energy conservation
 - **Vehicle System**: Robust vehicle implementation with `RigidBody2D` physics, tank-style controls, and a simplified enter/exit mechanism based on a non-collision design.
+- **Combat Visuals & Feedback**: A rich and responsive combat experience with animated damage numbers, projectile hit effects, and a unified weapon effect system.
+- **Actor Lifecycle**: A complete lifecycle for actors, including a generic death sequence with animation and cleanup.
 
 ### Technical Excellence ✅
 - **Float Precision Energy**: Accurate per-frame energy calculations  
@@ -100,3 +107,4 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Data-Driven Balance**: Easy tweaking of metabolic rates and conversion ratios
 - **Performance Optimized**: Efficient real-time metabolism processing
 - **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.
+- **Asynchronous Logic**: Use of `await` for timed, non-blocking actions like rhythmic combo firing.

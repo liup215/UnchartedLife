@@ -39,3 +39,12 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 @export var visual_effect: PackedScene
 ## Audio effect for firing
 @export var fire_sound: AudioStream
+
+func fire(origin: Vector2, target: Vector2, effect_node: Node = null):
+	if not effect_node:
+		return
+
+	# 直接使用传入的 effect_node
+	if effect_node and effect_node.has_method("fire"):
+	# 传递所有必要的参数给 effect
+		effect_node.fire(origin, target, damage, self)

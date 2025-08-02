@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://cvc30g5d6sxx3"]
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://cvc30g5d6sxx3"]
 
 [ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/components/weapon_data.gd" id="1_weapon"]
+[ext_resource type="PackedScene" uid="uid://bss6nl3qbjd2e" path="res://light_machine_gun_effect.tscn" id="2_wnssu"]
 
 [resource]
 script = ExtResource("1_weapon")
@@ -15,3 +16,4 @@ ammo_capacity = 100
 max_charge_level = 1
 charge_time = 0.1
 atp_cost_per_level = 1.0
+visual_effect = ExtResource("2_wnssu")

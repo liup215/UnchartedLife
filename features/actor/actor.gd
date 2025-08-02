@@ -28,9 +28,7 @@ func _ready():
         health_component.health_changed.connect(
             func(current, max): actor_health_changed.emit(current, max)
         )
-        health_component.died.connect(
-            func(): actor_died.emit()
-        )
+        health_component.died.connect(_on_death)
     else:
         printerr("Actor _ready() called, but no ActorData was assigned to StatsComponent.")
 
@@ -38,6 +36,29 @@ func _ready():
 
 func take_damage(amount: int):
     health_component.take_damage(amount)
+    _show_damage_number(amount)
+
+func _show_damage_number(amount: int):
+    var label = Label.new()
+    label.text = str(amount)
+    
+    # --- 关键修改：确保字体和大小 ---
+    label.add_theme_font_size_override("font_size", 24)
+    label.add_theme_color_override("font_color", Color.RED)
+    
+    label.global_position = global_position + Vector2(randf_range(-20, 20), -50)
+    get_tree().get_root().add_child(label) # 添加到根节点，避免被父节点影响
+
+    var tween = get_tree().create_tween().set_parallel() # Start a parallel tween
+
+    # Animate vertical movement
+    tween.tween_property(label, "global_position:y", label.global_position.y - 60, 1.2).set_ease(Tween.EASE_OUT)
+    
+    # Animate fade out
+    tween.tween_property(label, "modulate:a", 0.0, 1.2).set_ease(Tween.EASE_IN)
+
+    # Connect the finished signal to free the label
+    tween.finished.connect(label.queue_free)
 
 # --- Save/Load Interface ---
 # Child classes are expected to implement these if they are saveable.
@@ -57,3 +78,22 @@ func load_data(data: Dictionary):
     
     var loaded_health = data.get("current_health", health_component.max_health)
     health_component.current_health = loaded_health
+
+func _on_death():
+    # Emit the signal for other systems to react (e.g., quest system, score manager)
+    actor_died.emit()
+
+    # 1. Disable collision
+    if has_node("CollisionShape2D"):
+        get_node("CollisionShape2D").set_deferred("disabled", true)
+
+    # 2. Play death animation/effect
+    var tween = create_tween()
+    # Example: Fade out and shrink
+    tween.set_parallel()
+    tween.tween_property(self, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+    tween.tween_property(self, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
+
+    # 3. Remove from scene after animation
+    await tween.finished
+    queue_free()
