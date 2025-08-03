@@ -260,6 +260,9 @@ The project's core advantages are:
 
 # Core Systems Detailed Design
 
+## Data-Driven Design Philosophy
+A core principle of the project is to be as data-driven as possible. This means separating data (stats, behaviors, appearances) from logic (how the game runs). The goal is to empower designers to create new content (enemies, weapons, items) by simply creating and modifying `Resource` files (`.tres`), without needing to write new code or create new scenes. This significantly speeds up iteration and content creation.
+
 ## Player + Vehicle Dual Stat System
 
 ### System Concept

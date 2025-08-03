@@ -6,7 +6,7 @@ extends Node
 signal health_changed(current_health: int, max_health: int)
 signal died
 
-@export var max_health: int = 100
+var max_health: int = 100
 
 var current_health: int:
     set(value):
@@ -16,7 +16,7 @@ var current_health: int:
             emit_signal("died")
 
 func _ready():
-    self.current_health = max_health
+    pass # Initialization will be handled by the owner Actor.
 
 func take_damage(damage_amount: int):
     self.current_health -= damage_amount

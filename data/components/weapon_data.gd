@@ -7,6 +7,10 @@ enum WeaponType { MAIN_CANNON, SUB_WEAPON }
 enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 
 @export_group("Core Properties")
+## The texture for the weapon's sprite.
+@export var weapon_texture: Texture2D
+## The positional offset for the weapon's sprite.
+@export var weapon_offset: Vector2 = Vector2.ZERO
 ## The name of the weapon.
 @export var weapon_name: String = "50mm Cannon"
 ## The type of weapon.
@@ -34,17 +38,43 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 ## ATP cost per charge level
 @export var atp_cost_per_level: float = 10.0
 
-@export_group("Visual Effects")
-## Visual effect resource for this weapon
-@export var visual_effect: PackedScene
-## Audio effect for firing
+@export_group("Visual & Audio Effects")
+## The sound played when the weapon is fired.
 @export var fire_sound: AudioStream
+## The muzzle flash effect scene to instantiate.
+@export var muzzle_flash_effect: PackedScene
+
+@export_group("Projectile Properties")
+## The scene for the projectile. Should be base_bullet.tscn
+@export var bullet_scene: PackedScene
+## The speed of the projectile in pixels per second.
+@export var bullet_speed: float = 800.0
+## The lifetime of the projectile in seconds.
+@export var bullet_lifetime: float = 2.0
+## The texture for the projectile's sprite.
+@export var bullet_texture: Texture2D
+## The scale of the projectile's sprite.
+@export var bullet_scale: Vector2 = Vector2.ONE
+
+@export_group("Hit Effect Properties")
+## The texture for the hit effect (e.g., an explosion spritesheet).
+@export var hit_effect_texture: Texture2D
+## The scale of the hit effect sprite.
+@export var hit_effect_scale: Vector2 = Vector2.ONE
+## Horizontal frames in the hit effect spritesheet.
+@export var hit_effect_h_frames: int = 1
+## Vertical frames in the hit effect spritesheet.
+@export var hit_effect_v_frames: int = 1
+## Total number of frames in the hit effect animation.
+@export var hit_effect_frame_count: int = 1
+## The duration of the hit effect animation in seconds.
+@export var hit_effect_duration: float = 0.5
 
 func fire(origin: Vector2, target: Vector2, effect_node: Node = null):
 	if not effect_node:
 		return
 
-	# 直接使用传入的 effect_node
+	# Directly use the passed-in effect_node
 	if effect_node and effect_node.has_method("fire"):
-	# 传递所有必要的参数给 effect
-		effect_node.fire(origin, target, damage, self)
+		# Pass all necessary parameters to the effect
+		effect_node.fire(origin, target, self)

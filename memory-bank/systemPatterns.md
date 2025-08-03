@@ -10,6 +10,7 @@ A clean directory structure is crucial. We will follow a feature-first approach.
 |- addons/         # For third-party plugins
 |- assets/         # Raw art and sound assets (e.g., .blend, .psd, .wav)
 |- components/     # Reusable, self-contained scenes/scripts (e.g., health.tscn, stats.tscn)
+|  |- ai/           # Reusable AI behavior resources
 |- data/           # Custom Resource files (.tres) for game data
 |  |- items/
 |  |- skills/
@@ -21,12 +22,8 @@ A clean directory structure is crucial. We will follow a feature-first approach.
 |  |- player/
 |  |  |- player.tscn
 |  |  |- player.gd
-|  |- enemy/
-|  |  |- goblin.tscn
-|  |  |- goblin.gd
-|  |- inventory/
-|  |  |- inventory_ui.tscn
-|  |  |- inventory_system.gd
+|  |- enemy/        # This folder is now mostly for data, not unique scenes
+|  |  |- goblin_data.tres
 |- systems/        # Global manager scripts (Autoloads)
 |  |- event_bus.gd
 |  |- save_manager.gd
@@ -37,57 +34,52 @@ A clean directory structure is crucial. We will follow a feature-first approach.
 |- main.tscn       # Main scene to launch the game
 ```
 
-## 2. Scene & Entity Architecture: A Hybrid Approach
-We will use a base `Actor` scene for shared functionality (inheritance) and add specific behaviors via components (composition).
+## 2. Data-Driven Entity Creation
+**Goal:** To create new enemies, weapons, or items by only creating and modifying `Resource` (`.tres`) files, without needing new scenes (`.tscn`) or scripts (`.gd`).
 
-**Step 1: The `base_actor.tscn` (Inheritance Base)**
-- **Scene Root:** `CharacterBody2D`
-- **Script:** `actor.gd` - This script defines core logic and properties common to all characters, like `health`, `stats`, and a `take_damage()` function.
-- **Core Components (Composition):**
-    - `StatsComponent`: A node holding all character stats (strength, dexterity, etc.).
-    - `HealthComponent`: A node managing current/max health and emitting signals like `health_changed` and `died`.
+### 2.1. Component-Based Actor (The "Container")
+- **`base_actor.tscn`**: This is the universal template for all living entities.
+    - **Root Node**: `CharacterBody2D`.
+    - **Script**: `actor.gd`. This script is a generic "brain" that knows how to use its components but contains no specific logic (like "how to be a goblin").
+    - **Core Components**:
+        - `HealthComponent`: Manages health.
+        - `StatsComponent`: A bridge to the data resource.
+        - `ATPComponent`: Manages energy.
+        - `CollisionShape2D`: Provides a default physical body.
+- **`actor.gd`'s Role**:
+    - It has an `@export var actor_data: ActorData`. This is the **only** thing that needs to be set from the outside to define what the actor *is*.
+    - In `_ready()`, it reads from `actor_data` and configures its components (e.g., `health_component.set_max_health(actor_data.max_hp)`).
+    - In `_physics_process()`, it iterates through the behaviors defined in `actor_data` and executes them.
 
-**Step 2: Creating Specific Entities (Inheritance + Composition)**
-- **`player.tscn`:**
-    - **Inherits from:** `base_actor.tscn`.
-    - **Additional Components (Composition):**
-        - `PlayerInputComponent`: Handles keyboard/gamepad input.
-        - `InventoryComponent`: Manages the player's items.
+### 2.2. Data Resources (The "Soul")
+- **`ActorData.gd`**: A `Resource` script that defines everything an actor *is*.
+    - **Stats**: `max_hp`, `move_speed`, etc.
+    - **Behaviors**: An array of `AIBehaviorData` resources that define how the actor acts.
+- **`WeaponData.gd`**: A `Resource` script defining a weapon's stats, appearance, and projectile type.
+- **`AIBehaviorData.gd`**: A base `Resource` for AI behaviors.
+    - **Concrete Behaviors**: `WanderBehaviorData.gd`, `ChasePlayerBehaviorData.gd`. These are also `Resource` scripts, allowing their parameters (like `detection_radius`) to be tweaked in the Inspector.
 
-- **`goblin.tscn`:**
-    - **Inherits from:** `base_actor.tscn`.
-    - **Additional Components (Composition):**
-        - `AIComponent`: Controls the goblin's behavior (e.g., chase, attack).
-        - `LootDropComponent`: Determines what items to drop on death.
+### 2.3. The Workflow
+1.  **To Create a New Enemy ("Slime")**:
+    - **Create `slime_data.tres`**: A new `ActorData` resource.
+    - **Configure `slime_data.tres`**:
+        - Set `max_hp = 20`, `move_speed = 100`.
+        - In the `behaviors` array, add a `WanderBehavior.tres` and maybe a new `JumpAttackBehavior.tres`.
+    - **To Spawn a Slime**:
+        - Instance `base_actor.tscn`.
+        - Set its `actor_data` property to the `slime_data.tres` resource.
+        - Add it to the scene.
 
-**Benefits of this Hybrid Model:**
-- **Code Reusability:** Common logic lives in `actor.gd`.
-- **Flexibility:** Easily create new actors by inheriting from `base_actor.tscn` and composing new components.
-- **Clear Separation of Concerns:** Each component has a single, well-defined responsibility.
+**Benefits:**
+- **Rapid Iteration**: Designers can create and balance dozens of enemies without programmer intervention.
+- **Decoupling**: The `Actor` scene is completely decoupled from any specific enemy type.
+- **Flexibility**: Behaviors can be mixed and matched to create complex AI with minimal effort.
 
 ## 3. Communication Patterns
 - **Pattern 1: Direct Signal Usage (Within an Actor):** For communication inside a single entity. The `HealthComponent` emits a `died` signal, and the `actor.gd` script listens to it to trigger the death sequence.
 - **Pattern 2: Global Event Bus (Between Decoupled Systems):** An Autoload script `EventBus` for game-wide events. When an actor's `HealthComponent` emits `died`, the `actor.gd` script tells the `EventBus` to emit a global `actor_died` event, which other systems (UI, quests) can listen to.
 
-## 4. Data Management: `Resource`-Driven Design
-All game data (stats, items, skills) will be defined using custom `Resource` scripts to separate data from code.
-- **`ActorData.gd` (extends `Resource`):** `base_stats`, `initial_health`, etc.
-- **`ItemData.gd` (extends `Resource`):** `item_name`, `icon`, `effects`.
-- The `StatsComponent` in `base_actor.tscn` will have an `export var data: ActorData` to link the data file. This makes creating new character types as simple as creating a new data resource.
-
-## 5. Actor Inheritance and Polymorphism
-
-- **Core Idea**: A base `Actor` class (`actor.gd`) provides common functionality for all "living" entities in the game.
-- **Implementation**:
-    - The `Actor` class (extending `CharacterBody2D`) includes references to core components like `HealthComponent` and `StatsComponent`.
-    - It provides a base `take_damage(amount)` method that delegates the damage calculation to its `HealthComponent` and also triggers visual feedback (like a floating damage number).
-    - It handles its own death sequence by listening to the `HealthComponent`'s `died` signal. When the signal is received, the `Actor` plays a death animation (e.g., fade out, shrink) and then removes itself from the scene (`queue_free()`).
-- **Example**: `Player.gd` and `Goblin.gd` both `extend` `res://features/actor/actor.gd`.
-- **Benefits**:
-    - **Code Reusability**: Common logic like taking damage and dying is written only once in the base `Actor` class.
-    - **Polymorphism**: A projectile can call `take_damage()` on any object that inherits from `Actor` without needing to know if it's a Player or a Goblin. This simplifies combat logic significantly.
-
-## 6. Combat and Visual Effects Logic
+## 4. Combat and Visual Effects Logic
 
 - **Projectile System (`Area2D`)**:
     - Projectiles (like bullets) are implemented as `Area2D` nodes. This allows them to detect collisions with `PhysicsBody` nodes (like enemies) without applying physical force, preventing unwanted pushing effects.
@@ -103,53 +95,17 @@ All game data (stats, items, skills) will be defined using custom `Resource` scr
     - **Damage Numbers**: When an `Actor`'s `take_damage` method is called, it dynamically creates a `Label` node, adds it to the scene root, and uses a `Tween` to animate it moving upwards and fading out. This provides clear, immediate feedback for damage dealt.
     - **Hit Effects**: When a projectile hits a target, it dynamically creates a `Sprite2D` with an explosion animation, also managed by a `Tween` for playback and automatic cleanup.
 
-## 7. Combo System and Asynchronous Actions
-
-- **Core Idea**: Implement combo mechanics and other sequential actions that require timing, without blocking the main game loop.
-- **Implementation**:
-    - **Time-Windowed Combos**: A component (like `CombatComponent`) tracks the time of the last action (`last_combo_time`). If the next action occurs within a specific window (`combo_reset_time`), the combo counter increases; otherwise, it resets. This is ideal for light attack chains.
-    - **Asynchronous Delays**: To create rhythmic actions, like a series of shots with a delay, use `await get_tree().create_timer(delay).timeout` inside a loop. This pauses the execution of that specific function without freezing the entire game, allowing for sequential actions with controlled timing.
-- **Benefits**:
-    - Creates more engaging and rhythmic combat mechanics.
-    - Provides a simple yet powerful way to handle any game logic that needs to happen in a sequence over time.
-
-## 8. Chunk-Based Map Streaming
+## 5. Chunk-Based Map Streaming
 - **Pattern:** The game world is divided into a grid of chunks, each represented by a separate scene file (`.tscn`). A manager loads and unloads these chunks based on player proximity.
 - **Implementation:** The `MapManager` autoload singleton tracks the player's position, calculates the current chunk coordinate, and instances/frees chunk scenes as needed.
 - **Benefit:** Allows for massive game worlds with minimal memory footprint and fast initial load times.
 
-## 9. Dual System (Player/Vehicle)
+## 6. Dual System (Player/Vehicle)
 - **Pattern:** The player's capabilities are split between two distinct but interconnected entities: the biological **Player Character** and the mechanical **Vehicle**.
 - **Implementation:** The Player node will manage biological stats (HP, ATP, etc.), while a separate Vehicle node will manage mechanical stats (Armor, Mobility). The two will interact through well-defined interfaces.
 - **Benefit:** Creates deep, strategic gameplay where players must balance the development of both systems.
 
-## 10. Unified Resource (Glucose as Energy/Currency)
+## 7. Unified Resource (Glucose as Energy/Currency)
 - **Pattern:** A single resource, **Glucose**, serves as the foundation for both the energy system (actions, skills) and the economic system (currency, crafting).
 - **Implementation:** A global `PlayerData` singleton will track the player's current Glucose total. All systems that consume or award resources will interface with this singleton.
 - **Benefit:** Tightly couples the game's economy with its core gameplay loop, making every economic decision a strategic gameplay decision.
-
-## 11. Biological Energy Management System
-- **Pattern:** A scientifically-grounded energy system that models real cellular metabolism through ATP-glucose interactions.
-- **Implementation:** 
-  - `ATPComponent` manages real-time ATP levels with float precision for accurate per-frame calculations
-  - Player metabolism dynamically adjusts glucose consumption based on ATP demand
-  - Tiered energy consumption: Rest (2 ATP/sec) → Walking (5 ATP/sec) → Sprinting (11 ATP/sec)
-  - Demand-driven glucose conversion: only consumes glucose when ATP < max capacity
-- **Benefit:** Creates authentic biological resource management that educates players about cellular energy processes while providing strategic gameplay depth.
-
-## 12. Activity-Responsive Metabolism Pattern
-- **Pattern:** Energy consumption rates that dynamically scale with player activity intensity, reflecting real biological energy demands.
-- **Implementation:**
-  - Multi-parameter metabolism calculation based on movement state and sprint status
-  - ATP recovery rate precisely matches consumption rate to maintain system balance
-  - Basal metabolic rate continues independently for basic cellular maintenance
-- **Benefit:** Provides realistic energy management challenges that mirror actual biological constraints, forcing strategic decisions about movement and resource conservation.
-
-## 13. Component-Based Biological Systems
-- **Pattern:** Modular biological components that can be composed to create complex energy management behaviors.
-- **Implementation:**
-  - `ATPComponent`: Handles ATP storage, consumption, and recovery with signal-based communication
-  - `HealthComponent`: Manages health with getter methods for consistent UI integration  
-  - `StatsComponent`: Provides biological parameter access through data resources
-  - Float-based precision for accurate real-time biological calculations
-- **Benefit:** Enables easy extension and modification of biological systems while maintaining clean separation of concerns and reusability across different actor types.

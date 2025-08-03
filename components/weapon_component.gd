@@ -17,8 +17,16 @@ signal charge_updated(charge_level: int)
 signal ammo_updated(current_ammo: int)
 
 func _ready():
+	pass # Defer setup until weapon_data is assigned
+
+func setup_weapon():
 	if weapon_data:
 		current_ammo = weapon_data.ammo_capacity
+		if has_node("Sprite2D"):
+			var sprite = get_node("Sprite2D")
+			if weapon_data.weapon_texture:
+				sprite.texture = weapon_data.weapon_texture
+			sprite.offset = weapon_data.weapon_offset
 
 func start_charging():
 	if not weapon_data or is_charging:
@@ -51,15 +59,19 @@ func fire(effect_node: Node = null):
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
 	else: # SUB_WEAPON
-	# 副炮发射子弹
+		# 副炮发射子弹
 		emit_signal("weapon_fired", weapon_data, 1)
 
-	# 统一调用 weapon_data.fire
+	# Call the weapon_data's fire method, which now just needs the effect_node
 	if effect_node:
 		weapon_data.fire(origin_pos, target_pos, effect_node)
 	else:
-	# Fallback if no effect node is provided (though it should be)
-		weapon_data.fire(origin_pos, target_pos, get_tree().current_scene)
+		# Fallback if no effect node is provided (though it should be)
+		# This might happen for non-vehicle actors, so we create a temporary effect node
+		var temp_effect_node = Node2D.new()
+		get_tree().current_scene.add_child(temp_effect_node)
+		weapon_data.fire(origin_pos, target_pos, temp_effect_node)
+		temp_effect_node.queue_free() # Clean up after use
 
 func _process(_delta):
 	if is_charging and weapon_data:
@@ -68,14 +80,14 @@ func _process(_delta):
 func _update_charge():
 	if not weapon_data:
 		return
-		
+
 	var elapsed_time = (Time.get_ticks_msec() - charge_start_time) / 1000.0
 	var charge_progress = elapsed_time / weapon_data.charge_time
-	
+
 	# Calculate charge level (1-5)
 	var new_charge = int(charge_progress * 5) + 1
 	new_charge = clamp(new_charge, 1, weapon_data.max_charge_level)
-	
+
 	if new_charge != current_charge:
 		current_charge = new_charge
 		emit_signal("charge_updated", current_charge)

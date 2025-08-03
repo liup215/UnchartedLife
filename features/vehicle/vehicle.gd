@@ -40,24 +40,25 @@ func _ready():
 
 	# Initialize combat weapons
 	_initialize_weapons()
-	_show_all_weapon_effects()
+	_create_weapon_effect_handler()
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
 		_handle_vehicle_movement(delta)
 		_consume_fuel(delta)
 		_handle_combat_input()
-		# get weapon effects
-		var weapon_effects = get_tree().get_nodes_in_group("weapon_effects")
-		for effect in weapon_effects:
-			effect.look_at(get_global_mouse_position())
+		# get weapon components and make them look at the mouse
+		var weapon_components = get_tree().get_nodes_in_group("weapon_components")
+		for wc in weapon_components:
+			wc.look_at(get_global_mouse_position())
+			wc.rotation_degrees += 90 # Add 90 degrees to correct the orientation
 	else:
 		# Auto-dampening when idle or overloaded
 		linear_damp = 8
 		angular_damp = 8
 
-# 只展示一个统一的武器效果节点
-func _show_all_weapon_effects():
+# 只创建一个统一的武器效果处理器
+func _create_weapon_effect_handler():
 	if not combat_component:
 		return
 
@@ -66,17 +67,11 @@ func _show_all_weapon_effects():
 	if has_node(effect_name):
 		return
 
-	# 找到第一个可用的视觉效果场景
-	var effect_scene = null
-	for weapon in combat_component.main_weapons + combat_component.secondary_weapons:
-		if weapon and weapon.weapon_data and weapon.weapon_data.visual_effect:
-			effect_scene = weapon.weapon_data.visual_effect
-			break
-	
+	# 直接加载通用的武器效果场景
+	var effect_scene = preload("res://data/vehicles/components/base_weapon_effect.tscn")
 	if effect_scene:
 		var effect = effect_scene.instantiate()
 		effect.name = effect_name
-		effect.rotation_degrees = -90
 		add_child(effect)
 		effect.add_to_group("weapon_effects")
 
@@ -106,7 +101,6 @@ func _handle_vehicle_movement(_delta: float):
 		# Speed Limiter
 		if linear_velocity.length() > stats_component.final_max_speed:
 			linear_velocity = linear_velocity.normalized() * stats_component.final_max_speed
-		
 
 	# Turning (Only allow turning while moving forward or backward)
 	if turn_input != 0 and move_input != 0:
@@ -117,14 +111,13 @@ func _handle_vehicle_movement(_delta: float):
 			angular_velocity = effective_turn_speed * -turn_input
 		else:
 			angular_velocity = effective_turn_speed * turn_input
-	
+
 	# Auto-dampening at low speed
 	if move_input == 0:
 		_animated_sprite.stop()
 		linear_damp = 8
 	else:
 		linear_damp = 2
-	
 
 func _consume_fuel(_delta: float):
 	# More detailed fuel consumption based on engine efficiency
@@ -146,7 +139,7 @@ func _consume_fuel(_delta: float):
 
 		# TODO: Link this to the global player glucose store
 		# current_fuel = max(0, current_fuel - _consumption_rate * _delta)
-	pass
+		pass
 
 func _on_body_entered(body: Node2D):
 	if body.has_method("show_vehicle_interaction") and not occupied:
@@ -206,12 +199,12 @@ func exit_vehicle() -> bool:
 		if ejected_player.has_method("set_in_vehicle_state"):
 			ejected_player.set_in_vehicle_state(false)
 
-	# reset all weapon effects
-	var weapon_effects = get_tree().get_nodes_in_group("weapon_effects")
+	# reset all weapon components
+	var weapon_components = get_tree().get_nodes_in_group("weapon_components")
 
-	print("Vehicle rotation: ", rotation_degrees)
-	for effect in weapon_effects:
-		effect.rotation_degrees = -90
+	print("Resetting weapon rotation.")
+	for wc in weapon_components:
+		wc.rotation = 0 # Reset rotation to face forward with the vehicle
 	return true
 
 func get_interaction_text() -> String:
@@ -247,9 +240,11 @@ func _initialize_weapons():
 			var mount = get_node(mount_name)
 			var weapon_component = preload("res://components/weapon_component.tscn").instantiate()
 			mount.add_child(weapon_component)
+			weapon_component.add_to_group("weapon_components")
 			# Load default heavy cannon
-			var weapon_data = preload("res://data/vehicles/components/heavy_cannon.tres")
+			var weapon_data = preload("res://data/vehicles/components/heavy_cannon.tres").duplicate()
 			weapon_component.weapon_data = weapon_data
+			weapon_component.setup_weapon()
 			combat_component.add_main_weapon(weapon_component)
 
 	# Add secondary weapons
@@ -259,11 +254,13 @@ func _initialize_weapons():
 			var mount = get_node(mount_name)
 			var weapon_component = preload("res://components/weapon_component.tscn").instantiate()
 			mount.add_child(weapon_component)
+			weapon_component.add_to_group("weapon_components")
 			# Load default light machine gun
 			var weapon_data = preload("res://data/vehicles/components/light_machine_gun.tres").duplicate()
 			weapon_data.weapon_name = "Light Machine Gun %d" % i
 			print("Adding secondary weapon:", weapon_data.weapon_name)
 			weapon_component.weapon_data = weapon_data
+			weapon_component.setup_weapon()
 			print("Weapon data set for:", weapon_component.weapon_data.weapon_name)
 			combat_component.add_secondary_weapon(weapon_component)
 	print("Vehicle weapons initialized.")

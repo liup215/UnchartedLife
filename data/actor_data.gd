@@ -18,6 +18,10 @@ class_name ActorData
 ## The base movement speed of the actor/vehicle.
 @export var move_speed: float = 250.0
 
+@export_group("AI Behaviors")
+## The list of behaviors that this actor will execute.
+@export var behaviors: Array[AIBehaviorData]
+
 @export_group("Bio-Energy Attributes")
 ## The maximum amount of ATP the actor can store for basic actions.
 @export var max_atp: int = 100

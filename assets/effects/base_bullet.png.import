@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dw5kh51necu05"
-path="res://.godot/imported/tanks_main_gun.png-5750651566db92b92adca205cc9cd152.ctex"
+uid="uid://16wmra0hr20o"
+path="res://.godot/imported/base_bullet.png-9b08ccef534395017e54dd18ae581346.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://data/components/enemy/tanks_main_gun.png"
-dest_files=["res://.godot/imported/tanks_main_gun.png-5750651566db92b92adca205cc9cd152.ctex"]
+source_file="res://assets/effects/base_bullet.png"
+dest_files=["res://.godot/imported/base_bullet.png-9b08ccef534395017e54dd18ae581346.ctex"]
 
 [params]
 

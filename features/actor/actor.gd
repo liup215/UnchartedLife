@@ -16,10 +16,14 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 @onready var atp_component: ATPComponent = $ATPComponent
 @onready var visuals: Polygon2D = $Visuals
 
+# This property will be set by the spawner.
+@export var actor_data: ActorData
+
 func _ready():
     # This function is meant to be called by child classes AFTER they have
     # assigned their specific ActorData to the stats_component.
-    if stats_component.data:
+    if actor_data:
+        stats_component.data = actor_data
         # Initialize components with data from the resource
         health_component.set_max_health(stats_component.get_max_health())
         atp_component.set_max_atp(stats_component.get_max_atp())
@@ -30,7 +34,16 @@ func _ready():
         )
         health_component.died.connect(_on_death)
     else:
-        printerr("Actor _ready() called, but no ActorData was assigned to StatsComponent.")
+        printerr("Actor _ready() called, but no ActorData was assigned.")
+
+func _physics_process(delta: float):
+    if actor_data and actor_data.behaviors:
+        # Reset velocity before executing behaviors
+        velocity = Vector2.ZERO
+        for behavior in actor_data.behaviors:
+            if behavior:
+                behavior.execute(self, delta)
+        move_and_slide()
 
 # --- Public API ---
 

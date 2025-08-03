@@ -1,17 +1,19 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ActorData" load_steps=5 format=3 uid="uid://d3d4eycswdr6w"]
 
-[ext_resource type="Script" path="res://data/actor_data.gd" id="1_goblin_data"]
+[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/components/ai/ai_behavior_data.gd" id="1_8w4qn"]
+[ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/actor_data.gd" id="1_actor_data"]
+[ext_resource type="Resource" path="res://data/components/ai/chase_player_behavior.tres" id="2_chase_behavior"]
+[ext_resource type="Resource" path="res://data/components/ai/wander_behavior.tres" id="3_wander_behavior"]
 
 [resource]
-script = ExtResource("1_goblin_data")
-# Base Physiological Indicators
+script = ExtResource("1_actor_data")
 max_hp = 50
-base_metabolic_rate = 0.05
-neural_response_speed = 0.5
-muscle_coordination = 0.8
-move_speed = 120.0
-# Bio-Energy Attributes
-max_atp = 20
-atp_conversion_rate = 3.0
+base_metabolic_rate = 0.1
+neural_response_speed = 1.0
+muscle_coordination = 1.0
+move_speed = 200.0
+behaviors = Array[ExtResource("1_8w4qn")]([ExtResource("2_chase_behavior"), ExtResource("3_wander_behavior")])
+max_atp = 50
+atp_conversion_rate = 5.0
 hemo_energy_capacity = 0
 entropy_energy_threshold = 0

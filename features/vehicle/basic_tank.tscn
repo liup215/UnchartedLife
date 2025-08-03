@@ -33,3 +33,12 @@ frame_progress = 0.631105
 
 [node name="Label" parent="." index="5"]
 visible = false
+
+[node name="SecondaryWeaponMount1" parent="." index="11"]
+position = Vector2(-10, 18)
+
+[node name="SecondaryWeaponMount2" parent="." index="12"]
+position = Vector2(11, 18)
+
+[node name="SecondaryWeaponMount3" parent="." index="13"]
+position = Vector2(0, 25)

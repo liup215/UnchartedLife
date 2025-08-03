@@ -54,7 +54,7 @@
     - [x] Balance ATP recovery rate to match consumption rate exactly.
     - [x] Create realistic energy management system with resource pressure.
 
-## Phase 5: Enhanced Gameplay Systems (In Progress)
+## Phase 5: Enhanced Gameplay Systems (Complete)
 
 - [x] **Implement Player-Vehicle System:**
     - [x] Create a base `Vehicle` scene.
@@ -74,7 +74,29 @@
     - [x] Implement dynamic, animated damage numbers on actors.
     - [x] Implement projectile hit effects (explosions).
     - [x] Implement a generic actor death sequence (animation and cleanup).
-    - [ ] Implement basic "Just Frame" mechanic.
+
+## Phase 6: Data-Driven Architecture Refactor (Complete)
+
+- [x] **Data-Driven Weapon System:**
+    - [x] Refactored `WeaponData` to include all visual and behavioral properties (texture, offset, scale, bullet type, etc.).
+    - [x] `WeaponComponent` now purely reads data from the `WeaponData` resource to configure itself.
+    - [x] Fixed resource duplication issues to ensure weapon stats load correctly.
+- [x] **Data-Driven Health System:**
+    - [x] Removed hard-coded `max_health` from `HealthComponent`.
+    - [x] `Actor` now sets its `HealthComponent`'s max health from `ActorData` on initialization.
+- [x] **Data-Driven AI System:**
+    - [x] Created a generic `AIBehaviorData` resource system.
+    - [x] Implemented specific, reusable behaviors like `WanderBehavior` and `ChasePlayerBehavior` as resources.
+    - [x] Refactored `ActorData` to include an array of `AIBehaviorData` resources.
+    - [x] Refactored the base `Actor` script to execute behaviors from its data, removing all hard-coded AI logic.
+    - [x] Cleaned up the old `goblin.gd` script and `goblin.tscn` scene to use the new data-driven approach.
+- [x] **Achieved "Resource-Only" Entity Creation:**
+    - [x] The system now supports creating new enemies by simply creating a new `ActorData` `.tres` file and composing behaviors, without writing new code or creating new scenes.
+    - [x] Fixed collision issues with dynamically spawned actors by ensuring `base_actor.tscn` has a default, valid `CollisionShape2D`.
+
+## Phase 7: Next Steps (In Progress)
+
+- [ ] **Implement "Just Frame" mechanic.**
 - [ ] **Implement Virtual Lab (First Pass):**
     - [ ] Create the basic UI for the lab.
     - [ ] Implement the "Virtual Microscope" feature for viewing item details.
@@ -102,9 +124,8 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Actor Lifecycle**: A complete lifecycle for actors, including a generic death sequence with animation and cleanup.
 
 ### Technical Excellence ✅
-- **Float Precision Energy**: Accurate per-frame energy calculations  
-- **Component Architecture**: Modular, extensible energy system design
-- **Data-Driven Balance**: Easy tweaking of metabolic rates and conversion ratios
-- **Performance Optimized**: Efficient real-time metabolism processing
-- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.
+- **Data-Driven Architecture**: Core entities like enemies and weapons are now defined almost entirely by `Resource` files, enabling rapid content creation and iteration without new code.
+- **Component-Based Design**: Logic is encapsulated in reusable components (`HealthComponent`, `StatsComponent`) and composable behaviors (`WanderBehavior`, `ChasePlayerBehavior`).
+- **Float Precision Energy**: Accurate per-frame energy calculations.
 - **Asynchronous Logic**: Use of `await` for timed, non-blocking actions like rhythmic combo firing.
+- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.

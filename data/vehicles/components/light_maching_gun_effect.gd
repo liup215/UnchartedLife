@@ -28,7 +28,7 @@ func fire(origin: Vector2, target: Vector2, damage: float, weapon_data: WeaponDa
 		var bullet = bullet_scene.instantiate()
 		bullet.global_position = origin + direction * 50 # 在朝向鼠标方向50像素处生成
 		bullet.direction = direction
-		bullet.speed = damage * 100.0 if damage > 0 else 800.0
+		# bullet.speed = damage * 100.0 if damage > 0 else 800.0
 		bullet.damage = damage
 		get_tree().current_scene.add_child(bullet)
 

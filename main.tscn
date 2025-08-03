@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://7rcsyrqgfrjk"]
+[gd_scene load_steps=9 format=3 uid="uid://7rcsyrqgfrjk"]
 
 [ext_resource type="Script" uid="uid://qhuvoa0s7ean" path="res://main_game_manager.gd" id="1_mgr"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://cq6rh160m8f1v" path="res://data/components/enemy/goblin.tscn" id="3_goblin"]
+[ext_resource type="PackedScene" uid="uid://d3e4f5g6h7i8j" path="res://features/actor/base_actor.tscn" id="4_5vw27"]
 [ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="4_hud"]
+[ext_resource type="Resource" uid="uid://d3d4eycswdr6w" path="res://data/enemies/goblin_data.tres" id="5_kek77"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="5_menu"]
 [ext_resource type="PackedScene" uid="uid://du8v15ckma8p8" path="res://features/vehicle/basic_tank.tscn" id="6_tank"]
 
@@ -15,6 +17,11 @@ position = Vector2(640, 360)
 
 [node name="Goblin" parent="." instance=ExtResource("3_goblin")]
 position = Vector2(800, 360)
+
+[node name="Goblin2" parent="." instance=ExtResource("4_5vw27")]
+collision_layer = 4
+collision_mask = 19
+actor_data = ExtResource("5_kek77")
 
 [node name="BasicTank" parent="." instance=ExtResource("6_tank")]
 position = Vector2(500, 360)

@@ -3,7 +3,7 @@ extends Area2D
 var speed: float = 800.0
 var damage: float = 10.0
 var direction: Vector2 = Vector2.UP
-var lifetime: float = 2.0
+var lifetime: float = 200.0
 
 @export var hit_effect_texture: Texture2D = preload("res://assets/effects/explosion_scaled_down.png")
 
