@@ -9,9 +9,6 @@ enum PlayerState {
 	IN_VEHICLE      # Inside a vehicle
 }
 
-func get_current_state() -> int:
-	return current_state
-
 # Combat state
 var combat_component: CombatComponent = null
 
@@ -21,25 +18,27 @@ var current_vehicle: Node2D = null  # Will be Vehicle when available
 var nearby_vehicle: Node2D = null   # Vehicle player can interact with
 var interaction_ui_visible: bool = false
 
+func get_current_state() -> int:
+	return current_state
+
 func _ready():
 	# Assign the specific data resource for the player.
-	stats_component.data = load("res://data/items/player_data.tres")
-	# Call the parent's _ready function to initialize health etc.
+	actor_data = load("res://data/items/player_data.tres")
+	# Call the parent's _ready function to initialize health, animations etc.
 	super()
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
 	add_to_group("saveable")
 	# Set player color
-	visuals.color = Color.DODGER_BLUE
+	visuals.modulate = Color.DODGER_BLUE
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
-	
+
 	# Initialize combat component
 	combat_component = CombatComponent.new()
 	combat_component.owner_node = self
 	add_child(combat_component)
 
-# Player-specific logic will go here, such as input handling.
 func _physics_process(delta: float) -> void:
 	# Handle vehicle interaction input
 	if Input.is_action_just_pressed("enter_vehicle"):  # E key
@@ -68,6 +67,8 @@ func _handle_on_foot_logic(delta: float):
 		movement_speed = base_speed * 1.8  # 80% speed increase when sprinting
 
 	velocity = direction * movement_speed
+
+	_update_animation()
 	move_and_slide()
 
 	# --- Biological Processes ---
@@ -223,14 +224,14 @@ func load_data(data: Dictionary):
 func _handle_combat_input():
 	if not combat_component or current_state != PlayerState.ON_FOOT:
 		return
-		
+
 	# Main weapon charging
 	if Input.is_action_just_pressed("main_attack"):
 		combat_component.start_main_charge()
 	elif Input.is_action_just_released("main_attack"):
 		combat_component.stop_main_charge()
 		combat_component.fire_main_weapons()
-	
+
 	# Light attack combos
 	if Input.is_action_just_pressed("light_attack"):
 		combat_component.perform_light_attack()

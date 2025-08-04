@@ -12,8 +12,8 @@ radius = 25.0
 motion_mode = 1
 script = ExtResource("1_actor_script")
 
-[node name="Visuals" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-20, -25, 20, -25, 20, 25, -20, 25)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
 
 [node name="HealthComponent" parent="." instance=ExtResource("2_health_comp")]
 

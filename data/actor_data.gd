@@ -5,7 +5,13 @@ extends Resource
 
 class_name ActorData
 
+const AnimationData = preload("res://data/components/animation_data.gd")
+
 # --- Player Character Stats ---
+@export_group("Visuals")
+## The list of animations for this actor.
+@export var animations: Array[AnimationData]
+
 @export_group("Base Physiological Indicators")
 ## The maximum health points of the actor's body.
 @export var max_hp: int = 100

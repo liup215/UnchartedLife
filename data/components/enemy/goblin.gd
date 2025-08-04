@@ -14,4 +14,4 @@ func _ready():
 	super()
 
 	# Set goblin color
-	visuals.color = Color.INDIAN_RED
+	visuals.modulate = Color.INDIAN_RED
