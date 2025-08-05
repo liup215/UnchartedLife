@@ -5,7 +5,7 @@ extends Resource
 
 class_name ActorData
 
-const AnimationData = preload("res://data/components/animation_data.gd")
+# const AnimationData = preload("res://data/components/animation_data.gd")
 
 # --- Player Character Stats ---
 @export_group("Visuals")
