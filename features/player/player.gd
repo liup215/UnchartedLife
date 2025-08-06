@@ -9,9 +9,6 @@ enum PlayerState {
 	IN_VEHICLE      # Inside a vehicle
 }
 
-# Combat state
-var combat_component: CombatComponent = null
-
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
 var current_vehicle: Node2D = null  # Will be Vehicle when available
@@ -23,7 +20,7 @@ func get_current_state() -> int:
 
 func _ready():
 	# Assign the specific data resource for the player.
-	actor_data = load("res://data/items/player_data.tres")
+	# actor_data = load("res://data/items/player_data.tres")
 	# Call the parent's _ready function to initialize health, animations etc.
 	super()
 	# Programmatically add to groups to ensure timing is correct.
@@ -34,18 +31,10 @@ func _ready():
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
 
-	# Initialize combat component
-	combat_component = CombatComponent.new()
-	combat_component.owner_node = self
-	add_child(combat_component)
-
 func _physics_process(delta: float) -> void:
 	# Handle vehicle interaction input
 	if Input.is_action_just_pressed("enter_vehicle"):  # E key
 		await _handle_vehicle_interaction()
-
-	# Handle combat input
-	_handle_combat_input()
 
 	# Different behavior based on current state
 	match current_state:
@@ -71,8 +60,17 @@ func _handle_on_foot_logic(delta: float):
 	_update_animation()
 	move_and_slide()
 
+	# Handle combat input
+	_handle_combat_input()
+
 	# --- Biological Processes ---
 	_process_metabolism(delta, is_sprinting)
+
+	var weapons = combat_component.actor_weapons
+	for wc in weapons:
+		if wc and wc.has_method("look_at"):
+			wc.look_at(get_global_mouse_position())
+			wc.rotation_degrees += 90  # Adjust orientation
 
 func _handle_in_vehicle_logic(delta: float):
 	# 进入载具后，player位置随vehicle同步
@@ -222,16 +220,10 @@ func load_data(data: Dictionary):
 	# The health_changed signal will do this automatically when we set health.
 
 func _handle_combat_input():
-	if not combat_component or current_state != PlayerState.ON_FOOT:
+	if not combat_component:
 		return
-
-	# Main weapon charging
-	if Input.is_action_just_pressed("main_attack"):
-		combat_component.start_main_charge()
-	elif Input.is_action_just_released("main_attack"):
-		combat_component.stop_main_charge()
-		combat_component.fire_main_weapons()
-
-	# Light attack combos
+	
+	# Actor武器发射（如手枪/步枪等）
 	if Input.is_action_just_pressed("light_attack"):
-		combat_component.perform_light_attack()
+		print("Firing actor weapon...")
+		combat_component.fire_actor_weapons()

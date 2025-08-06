@@ -1,15 +1,16 @@
 # components/combat_component.gd
 # Main combat system component
-extends Node
+extends Node2D
 class_name CombatComponent
 
-@export var owner_node: Node  # Reference to the owning actor/vehicle
+var owner_node = null  # Reference to the owning actor/vehicle, dynamic assignment only
 @export var max_main_weapons: int = 5
 @export var max_secondary_weapons: int = 5
 
 # Weapon arrays
 var main_weapons: Array = []
 var secondary_weapons: Array = []
+var actor_weapons: Array = [] # 新增：用于actor的所有武器
 
 # Combat state
 var is_main_charging: bool = false
@@ -19,6 +20,9 @@ var combo_reset_time: float = 0.5  # Time window to continue combo
 
 # ATP component reference
 var atp_component: Node = null
+
+# Weapon effect handler
+@onready var weapon_effect: BaseWeaponEffect = $BaseWeaponEffect
 
 # Signals
 signal combat_action_performed(action_type: String, energy_cost: float)
@@ -44,6 +48,11 @@ func add_secondary_weapon(weapon_component) -> bool:
 	_connect_weapon_signals(weapon_component)
 	return true
 
+func add_actor_weapon(weapon_component) -> bool:
+	actor_weapons.append(weapon_component)
+	_connect_weapon_signals(weapon_component)
+	return true
+
 func remove_main_weapon(weapon_component) -> bool:
 	var result = main_weapons.find(weapon_component)
 	if result != -1:
@@ -55,6 +64,13 @@ func remove_secondary_weapon(weapon_component) -> bool:
 	var result = secondary_weapons.find(weapon_component)
 	if result != -1:
 		secondary_weapons.remove_at(result)
+		return true
+	return false
+
+func remove_actor_weapon(weapon_component) -> bool:
+	var result = actor_weapons.find(weapon_component)
+	if result != -1:
+		actor_weapons.remove_at(result)
 		return true
 	return false
 
@@ -130,15 +146,30 @@ func fire_main_weapons():
 
 	# Fire weapons that match the max charge level
 	var fired_count = 0
-	var effect_node = owner_node.get_node("WeaponEffect") if owner_node and owner_node.has_node("WeaponEffect") else null
 	for weapon in main_weapons:
 		if weapon and weapon.current_charge == max_charge:
-			weapon.fire(effect_node)
+			weapon.fire(weapon_effect)
 			fired_count += 1
 
 	# Emit signal
 	emit_signal("weapons_fired", "main", fired_count, max_charge)
 	emit_signal("combat_action_performed", "main_fire", total_atp_cost)
+
+func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
+	if actor_weapons.is_empty():
+		return
+	# Fire the weapons
+	for weapon in actor_weapons:
+		weapon.fire(weapon_effect, target_pos)
+		await get_tree().create_timer(0.2).timeout
+	# Emit signal
+	emit_signal("weapons_fired", "actor", actor_weapons.size(), 1)
+	emit_signal("combat_action_performed", "actor_attack", 10)
+
+# func fire_weapon(index: int):
+# 	# 发射指定编号actor武器
+# 	if index >= 0 and index < actor_weapons.size():
+# 		actor_weapons[index].fire()
 
 func perform_light_attack():
 	# Update combo counter
@@ -169,16 +200,16 @@ func perform_light_attack():
 		atp_component.consume_atp(total_atp_cost)
 
 	# Fire the weapons
-	var effect_node = owner_node.get_node("WeaponEffect") if owner_node and owner_node.has_node("WeaponEffect") else null
 	for i in range(weapons_to_fire):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
-			secondary_weapons[i].fire(effect_node)
-			# Add a short delay between shots
-			await get_tree().create_timer(0.2).timeout
+			print("[COMBAT] Firing secondary weapon:", weapon_effect)
+			secondary_weapons[i].fire(weapon_effect)
+		# Add a short delay between shots
+		await get_tree().create_timer(0.2).timeout
 	# 如果连击数达到最大值，则重置
 	if combo_counter >= secondary_weapons.size():
 		reset_combo()
-	
+
 	# Emit signal
 	emit_signal("weapons_fired", "secondary", weapons_to_fire, 1)
 	emit_signal("combat_action_performed", "light_attack", total_atp_cost)
@@ -192,6 +223,13 @@ func get_total_main_weapon_damage(charge_level: int) -> float:
 	for weapon in main_weapons:
 		if weapon and weapon.current_charge == charge_level:
 			total_damage += weapon.weapon_data.damage * weapon.get_damage_multiplier()
+	return total_damage
+
+func get_total_actor_weapon_damage() -> float:
+	var total_damage = 0.0
+	for weapon in actor_weapons:
+		if weapon:
+			total_damage += weapon.weapon_data.damage
 	return total_damage
 
 func get_total_secondary_weapon_damage() -> float:
@@ -209,5 +247,8 @@ func reload_all_weapons():
 		if weapon:
 			weapon.reload()
 	for weapon in secondary_weapons:
+		if weapon:
+			weapon.reload()
+	for weapon in actor_weapons:
 		if weapon:
 			weapon.reload()

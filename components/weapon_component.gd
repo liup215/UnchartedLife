@@ -26,7 +26,7 @@ func setup_weapon():
 			var sprite = get_node("Sprite2D")
 			if weapon_data.weapon_texture:
 				sprite.texture = weapon_data.weapon_texture
-			sprite.offset = weapon_data.weapon_offset
+				sprite.offset = weapon_data.weapon_offset
 
 func start_charging():
 	if not weapon_data or is_charging:
@@ -40,11 +40,13 @@ func start_charging():
 func stop_charging():
 	is_charging = false
 
-func fire(effect_node: Node = null):
+func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	if not weapon_data:
 		return
 
-	var target_pos = get_global_mouse_position()
+	var target_pos = p_target_pos
+	if target_pos == Vector2.ZERO:
+		target_pos = get_global_mouse_position()
 	var origin_pos = global_position
 
 	if weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:

@@ -42,6 +42,12 @@ Common functionalities are encapsulated in reusable components (both scenes and 
 -   `StatsComponent`
 -   `ATPComponent`
 -   `CombatComponent`
+-   `WeaponComponent`
+-   `WeaponEffect`
+-   Data-driven `AIBehavior`
+
+**Unified Combat/Weapon/AI System:**  
+All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components (`CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`). This enables any entity to perform attacks, and all logic is reusable and extensible. WeaponEffect supports flexible attack effects and visual feedback, and can be configured for different weapon types and entities. AIBehavior is assigned via data resources, allowing both player and enemy to use the same behavior system, fully data-driven.
 
 ### Physics Model
 -   **Actors (`CharacterBody2D`):** For direct, predictable control over player and AI movement.

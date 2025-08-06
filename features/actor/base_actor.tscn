@@ -1,14 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://d3e4f5g6h7i8j"]
+[gd_scene load_steps=7 format=3 uid="uid://d3e4f5g6h7i8j"]
 
-[ext_resource type="Script" path="res://features/actor/actor.gd" id="1_actor_script"]
+[ext_resource type="Script" uid="uid://d3ifpac5jqt5u" path="res://features/actor/actor.gd" id="1_actor_script"]
 [ext_resource type="PackedScene" uid="uid://b1x2y3v4a5s6d" path="res://components/health_component.tscn" id="2_health_comp"]
 [ext_resource type="PackedScene" uid="uid://c7d8faf0a1b2c" path="res://components/stats_component.tscn" id="3_stats_comp"]
-[ext_resource type="PackedScene" uid="uid://d1e2f3g4h5i6j_atp" path="res://components/atp_component.tscn" id="4_atp_comp"]
+[ext_resource type="PackedScene" path="res://components/atp_component.tscn" id="4_atp_comp"]
+[ext_resource type="PackedScene" uid="uid://ckr16c2wjeqpv" path="res://components/combat_component.tscn" id="5_bq51l"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_default"]
-radius = 25.0
+radius = 100.0
 
 [node name="BaseActor" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 2
 motion_mode = 1
 script = ExtResource("1_actor_script")
 
@@ -23,3 +26,5 @@ unique_name_in_owner = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_default")
+
+[node name="CombatComponent" parent="." instance=ExtResource("5_bq51l")]

@@ -11,8 +11,9 @@ The primary focus has shifted from implementing individual features to a major a
 
 ## Recent Achievements
 1.  **Fully Data-Driven Entities**: Successfully refactored the weapon, health, and AI systems. It is now possible to create a new, fully functional enemy with unique stats and behaviors **purely by creating a new `.tres` file**.
-2.  **Decoupling Complete**: The `Actor` scene is now completely decoupled from any specific enemy type (like `Goblin`). The old, specific `goblin.gd` script has been simplified and its hard-coded logic removed.
-3.  **Architectural Documentation Updated**: All major design documents (`design_document.md`, `systemPatterns.md`, `progress.md`, `techContext.md`) have been updated to reflect this new, powerful data-driven architecture.
+2.  **Combat/Weapon/AI Unified & Reusable**: The combat_component, weapon_component, weapon_effect, and AIBehavior have been fully refactored and unified. Now, actor, enemy, and vehicle all use the same attack logic and component structure. WeaponEffect supports flexible attack effects, and AIBehavior is assigned via data for both player and enemy, enabling true code/data reuse and extensibility.
+3.  **Decoupling Complete**: The `Actor` scene is now completely decoupled from any specific enemy type (like `Goblin`). The old, specific `goblin.gd` script has been simplified and its hard-coded logic removed.
+4.  **Architectural Documentation Updated**: All major design documents (`design_document.md`, `systemPatterns.md`, `progress.md`, `techContext.md`) have been updated to reflect this new, powerful data-driven architecture.
 
 ## Next Steps (Phase 7)
 With the robust and flexible architecture now in place, the next steps are to build upon it:

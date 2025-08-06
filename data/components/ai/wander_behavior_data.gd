@@ -1,6 +1,6 @@
 # wander_behavior_data.gd
 # An AI behavior that makes an actor wander around randomly.
-extends "res://data/components/ai/ai_behavior_data.gd"
+extends AIBehaviorData
 class_name WanderBehaviorData
 
 @export var wander_speed_multiplier: float = 0.5

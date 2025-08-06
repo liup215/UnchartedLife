@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ckr16c2wjeqpv"]
+[gd_scene load_steps=3 format=3 uid="uid://ckr16c2wjeqpv"]
 
 [ext_resource type="Script" uid="uid://cdu3i0f21grj" path="res://components/combat_component.gd" id="1_combat"]
+[ext_resource type="PackedScene" uid="uid://c05kfewedfddc" path="res://data/vehicles/components/base_weapon_effect.tscn" id="2_of5wp"]
 
-[node name="CombatComponent" type="Node"]
+[node name="CombatComponent" type="Node2D"]
 script = ExtResource("1_combat")
+
+[node name="BaseWeaponEffect" parent="." instance=ExtResource("2_of5wp")]

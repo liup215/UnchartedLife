@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://dtykwpgayen17"]
+[gd_scene load_steps=3 format=3 uid="uid://ctjtq32keeo1f"]
 
 [ext_resource type="Script" uid="uid://jwf02h2ubonw" path="res://data/vehicles/components/base_bullet.gd" id="1_0xqh0"]
 
@@ -6,8 +6,8 @@
 radius = 5.0
 
 [node name="BaseBullet" type="Area2D"]
-collision_layer = 2
-collision_mask = 4
+collision_layer = 4
+collision_mask = 2
 script = ExtResource("1_0xqh0")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

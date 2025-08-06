@@ -81,14 +81,19 @@ A clean directory structure is crucial. We will follow a feature-first approach.
 
 ## 4. Combat and Visual Effects Logic
 
-- **Projectile System (`Area2D`)**:
-    - Projectiles (like bullets) are implemented as `Area2D` nodes. This allows them to detect collisions with `PhysicsBody` nodes (like enemies) without applying physical force, preventing unwanted pushing effects.
-    - The `body_entered` signal is used to trigger hit logic.
-    - Upon hitting a valid target, the projectile deals damage, spawns a visual "hit effect" (e.g., an explosion animation), and then immediately removes itself (`queue_free()`).
+- **Unified Combat/Weapon/AI System**:
+    - All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components: `CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`. This enables any entity to perform attacks, and all logic is reusable and extensible.
+    - `WeaponEffect` supports flexible attack effects and visual feedback, and can be configured for different weapon types and entities.
+    - `AIBehavior` is assigned via data resources, allowing both player and enemy to use the same behavior system, fully data-driven.
 
-- **Centralized Weapon Effect**:
-    - Instead of each weapon on a vehicle having its own visual effect node, the `Vehicle` script now instantiates a single, shared `WeaponEffect` node.
-    - When firing, the `CombatComponent` retrieves this single effect node and passes it down through the `WeaponComponent` to the `WeaponData`.
+- **Prejecsilm2D`)**: (`Area2D`)
+    - Projectiresj(liees ull(tu)l)eemimplpmnnted atd`Are 2D` aosAs. Tre` nll. sTthlmoto dececttllllisiiowtwith hPhysicsB`dy` dodysd(lik  ekeeiis) wishoutwouplyi g physical poryeg prevehtingsunwcnaef pushr,g effectsn
+w   - an g`bodf_ected`igo triggr ht ogic
+    - U`borhigtingaa va  ddt rget, oheiprojg hiletoesmagespwsvsal"ht ec"(.g.,xplotinvattmheien) deada, svsimmudiatll"hremtvefeic(glf.(`qu un_ideh()`)n immediately removes itself (`queue_free()`).
+
+- **CrnlralizeddWpaponnEffect
+    - Instead sf eaahewwaponeona  vehicensh viage tno tn vihuall`ffscrinide,ttieatVes sle` icript shwdWnstantfatec sle,sd`WoE` node
+    - When firing, then ComfatComping, ` rtthieves thisComnble effect aode tndopapens`i  drwnethrouvh the `WeaponComponent` to ttes`WeapsnData`le effect node and passes it down through the `WeaponComponent` to the `WeaponData`.
     - The `WeaponData`'s `fire` method then calls a `fire` method on this shared effect node, passing in parameters like origin, target, and damage. This allows the single effect node to handle different weapon types (e.g., spawning different projectiles).
 
 - **Dynamic Visual Feedback**:

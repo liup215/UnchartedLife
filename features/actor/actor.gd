@@ -15,11 +15,13 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var atp_component: ATPComponent = $ATPComponent
 @onready var visuals: AnimatedSprite2D = %AnimatedSprite2D
+@onready var combat_component: CombatComponent = $CombatComponent
 
 # This property will be set by the spawner.
 @export var actor_data: ActorData
 
 var last_direction: Vector2 = Vector2.DOWN
+# 不再直接持有weapon_components，由combat组件管理
 
 func _ready():
 	# This function is meant to be called by child classes AFTER they have
@@ -30,10 +32,23 @@ func _ready():
 		health_component.set_max_health(stats_component.get_max_health())
 		atp_component.set_max_atp(stats_component.get_max_atp())
 		_setup_animations()
-		
+		# 动态设置碰撞半径
+		if has_node("CollisionShape2D") and actor_data.has_method("get_collision_radius"):
+			var shape = get_node("CollisionShape2D").shape
+			if shape and shape.has_method("set_radius"):
+				shape.set_radius(actor_data.get_collision_radius())
+		# 动态加载战斗组件和武器
+		combat_component.owner_node = self
+		for weapon_data in actor_data.weapons:
+			var weapon_comp = preload("res://components/weapon_component.tscn").instantiate()
+			weapon_comp.weapon_data = weapon_data
+			weapon_comp.setup_weapon()
+			add_child(weapon_comp)
+			combat_component.add_actor_weapon(weapon_comp)
+
 		# Connect signals from components to the actor's own signals
 		health_component.health_changed.connect(
-			func(current, max): actor_health_changed.emit(current, max)
+			func(current, max_hp): actor_health_changed.emit(current, max_hp)
 		)
 		health_component.died.connect(_on_death)
 	else:
@@ -43,10 +58,20 @@ func _physics_process(delta: float):
 	# Reset velocity before executing behaviors for AI-controlled actors
 	if actor_data and not actor_data.behaviors.is_empty():
 		velocity = Vector2.ZERO
+		# 优先级调度：只执行第一个满足条件的行为
 		for behavior in actor_data.behaviors:
 			if behavior:
-				behavior.execute(self, delta)
-	
+				# Check if the behavior should execute
+				# If it has a should_execute method, use it
+				# Otherwise, just execute it directly
+				if behavior.has_method("should_execute"):
+					if behavior.should_execute(self):
+						behavior.execute(self, delta)
+						break
+				elif not behavior.has_method("should_execute"):
+					behavior.execute(self, delta)
+					break
+
 	# Player-controlled actors will have their velocity set in their own script.
 	# This ensures move_and_slide and animation updates run for ALL actors.
 	_update_animation()
@@ -93,7 +118,7 @@ func _update_animation():
 	if velocity.length_squared() > 0:
 		direction = velocity.normalized()
 		last_direction = direction
-	
+
 	var anim_name = "idle"
 	if direction != Vector2.ZERO:
 		anim_name = "walk"
@@ -110,12 +135,12 @@ func _update_animation():
 			dir_suffix = "down"
 		else:
 			dir_suffix = "up"
-			
+
 	var final_anim_name = anim_name + "_" + dir_suffix
-	
-	if visuals.sprite_frames.has_animation(final_anim_name) and visuals.animation != final_anim_name:
+
+	if visuals.sprite_frames and visuals.sprite_frames.has_animation(final_anim_name) and visuals.animation != final_anim_name:
 		visuals.play(final_anim_name)
-	elif visuals.sprite_frames.has_animation(anim_name) and visuals.animation != anim_name: # Fallback to non-directional
+	elif visuals.sprite_frames and visuals.sprite_frames.has_animation(anim_name) and visuals.animation != anim_name: # Fallback to non-directional
 		visuals.play(anim_name)
 
 # --- Public API ---

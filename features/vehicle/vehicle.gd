@@ -6,7 +6,6 @@ class_name Vehicle
 
 @export var vehicle_data: VehicleData
 @onready var stats_component: VehicleStatsComponent = $VehicleStatsComponent
-@onready var visuals: ColorRect = $Visuals
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var interaction_ui: Control = $InteractionUI
@@ -25,9 +24,6 @@ func _ready():
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_body_entered)
 		interaction_area.body_exited.connect(_on_body_exited)
-	if visuals:
-		visuals.color = Color.DARK_GRAY
-		visuals.size = Vector2(48, 64)
 
 	# Ensure the stats component has the data it needs
 	if stats_component:
@@ -40,7 +36,6 @@ func _ready():
 
 	# Initialize combat weapons
 	_initialize_weapons()
-	_create_weapon_effect_handler()
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
@@ -57,23 +52,23 @@ func _physics_process(delta: float):
 		linear_damp = 8
 		angular_damp = 8
 
-# 只创建一个统一的武器效果处理器
-func _create_weapon_effect_handler():
-	if not combat_component:
-		return
+# # 只创建一个统一的武器效果处理器
+# func _create_weapon_effect_handler():
+# 	if not combat_component:
+# 		return
 
-	# 确保只创建一个效果节点
-	var effect_name = "WeaponEffect"
-	if has_node(effect_name):
-		return
+# 	# 确保只创建一个效果节点
+# 	var effect_name = "WeaponEffect"
+# 	if has_node(effect_name):
+# 		return
 
-	# 直接加载通用的武器效果场景
-	var effect_scene = preload("res://data/vehicles/components/base_weapon_effect.tscn")
-	if effect_scene:
-		var effect = effect_scene.instantiate()
-		effect.name = effect_name
-		add_child(effect)
-		effect.add_to_group("weapon_effects")
+# 	# 直接加载通用的武器效果场景
+# 	var effect_scene = preload("res://data/vehicles/components/base_weapon_effect.tscn")
+# 	if effect_scene:
+# 		var effect = effect_scene.instantiate()
+# 		effect.name = effect_name
+# 		add_child(effect)
+# 		effect.add_to_group("weapon_effects")
 
 func _handle_vehicle_movement(_delta: float):
 	# Only allow forward/backward movement and turning
@@ -172,6 +167,13 @@ func enter_vehicle(player: Node2D) -> bool:
 	if vehicle_camera:
 		vehicle_camera.enabled = true
 	player.set_in_vehicle_state(true)
+
+	# hide player's weapon components
+	var combat = player.combat_component
+	if combat:
+		for weapon in combat.actor_weapons:
+			weapon.visible = false
+
 	return true
 
 func exit_vehicle() -> bool:
@@ -198,13 +200,19 @@ func exit_vehicle() -> bool:
 		ejected_player.global_position = global_position
 		if ejected_player.has_method("set_in_vehicle_state"):
 			ejected_player.set_in_vehicle_state(false)
+		
+		# Show player's weapon components
+		var combat = ejected_player.combat_component
+		if combat:
+			for weapon in combat.actor_weapons:
+				weapon.visible = true
 
 	# reset all weapon components
 	var weapon_components = get_tree().get_nodes_in_group("weapon_components")
 
-	print("Resetting weapon rotation.")
 	for wc in weapon_components:
 		wc.rotation = 0 # Reset rotation to face forward with the vehicle
+	
 	return true
 
 func get_interaction_text() -> String:

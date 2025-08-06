@@ -124,6 +124,7 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Actor Lifecycle**: A complete lifecycle for actors, including a generic death sequence with animation and cleanup.
 
 ### Technical Excellence ✅
+- **Combat/Weapon/AI Unified & Reusable**: All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components (`CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`). This enables any entity to perform attacks, and all logic is reusable and extensible.
 - **Data-Driven Architecture**: Core entities like enemies and weapons are now defined almost entirely by `Resource` files, enabling rapid content creation and iteration without new code.
 - **Component-Based Design**: Logic is encapsulated in reusable components (`HealthComponent`, `StatsComponent`) and composable behaviors (`WanderBehavior`, `ChasePlayerBehavior`).
 - **Float Precision Energy**: Accurate per-frame energy calculations.

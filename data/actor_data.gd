@@ -15,6 +15,8 @@ class_name ActorData
 @export_group("Base Physiological Indicators")
 ## The maximum health points of the actor's body.
 @export var max_hp: int = 100
+## The collision radius for the actor's physics body.
+@export var collision_radius: float = 100.0
 ## Affects passive glucose consumption and natural ATP recovery.
 @export var base_metabolic_rate: float = 0.1 # Glucose per second
 ## Affects the window size for "Just Frame" judgments.
@@ -23,6 +25,10 @@ class_name ActorData
 @export var muscle_coordination: float = 1.0
 ## The base movement speed of the actor/vehicle.
 @export var move_speed: float = 250.0
+
+@export_group("Weapons")
+## The list of weapons this actor can equip.
+@export var weapons: Array[WeaponData] = []
 
 @export_group("AI Behaviors")
 ## The list of behaviors that this actor will execute.
@@ -44,6 +50,9 @@ func get_max_health() -> int:
 
 func get_max_atp() -> int:
 	return max_atp
+
+func get_collision_radius() -> float:
+	return collision_radius
 
 # We will keep a move_speed function for now for compatibility with existing code,
 # but it will be derived from vehicle stats later.

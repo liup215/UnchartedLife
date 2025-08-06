@@ -1,8 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://e5dy5ow2xsdx"]
+[gd_scene load_steps=9 format=3 uid="uid://e5dy5ow2xsdx"]
 
 [ext_resource type="Script" uid="uid://dulkygutgbg8g" path="res://features/vehicle/vehicle.gd" id="1_vehicle"]
 [ext_resource type="Script" uid="uid://kpdca02bwa2y" path="res://components/vehicle_stats_component.gd" id="2_stats"]
-[ext_resource type="Script" uid="uid://cdu3i0f21grj" path="res://components/combat_component.gd" id="3_combat"]
+[ext_resource type="PackedScene" uid="uid://ckr16c2wjeqpv" path="res://components/combat_component.tscn" id="3_g7ui6"]
+[ext_resource type="Texture2D" uid="uid://dsmy2rh1uybuv" path="res://assets/sprites/tanks_moving_1.png" id="4_4y3m5"]
+[ext_resource type="Texture2D" uid="uid://bpaaeeh66f6hi" path="res://assets/sprites/tanks_moving_2.png" id="5_qifqj"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_07o1g"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_4y3m5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_qifqj")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 5.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(64, 48)
@@ -17,22 +33,13 @@ collision_mask = 4
 gravity_scale = 0.0
 script = ExtResource("1_vehicle")
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+rotation = -1.5708
+sprite_frames = SubResource("SpriteFrames_07o1g")
+animation = &"moving"
+
 [node name="VehicleStatsComponent" type="Node" parent="."]
 script = ExtResource("2_stats")
-
-[node name="Visuals" type="ColorRect" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -32.0
-offset_top = -24.0
-offset_right = 32.0
-offset_bottom = 24.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.4, 0.4, 0.4, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_1")
@@ -98,8 +105,7 @@ vertical_alignment = 1
 [node name="Camera2D" type="Camera2D" parent="."]
 enabled = false
 
-[node name="CombatComponent" type="Node" parent="."]
-script = ExtResource("3_combat")
+[node name="CombatComponent" parent="." instance=ExtResource("3_g7ui6")]
 
 [node name="MainWeaponMount1" type="Node2D" parent="."]
 position = Vector2(-20, 0)

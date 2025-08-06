@@ -3,7 +3,7 @@
 extends Resource
 class_name WeaponData
 
-enum WeaponType { MAIN_CANNON, SUB_WEAPON }
+enum WeaponType { MAIN_CANNON, SUB_WEAPON, ACTOR_WEAPON }
 enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 
 @export_group("Core Properties")

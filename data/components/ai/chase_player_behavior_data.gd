@@ -1,9 +1,12 @@
 # chase_player_behavior_data.gd
 # An AI behavior that makes an actor chase the player.
-extends "res://data/components/ai/ai_behavior_data.gd"
+extends AIBehaviorData
 class_name ChasePlayerBehaviorData
 
 @export var detection_radius: float = 400.0
+
+func get_detection_radius() -> float:
+    return detection_radius
 
 # We need to store state per actor instance.
 var chase_states: Dictionary = {}
