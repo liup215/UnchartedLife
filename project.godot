@@ -19,9 +19,9 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 [autoload]
 
 EventBus="*res://systems/event_bus.gd"
-PlayerData="*res://data/player_data_global.gd"
+PlayerData="*res://data/definitions/player_data_global.gd"
 SaveManager="*res://systems/save_manager.gd"
-MapManager="*res://features/map/map_manager.gd"
+MapManager="*res://systems/map_manager.gd"
 
 [display]
 

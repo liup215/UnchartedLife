@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtykwpgayen17"]
+
+[ext_resource type="Script" uid="uid://jwf02h2ubonw" path="res://features/effects/base_bullet.gd" id="1_0xqh0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k8fr6"]
+radius = 5.0
+
+[node name="BaseBullet" type="Area2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_0xqh0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_k8fr6")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="queue_free"]

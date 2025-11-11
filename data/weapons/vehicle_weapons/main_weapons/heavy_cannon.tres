@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=6 format=3 uid="uid://bsfwef2t8sd0a"]
+
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="1_weapon"]
+[ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="2_bullet_scene"]
+[ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_i3l1c"]
+[ext_resource type="Texture2D" uid="uid://crjex1ppgs57y" path="res://assets/sprites/tanks_main_gun.png" id="3_weapon_texture"]
+[ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="4_hit_effect_texture"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_texture = ExtResource("3_weapon_texture")
+weapon_offset = Vector2(0, -20)
+weapon_name = "重型加农炮"
+weapon_type = 0
+weight = 150.0
+energy_cost = 10
+damage = 100.0
+damage_type = 0
+rate_of_fire = 1.0
+ammo_capacity = 10000
+max_charge_level = 5
+charge_time = 3.0
+atp_cost_per_level = 15.0
+bullet_scene = ExtResource("2_bullet_scene")
+bullet_speed = 600.0
+bullet_lifetime = 3.0
+bullet_texture = ExtResource("2_i3l1c")
+bullet_scale = Vector2(3, 3)
+hit_effect_texture = ExtResource("4_hit_effect_texture")
+hit_effect_scale = Vector2(5, 5)
+hit_effect_h_frames = 4
+hit_effect_v_frames = 4
+hit_effect_frame_count = 16
+hit_effect_duration = 0.8

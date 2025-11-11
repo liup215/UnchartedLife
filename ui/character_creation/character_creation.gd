@@ -1,5 +1,7 @@
 extends Control
 
+@export var main_game_scene: PackedScene
+
 @onready var name_edit: LineEdit = $CenterContainer/VBoxContainer/NameEdit
 @onready var start_game_button: Button = $CenterContainer/VBoxContainer/StartGameButton
 
@@ -16,4 +18,7 @@ func _on_start_game_pressed(text: String = ""):
 	PlayerData.player_name = player_name
 	PlayerData.current_slot = ""
 	
-	get_tree().change_scene_to_file("res://main.tscn")
+	if main_game_scene:
+		get_tree().change_scene_to_packed(main_game_scene)
+	else:
+		print("Main game scene not set in the inspector!")

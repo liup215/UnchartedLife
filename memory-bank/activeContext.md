@@ -1,7 +1,10 @@
-# Active Context: Godot ARPG - Data-Driven Architecture & Next Steps
+# Active Context: Godot ARPG - Data-Driven Architecture & Directory Update
 
 ## Current Focus
-The primary focus has shifted from implementing individual features to a major architectural refactor. We have successfully transitioned the core systems (enemies, weapons, stats) to a fully data-driven model. The current focus is now on leveraging this new architecture to build out the next layer of gameplay features.
+- 目录结构已完成梳理与规范化，所有资源、组件、功能模块分层清晰，便于扩展和维护。
+- WorldData资源类型已引入，地图区块场景引用已实现数据驱动，消除硬编码路径。
+- 组件、数据、功能、原始资源分离，强化高内聚、低耦合。
+- 继续推动所有场景、数据、资源引用走数据驱动和Inspector导出变量方式。
 
 ## Key Decisions Made
 1.  **Embrace "Resource-as-Soul"**: The core design philosophy is now to treat `Resource` files (`.tres`) as the "soul" of an entity, defining what it *is* and how it *behaves*. Scenes (`.tscn`) are now just generic "containers".
@@ -14,9 +17,10 @@ The primary focus has shifted from implementing individual features to a major a
 2.  **Combat/Weapon/AI Unified & Reusable**: The combat_component, weapon_component, weapon_effect, and AIBehavior have been fully refactored and unified. Now, actor, enemy, and vehicle all use the same attack logic and component structure. WeaponEffect supports flexible attack effects, and AIBehavior is assigned via data for both player and enemy, enabling true code/data reuse and extensibility.
 3.  **Decoupling Complete**: The `Actor` scene is now completely decoupled from any specific enemy type (like `Goblin`). The old, specific `goblin.gd` script has been simplified and its hard-coded logic removed.
 4.  **Architectural Documentation Updated**: All major design documents (`design_document.md`, `systemPatterns.md`, `progress.md`, `techContext.md`) have been updated to reflect this new, powerful data-driven architecture.
+5.  **目录结构与资源引用规范化**：所有核心资源（如地图区块、武器、组件等）已按功能和用途分层，WorldData等资源型引用已替代硬编码路径。
 
-## Next Steps (Phase 7)
-With the robust and flexible architecture now in place, the next steps are to build upon it:
-1.  **Implement "Just Frame" Mechanic**: Begin work on the "Just Frame" system for the main weapon, which will reward precise timing from the player. This is the next major combat feature.
-2.  **Implement Virtual Lab (First Pass)**: Start designing and implementing the first pass of the Virtual Lab UI. This will be a core part of the game's progression and item interaction systems.
-3.  **Advanced Energy Systems**: Continue planning for the Hemo-Energy and Entropy Energy systems, which will build upon the existing Glucose-ATP foundation.
+## Next Steps
+1.  持续推进所有资源、场景、数据的Inspector导出变量引用，彻底消除硬编码路径。
+2.  实现和完善“Just Frame”主武器精确判定系统，提升战斗深度。
+3.  设计并开发虚拟实验室（Virtual Lab）UI，作为游戏进阶与物品交互的核心入口。
+4.  规划并逐步实现高级能量系统（如Hemo-Energy、Entropy Energy），基于现有Glucose-ATP体系扩展。

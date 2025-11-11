@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ChasePlayerBehaviorData" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://cmakrufvp2bl5" path="res://data/definitions/ai_behavior/chase_player_behavior_data.gd" id="1_chase"]
+
+
+[resource]
+script = ExtResource("1_chase")
+detection_radius = 400.0

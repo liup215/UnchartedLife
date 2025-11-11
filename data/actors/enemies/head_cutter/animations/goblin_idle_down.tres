@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AnimationData" load_steps=3 format=3 uid="uid://pbmt4ibvwduh"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
+[ext_resource type="Texture2D" uid="uid://bl2dfwd3164r2" path="res://assets/sprites/enemy.png" id="2_ji8uf"]
+
+[resource]
+script = ExtResource("1_anim_data")
+animation_name = "idle_down"
+spritesheet = ExtResource("2_ji8uf")
+h_frames = 4
+v_frames = 4
+frame_indices = Array[int]([0])
+speed = 5.0

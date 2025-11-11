@@ -1,7 +1,10 @@
-[gd_resource type="Resource" script_class="VehicleData" load_steps=3 format=3 uid="uid://cdbxd4u1pa2lh"]
+[gd_resource type="Resource" script_class="VehicleData" load_steps=6 format=3 uid="uid://cdbxd4u1pa2lh"]
 
-[ext_resource type="Script" path="res://data/vehicle_data.gd" id="1_v"]
-[ext_resource type="Resource" path="res://data/vehicles/components/default_tank_engine.tres" id="2_e"]
+[ext_resource type="Resource" uid="uid://cb8yg7he8dao1" path="res://data/vehicles/components/engines/default_tank_engine.tres" id="1_0iyvm"]
+[ext_resource type="Script" path="res://data/definitions/vehicle_data.gd" id="1_v"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="3_qca5v"]
+[ext_resource type="Resource" uid="uid://bsfwef2t8sd0a" path="res://data/weapons/vehicle_weapons/main_weapons/heavy_cannon.tres" id="4_1irl3"]
+[ext_resource type="Resource" uid="uid://cvc30g5d6sxx3" path="res://data/weapons/vehicle_weapons/sub_weapons/light_machine_gun.tres" id="5_hivc8"]
 
 [resource]
 script = ExtResource("1_v")
@@ -17,7 +20,8 @@ base_resistances = {
 level = 1
 experience = 0
 energy_points = 20
-engine_slots = Array[Resource]([ExtResource("2_e")])
+weapons = Array[ExtResource("3_qca5v")]([ExtResource("4_1irl3"), ExtResource("4_1irl3"), ExtResource("5_hivc8"), ExtResource("5_hivc8"), ExtResource("5_hivc8"), ExtResource("4_1irl3"), ExtResource("5_hivc8")])
+engine_slots = Array[Resource]([ExtResource("1_0iyvm")])
 main_cannon_slots = Array[Resource]([])
 sub_weapon_slots = Array[Resource]([])
 se_slots = Array[Resource]([])

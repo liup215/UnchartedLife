@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://78f67tcx1baf"]
-
-[ext_resource type="PackedScene" uid="uid://d3e4f5g6h7i8j" path="res://features/actor/base_actor.tscn" id="1"]
-
-[node name="Enemy" instance=ExtResource("1")]
-collision_layer = 4
-collision_mask = 5

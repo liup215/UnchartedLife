@@ -3,36 +3,70 @@
 This document outlines the architectural patterns for building the ARPG, based on a hybrid model of inheritance and composition.
 
 ## 1. Directory Structure
-A clean directory structure is crucial. We will follow a feature-first approach.
+A clean directory structure is crucial. The project now follows a feature-first and data-driven approach, with clear separation of assets, components, data, features, systems, and UI. All resource references are moving toward data-driven (Inspector-exported) patterns.
 
 ```
 /
-|- addons/         # For third-party plugins
-|- assets/         # Raw art and sound assets (e.g., .blend, .psd, .wav)
-|- components/     # Reusable, self-contained scenes/scripts (e.g., health.tscn, stats.tscn)
-|  |- ai/           # Reusable AI behavior resources
-|- data/           # Custom Resource files (.tres) for game data
-|  |- items/
-|  |- skills/
-|  |- enemies/
-|- features/       # Core game features, each in its own folder
-|  |- actor/        # The base actor scene and script
-|  |  |- base_actor.tscn
-|  |  |- actor.gd
-|  |- player/
-|  |  |- player.tscn
-|  |  |- player.gd
-|  |- enemy/        # This folder is now mostly for data, not unique scenes
-|  |  |- goblin_data.tres
-|- systems/        # Global manager scripts (Autoloads)
-|  |- event_bus.gd
-|  |- save_manager.gd
-|- ui/             # UI scenes and themes
-|  |- hud/
-|  |  |- hud.tscn
-|  |- main_menu/
-|- main.tscn       # Main scene to launch the game
+├── scenes/                 # Top-level entry scenes (e.g., main.tscn)
+│   └── main.tscn
+│
+├── features/               # Core game features, each as a folder
+│   ├── actor/              # Base actor scene and script
+│   │   ├── base_actor.tscn
+│   │   └── actor.gd
+│   ├── player/             # Player-specific scenes/scripts
+│   │   ├── player.tscn
+│   │   └── player.gd
+│   ├── enemy/              # Enemy templates and logic
+│   │   └── enemy.tscn
+│   ├── vehicle/            # Vehicle base and logic
+│   │   ├── base_vehicle.tscn
+│   │   └── base_vehicle.gd
+│   └── effects/            # Reusable effect/projectile scenes
+│       ├── base_bullet.tscn
+│       └── base_weapon_effect.tscn
+│
+├── components/             # Reusable, self-contained scenes/scripts (e.g., health_component.tscn)
+│   ├── health_component.tscn
+│   ├── combat_component.tscn
+│   ├── stats_component.tscn
+│   └── weapon_component.tscn
+│
+├── data/                   # All game data resources and definitions
+│   ├── definitions/        # Resource class scripts (e.g., actor_data.gd, world_data.gd)
+│   ├── actors/             # Actor data (player, enemies, with per-entity folders)
+│   ├── vehicles/           # Vehicle data and components
+│   │   ├── basic_tank_data.tres
+│   │   └── components/
+│   │       ├── engines/
+│   │       └── chips/
+│   ├── weapons/            # Weapon data (actor_weapons, vehicle_weapons)
+│   ├── ai_behavior/        # AI behavior resource instances
+│   └── items/              # Item data
+│
+├── assets/                 # Raw art/audio assets (png, wav, etc.)
+│   ├── sprites/
+│   ├── tilesets/
+│   └── effects/
+│
+├── systems/                # Global manager scripts (Autoloads)
+│   ├── event_bus.gd
+│   ├── save_manager.gd
+│   ├── main_game_manager.gd
+│   └── map_manager.gd
+│
+├── ui/                     # UI scenes and themes
+│   ├── hud/
+│   ├── main_menu/
+│   └── character_creation/
+│
+└── project.godot           # Godot project file
 ```
+
+**Notes:**
+- All map chunk scene references are now managed via a WorldData resource (`data/definitions/world_data.gd`), eliminating hard-coded paths.
+- All resource, scene, and data references are moving toward Inspector-exported variables for maximum flexibility and maintainability.
+- Each entity (player, enemy, vehicle) has its own data folder for core data and animation resources.
 
 ## 2. Data-Driven Entity Creation
 **Goal:** To create new enemies, weapons, or items by only creating and modifying `Resource` (`.tres`) files, without needing new scenes (`.tscn`) or scripts (`.gd`).

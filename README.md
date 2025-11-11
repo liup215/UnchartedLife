@@ -72,7 +72,15 @@ The project has completed several major development phases, establishing a robus
 1.  **Engine:** This project is developed using **Godot 4.x**.
 2.  **Clone:** Clone this repository to your local machine.
 3.  **Open:** Open the project in the Godot Engine. No external dependencies are required.
-4.  **Run:** The main scene is `main.tscn`. Press `F5` to run the game.
+4.  **Run:** The main scene is `scenes/main.tscn`. Press `F5` to run the game.
+
+---
+
+## Data-Driven Resource Management
+
+- All scene, data, and resource references are managed via Inspector-exported variables or custom Resource types (e.g., WorldData), eliminating hard-coded paths.
+- Map chunk scene references are managed centrally via `data/definitions/world_data.gd`.
+- Each entity (player, enemy, vehicle) has a dedicated data folder, with animation and related resources colocated.
 
 ---
 
@@ -82,17 +90,11 @@ The project follows a feature-first directory structure to keep related code org
 
 ```
 /
-|- assets/         # Raw art and sound assets
-|- components/     # Reusable, self-contained scenes/scripts (e.g., health.tscn)
-|  |- ai/           # Reusable AI behavior resources
-|- data/           # Custom Resource files (.tres) for game data
-|  |- enemies/
-|  |- weapons/
-|  |- items/
-|- features/       # Core game features, each in its own folder
-|  |- actor/        # The base actor scene and script
-|  |- player/
-|  |- vehicle/
-|- systems/        # Global manager scripts (Autoloads)
-|- ui/             # UI scenes and themes
-|- main.tscn       # Main scene to launch the game
+├── scenes/                 # Entry scenes (main.tscn)
+├── features/               # Core feature modules (actor, player, enemy, vehicle, effects, etc.)
+├── components/             # Reusable components (health_component, etc.)
+├── data/                   # All data resources and definitions (actors, vehicles, weapons, ai_behavior, definitions, etc.)
+├── assets/                 # Raw art and audio assets
+├── systems/                # Global managers (event_bus, map_manager, etc.)
+├── ui/                     # UI scenes and scripts
+└── project.godot           # Godot project file

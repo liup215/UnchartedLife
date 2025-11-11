@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AttackBehaviorData" load_steps=2 format=3 uid="uid://b5ankkf4xahg7"]
+
+[ext_resource type="Script" uid="uid://eyca6digsaij" path="res://data/definitions/ai_behavior/attack_behavior_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_radius = 2000.0
+attack_cooldown = 1.2
+attack_damage = 10
+name = "Attack Behavior"

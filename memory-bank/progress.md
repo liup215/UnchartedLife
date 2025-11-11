@@ -96,6 +96,10 @@
 
 ## Phase 7: Next Steps (In Progress)
 
+- [ ] **目录结构与资源引用规范化：**
+    - [x] 目录结构已完成梳理与规范化，所有资源、组件、功能模块分层清晰。
+    - [x] WorldData资源类型已引入，地图区块场景引用已实现数据驱动，消除硬编码路径。
+    - [ ] 持续推进所有资源、场景、数据的Inspector导出变量引用，彻底消除硬编码路径。
 - [ ] **Implement "Just Frame" mechanic.**
 - [ ] **Implement Virtual Lab (First Pass):**
     - [ ] Create the basic UI for the lab.
@@ -130,3 +134,4 @@ The game now has a complete, scientifically-grounded energy management system:
 - **Float Precision Energy**: Accurate per-frame energy calculations.
 - **Asynchronous Logic**: Use of `await` for timed, non-blocking actions like rhythmic combo firing.
 - **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.
+- **目录结构与资源引用规范化**：所有核心资源（如地图区块、武器、组件等）已按功能和用途分层，WorldData等资源型引用已替代硬编码路径，资源引用逐步数据驱动化。

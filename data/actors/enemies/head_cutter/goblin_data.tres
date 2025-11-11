@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ActorData" load_steps=16 format=3 uid="uid://duveh6r1rbdni"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_4itwm"]
+[ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/definitions/actor_data.gd" id="1_actor_data"]
+[ext_resource type="Resource" uid="uid://bkntsn0yaa6ec" path="res://data/actors/enemies/head_cutter/animations/goblin_walk_down.tres" id="4_walk_down"]
+[ext_resource type="Resource" uid="uid://43jdogt1m0h2" path="res://data/actors/enemies/head_cutter/animations/goblin_walk_left.tres" id="5_walk_left"]
+[ext_resource type="Resource" uid="uid://j3pnp2bubntw" path="res://data/actors/enemies/head_cutter/animations/goblin_walk_right.tres" id="6_walk_right"]
+[ext_resource type="Resource" uid="uid://dg6ow4dwif11a" path="res://data/actors/enemies/head_cutter/animations/goblin_walk_up.tres" id="7_walk_up"]
+[ext_resource type="Resource" uid="uid://pbmt4ibvwduh" path="res://data/actors/enemies/head_cutter/animations/goblin_idle_down.tres" id="8_idle_down"]
+[ext_resource type="Resource" uid="uid://kg2nhcltgpqs" path="res://data/actors/enemies/head_cutter/animations/goblin_idle_left.tres" id="9_idle_left"]
+[ext_resource type="Resource" uid="uid://b5xd8arvoswpe" path="res://data/actors/enemies/head_cutter/animations/goblin_idle_right.tres" id="10_idle_right"]
+[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior_data.gd" id="10_pi44i"]
+[ext_resource type="Resource" uid="uid://b5ankkf4xahg7" path="res://data/ai_behavior/attack_behavior.tres" id="11_8qkmk"]
+[ext_resource type="Resource" uid="uid://52pc2pt6tyqy" path="res://data/actors/enemies/head_cutter/animations/goblin_idle_up.tres" id="11_idle_up"]
+[ext_resource type="Resource" uid="uid://bjg7yy4uboq1j" path="res://data/ai_behavior/patrol_behavior.tres" id="12_j5mu4"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="14_j4w3h"]
+[ext_resource type="Resource" uid="uid://w1yi73y6nmcl" path="res://data/weapons/actor_weapons/enemy_weapons/enemy_gun.tres" id="14_j5mu4"]
+
+[resource]
+script = ExtResource("1_actor_data")
+animations = Array[ExtResource("1_4itwm")]([ExtResource("4_walk_down"), ExtResource("5_walk_left"), ExtResource("6_walk_right"), ExtResource("7_walk_up"), ExtResource("8_idle_down"), ExtResource("9_idle_left"), ExtResource("10_idle_right"), ExtResource("11_idle_up")])
+max_hp = 10000
+collision_radius = 60.0
+base_metabolic_rate = 0.1
+neural_response_speed = 1.0
+muscle_coordination = 1.0
+move_speed = 200.0
+weapons = Array[ExtResource("14_j4w3h")]([ExtResource("14_j5mu4")])
+behaviors = Array[ExtResource("10_pi44i")]([ExtResource("11_8qkmk"), ExtResource("12_j5mu4")])
+max_atp = 50
+atp_conversion_rate = 5.0
+hemo_energy_capacity = 0
+entropy_energy_threshold = 0

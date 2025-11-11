@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://x1y2z3a4b5c6d"]
+[gd_scene load_steps=3 format=3 uid="uid://ujuhqrlww3mr"]
 
-[ext_resource type="Script" path="res://ui/character_creation/character_creation.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://i1tgu8iks346" path="res://ui/character_creation/character_creation.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://7rcsyrqgfrjk" path="res://scenes/main.tscn" id="2_7ht17"]
 
 [node name="CharacterCreation" type="Control"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
+main_game_scene = ExtResource("2_7ht17")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -38,8 +40,8 @@ theme_override_font_sizes/font_size = 32
 text = "Enter Your Name"
 
 [node name="NameEdit" type="LineEdit" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
 placeholder_text = "Hero"
 alignment = 1
 

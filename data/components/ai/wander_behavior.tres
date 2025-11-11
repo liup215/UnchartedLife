@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="WanderBehaviorData" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://data/components/ai/wander_behavior_data.gd" id="1_wander"]
-
-[resource]
-script = ExtResource("1_wander")
-wander_speed_multiplier = 0.5
-wander_interval = 3.0
