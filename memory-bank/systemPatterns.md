@@ -1,6 +1,6 @@
-# System Patterns: Godot ARPG
+# System Patterns: 《执笔问道录》
 
-This document outlines the architectural patterns for building the ARPG, based on a hybrid model of inheritance and composition.
+This document outlines the architectural patterns for building the ARPG, based on a hybrid model of inheritance and composition. The core data-driven and component-based philosophy is retained and adapted for the new game design.
 
 ## 1. Directory Structure
 A clean directory structure is crucial. The project now follows a feature-first and data-driven approach, with clear separation of assets, components, data, features, systems, and UI. All resource references are moving toward data-driven (Inspector-exported) patterns.
@@ -78,7 +78,7 @@ A clean directory structure is crucial. The project now follows a feature-first 
     - **Core Components**:
         - `HealthComponent`: Manages health.
         - `StatsComponent`: A bridge to the data resource.
-        - `ATPComponent`: Manages energy.
+        - `InkEnergyComponent`: Manages "文气" (Ink Energy).
         - `CollisionShape2D`: Provides a default physical body.
 - **`actor.gd`'s Role**:
     - It has an `@export var actor_data: ActorData`. This is the **only** thing that needs to be set from the outside to define what the actor *is*.
@@ -139,12 +139,60 @@ w   - an g`bodf_ected`igo triggr ht ogic
 - **Implementation:** The `MapManager` autoload singleton tracks the player's position, calculates the current chunk coordinate, and instances/frees chunk scenes as needed.
 - **Benefit:** Allows for massive game worlds with minimal memory footprint and fast initial load times.
 
-## 6. Dual System (Player/Vehicle)
-- **Pattern:** The player's capabilities are split between two distinct but interconnected entities: the biological **Player Character** and the mechanical **Vehicle**.
-- **Implementation:** The Player node will manage biological stats (HP, ATP, etc.), while a separate Vehicle node will manage mechanical stats (Armor, Mobility). The two will interact through well-defined interfaces.
-- **Benefit:** Creates deep, strategic gameplay where players must balance the development of both systems.
+## 6. Data-Driven System Extensions for 《执笔问道录》
 
-## 7. Unified Resource (Glucose as Energy/Currency)
-- **Pattern:** A single resource, **Glucose**, serves as the foundation for both the energy system (actions, skills) and the economic system (currency, crafting).
-- **Implementation:** A global `PlayerData` singleton will track the player's current Glucose total. All systems that consume or award resources will interface with this singleton.
-- **Benefit:** Tightly couples the game's economy with its core gameplay loop, making every economic decision a strategic gameplay decision.
+The following patterns extend the core data-driven architecture to support the unique mechanics of the new game design.
+
+### 6.1. "乱墨妖" (Enemy) and "题目" (Question) Integration
+The existing `ActorData` is extended to integrate the educational core.
+- **`EnemyData.gd`** (formerly `ActorData.gd`): This `Resource` now includes a critical new property:
+    - **`question_data: QuestionData`**: A direct link to a `QuestionData` resource. A "乱墨妖" cannot be defeated by simply reducing its HP to zero. The final blow must be a correct answer to its associated question.
+- **`QuestionData.gd`**: A new `Resource` script defining a question.
+    - **`content`**: The question's text, images, or formulas.
+    - **`type`**: The question type (e.g., multiple choice, fill-in-the-blank, structured solution).
+    - **`answer_key`**: A structured representation of the correct answer.
+    - **`evaluation_nodes`**: For complex problems, an array of sub-problems or key steps for procedural evaluation.
+    - **`knowledge_link`**: A link to the specific `KnowledgeUnitData` this question assesses.
+
+### 6.2. "书魂印" (Book-Soul Seal) as a Skill System
+This system replaces the generic `WeaponData` for the player's primary abilities.
+- **`BookSoulSealData.gd`**: A `Resource` defining a skill.
+    - **`seal_type`**: An enum (`MAIN_SEAL`, `SUB_SEAL`) to determine if it's a main or auxiliary skill.
+    - **`effects`**: An array of `EffectData` resources (e.g., `DealDamageEffect`, `ApplyStatusEffect`, `ModifyStatEffect`). This allows for highly composable skill design.
+    - **`ultimate_attack`**: If it's a `MAIN_SEAL`, this defines the "破妄一击" (Ultimate Attack) triggered by a correct answer.
+- **`CombatComponent.gd`**: This component is updated with slots for `main_seal` and an array of `sub_seals`. It reads the `BookSoulSealData` to execute skill logic.
+
+### 6.3. "百川归海" (Inverted) Skill Tree
+- **`SkillTreeData.gd`**: A `Resource` that defines the relationship between basic and advanced skills.
+    - **`source_seals`**: An array of `BookSoulSealData` resources representing the foundational "leaf" skills.
+    - **`trunk_seal`**: The advanced `BookSoulSealData` that is unlocked upon mastery.
+    - **`mastery_requirements`**: Defines the proficiency level needed for each `source_seal` to trigger the "顿悟三阶试炼" (Enlightenment Trial).
+- **`PlayerProgress.gd`**: A global singleton (or part of `SaveManager`) that tracks the player's proficiency with each `BookSoulSealData`. The `GameManager` monitors this progress to initiate trials.
+
+## 7. Offline Evaluation Engine
+This is a critical new system for local, offline-first question evaluation.
+- **Pattern:** Client-Local Service.
+- **Implementation:**
+    1.  **Godot-Side (`EvaluationClient.gd`):**
+        - When a player submits an answer, this script packages the `QuestionData` and the player's input into a standardized format (e.g., JSON).
+        - It sends this data via a local HTTP request to the background evaluation service.
+    2.  **Local Evaluation Service (Python/SymPy):**
+        - A lightweight Python service, bundled with the game executable, runs silently in the background.
+        - It uses a library like **SymPy** for symbolic mathematics.
+        - **Capabilities:**
+            - **Expression Parsing:** Converts string inputs like `(x+1)*x` into a symbolic representation.
+            - **Equivalence Checking:** Determines if the player's answer is mathematically equivalent to the `answer_key` (e.g., `x**2 + x`).
+            - **Numerical Tolerance:** Compares floating-point answers within an acceptable margin of error.
+            - **Procedural Validation:** For structured problems, it checks the player's solution against the `evaluation_nodes`.
+        - The service returns a structured result (e.g., `{"correct": true, "feedback": "Excellent!"}`) to Godot.
+
+## 8. PBL Project Evaluation
+This system evaluates open-ended projects using a rule-based, offline approach.
+- **`PBLProjectData.gd`**: A `Resource` defining a project.
+    - **`objective`**: The goal of the project.
+    - **`constraints`**: An array of `ConstraintRule` resources (e.g., `EnergyConservationRule`, `MaxBudgetRule`). Each rule is a script that can validate the player's submission.
+    - **`kpis`**: An array of `KeyPerformanceIndicator` resources that define how to score the project (e.g., `EfficiencyKPI`, `CostKPI`).
+- **Evaluation Flow:**
+    1.  **Constraint Validation:** The system first iterates through all `constraints`. If any rule fails, the submission is rejected.
+    2.  **Simulation & KPI Calculation:** If constraints are met, the system runs a simulation (using Godot's physics or a custom model) and calculates the values for each KPI.
+    3.  **Scoring:** A final score is calculated based on the KPI results using a predefined formula.

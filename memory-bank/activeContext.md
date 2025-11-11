@@ -1,26 +1,42 @@
-# Active Context: Godot ARPG - Data-Driven Architecture & Directory Update
+# Active Context: 《执笔问道录》 - 核心设计转向与新架构规划
 
-## Current Focus
-- 目录结构已完成梳理与规范化，所有资源、组件、功能模块分层清晰，便于扩展和维护。
-- WorldData资源类型已引入，地图区块场景引用已实现数据驱动，消除硬编码路径。
-- 组件、数据、功能、原始资源分离，强化高内聚、低耦合。
-- 继续推动所有场景、数据、资源引用走数据驱动和Inspector导出变量方式。
+## 当前焦点 (Current Focus)
+项目已完成核心设计理念的重大转向，从原有的生物学科ARPG（"Legends of Uncharted Life"）转型为以K-12教育为核心、首发小学数学的《执笔问道录》。当前的首要任务是**使项目的文档和架构规划与新设计完全对齐**。
 
-## Key Decisions Made
-1.  **Embrace "Resource-as-Soul"**: The core design philosophy is now to treat `Resource` files (`.tres`) as the "soul" of an entity, defining what it *is* and how it *behaves*. Scenes (`.tscn`) are now just generic "containers".
-2.  **AI as Composable Data**: Instead of hard-coding AI in scripts, we created a system of `AIBehaviorData` resources. This allows designers to create complex AI by simply mixing and matching behavior resources in an array within an `ActorData` file.
-3.  **Generic `Actor` Class**: The base `Actor` script has been stripped of all specific logic. It now functions as a generic "executor" that reads from an `ActorData` resource and delegates tasks to its components and behaviors.
-4.  **Default Collision on Base Actor**: To support dynamic, data-driven spawning, a default, valid `CollisionShape2D` was added to `base_actor.tscn`. This ensures any actor instanced from the base scene can be physically interacted with immediately.
+- **文档更新:** 所有核心设计文档 (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`) 已经更新，以反映新的世界观、游戏机制和技术方案。
+- **架构调整:** 保留并扩展了原有的数据驱动和组件化架构，使其能够支持新的核心系统，如“书魂印”、“离线评估引擎”和“PBL项目”。
 
-## Recent Achievements
-1.  **Fully Data-Driven Entities**: Successfully refactored the weapon, health, and AI systems. It is now possible to create a new, fully functional enemy with unique stats and behaviors **purely by creating a new `.tres` file**.
-2.  **Combat/Weapon/AI Unified & Reusable**: The combat_component, weapon_component, weapon_effect, and AIBehavior have been fully refactored and unified. Now, actor, enemy, and vehicle all use the same attack logic and component structure. WeaponEffect supports flexible attack effects, and AIBehavior is assigned via data for both player and enemy, enabling true code/data reuse and extensibility.
-3.  **Decoupling Complete**: The `Actor` scene is now completely decoupled from any specific enemy type (like `Goblin`). The old, specific `goblin.gd` script has been simplified and its hard-coded logic removed.
-4.  **Architectural Documentation Updated**: All major design documents (`design_document.md`, `systemPatterns.md`, `progress.md`, `techContext.md`) have been updated to reflect this new, powerful data-driven architecture.
-5.  **目录结构与资源引用规范化**：所有核心资源（如地图区块、武器、组件等）已按功能和用途分层，WorldData等资源型引用已替代硬编码路径。
+## 关键决策 (Key Decisions Made)
+1.  **确立新核心:** 游戏的核心不再是生物学模拟，而是“学-练-考-悟”的闭环学习体验。战斗、技能和成长系统都将围绕“解题”这一核心互动展开。
+2.  **保留数据驱动哲学:** “万物皆数据”的理念被继承和强化。无论是敌人（乱墨妖）、技能（书魂印），还是题目本身，都将被定义为可组合的 `Resource` 文件。
+3.  **采用离线优先评估:** 决定采用客户端-本地服务的架构来实现题目的离线评估。优先方案是捆绑一个轻量级的 Python + SymPy 服务，以实现强大的符号计算能力，确保核心玩法不依赖网络。
+4.  **技能系统内化:** “书魂印”被确立为玩家能力的直接体现，取代了传统的武器系统，并与“顿悟”和技能树深度绑定。
+5.  **移除过时系统:** 明确废弃原有的“载具/玩家”双系统和“葡萄糖”统一资源系统，相关的代码和设计将被移除或重构。
 
-## Next Steps
-1.  持续推进所有资源、场景、数据的Inspector导出变量引用，彻底消除硬编码路径。
-2.  实现和完善“Just Frame”主武器精确判定系统，提升战斗深度。
-3.  设计并开发虚拟实验室（Virtual Lab）UI，作为游戏进阶与物品交互的核心入口。
-4.  规划并逐步实现高级能量系统（如Hemo-Energy、Entropy Energy），基于现有Glucose-ATP体系扩展。
+## 长期规划与开发优先级 (Long-Term Planning & Priorities)
+- **开发优先级:** 游戏体验 > 做题功能 > AI增强 > 后台云服务
+    - 1. **游戏体验:** 首先实现可玩的战斗-答题循环原型，优先保证核心玩法的流畅性和乐趣。
+    - 2. **做题功能:** 在游戏循环跑通后，逐步完善题目评估系统，先用简单的字符串匹配，后续再集成离线评估引擎（Python+SymPy）。
+    - 3. **AI增强:** 基础AI（敌人移动/攻击）属于游戏范畴，题目生成/智能评估等高级AI为远期目标。
+    - 4. **后台云服务:** 所有云端功能（如数据同步、在线PBL分享等）在单机体验完善后再考虑。
+
+- **实施策略:** 先用“假判断”快速实现“真循环”，即先用简单判断实现战斗-答题流程，待核心体验稳定后再完善评估引擎。
+
+## 近期成就 (Recent Achievements)
+1.  **完成设计文档转型:** `projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md` 四个核心文档已根据新的产品设计全面重写。
+2.  **明确技术路径:** 为新的核心功能（特别是离线评估引擎）确定了清晰、可行且风险可控的技术实现方案（Python + SymPy 本地服务）。
+3.  **统一团队认知:** 通过更新文档，为项目接下来的开发工作建立了统一、明确的蓝图和目标。
+
+## 下一步计划 (Next Steps)
+1.  **搭建原型 - 离线评估引擎:**
+    - **任务:** 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
+    - **目标:** 验证 Godot 通过本地 HTTP 请求将一道简单的数学题（如 `2*x = 4`）发送给 Python 脚本，脚本使用 SymPy 判断答案 `x=2` 是否正确，并将结果返回给 Godot。这是整个项目的最高技术风险点，需要最先验证。
+2.  **定义核心数据结构:**
+    - **任务:** 在 Godot 中创建 `QuestionData.gd` 和 `BookSoulSealData.gd` 的 `Resource` 脚本。
+    - **目标:** 定义这些核心数据结构的具体字段，为后续的系统开发提供数据基础。
+3.  **实现战斗-答题循环原型:**
+    - **任务:** 创建一个基础的“乱墨妖”敌人，当其生命值降低到阈值时，触发答题界面。
+    - **目标:** 验证“战斗”与“答题”两个状态之间的切换流程。
+4.  **重构/清理旧代码:**
+    - **任务:** 识别并逐步移除与旧载具系统和葡萄糖资源相关的代码和资源文件。
+    - **目标:** 保持代码库的整洁，移除不再需要的历史包袱。

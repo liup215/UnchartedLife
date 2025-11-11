@@ -14,7 +14,7 @@ name="UnchartedLife"
 
 config/name="UnchartedLife"
 run/main_scene="res://ui/main_menu/main_menu.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
 

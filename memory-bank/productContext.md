@@ -1,17 +1,57 @@
-# Product Context: Legends of Uncharted Life
+# Product Context: 《执笔问道录》 (The Scribe's Odyssey)
 
-## Core Vision
-"Legends of Uncharted Life" is the first installment in a series of post-apocalyptic educational ARPGs. This title focuses on **Biology**, blending hardcore, strategic ARPG combat with a deep, integrated curriculum based on high school biology standards.
+## 一、项目定位与愿景 (Anchor)
 
-## Gameplay Pillars
-1.  **Dual System Mechanics:** The player controls both a biologically-modified human character and a customizable vehicle. These two entities have separate but interconnected stat systems, creating deep strategic choices in progression and combat.
-2.  **Unified Energy-Currency:** **Glucose** is the single, central resource. It functions as both the player's life-sustaining energy and the game's universal currency. Every action, from combat to crafting to upgrading, has a direct, tangible cost, forcing meaningful strategic decisions rooted in biological principles of energy management.
-3.  **Education through Gameplay:** Learning is not a separate mode but is woven into the core gameplay loop. Players learn about cellular respiration by managing their ATP, about genetics by performing gene-editing, and about ecology by restoring the wasteland.
-4.  **Data-Driven Modularity:** The game is built on a highly modular, data-driven architecture. Core entities like enemies and weapons are defined as `Resource` files. This allows for immense variety and easy content creation, empowering both developers and potentially the modding community to create new challenges and tools by simply editing data, not code.
+- **名称 (Name):** 《执笔问道录》 / The Scribe's Odyssey
+- **类型 (Type):** 教育向动作角色扮演游戏 (ARPG + 学习系统 + PBL)
+- **目标用户 (Target Audience):** 以 K-12 学生（首推小学数学章节）及其家长、教师为主；长期可扩展到高中、大学及成人学科模块。
+- **核心愿景 (Core Vision):** 将“学会做题”与“理解价值”相结合，帮助学生从“会做题”到“知其所以然”，并通过可玩化的战斗与PBL项目，强化“学-练-考-悟”的闭环学习体验。
 
-## Target Audience
-- Primary: High school students and teachers looking for an engaging way to learn/teach biology.
-- Secondary: Fans of hardcore ARPGs and science enthusiasts who appreciate deep, complex systems.
+---
 
-## Unique Selling Proposition
-The game offers a unique blend of deep, strategic combat reminiscent of titles like *Metal Max*, combined with a robust, curriculum-aligned educational framework. It is a game that respects the player's intelligence, offering both a challenging gameplay experience and a meaningful learning journey. Its data-driven architecture ensures a vast and expandable world, setting it apart from games with more static, hard-coded content.
+## 二、高阶玩法与世界观 (Gameplay & Worldview)
+
+- **背景世界 (World Setting):** 一个被“颠倒妖皇”所污染的知识世界。在这个世界里，题海和陷阱化的试题化身为各种“乱墨妖”。玩家扮演“执笔者”，手持“知识之笔”，在这个世界中探索、学习，并收服具象化的知识法则。
+- **核心循环 (Core Loop):**
+  1. **引导学习 (翰墨点睛):** 玩家使用“知识之笔”进行章节知识点的交互式学习（如交互动画、拆解式问答）。完成学习后，解锁对应的场景试炼。
+  2. **场景试炼 (过关斩将):** 玩家与“乱墨妖”（由各种易错题、陷阱题化身）战斗。战斗的核心是正面解题练习。玩家可以消耗有限资源（文气）来获得分级提示（题眼勘破）。
+  3. **Boss 试炼:** 以复杂的综合题或高阶练习作为 Boss 战，全面考核玩家对知识的融会贯通能力。
+  4. **天问 (PBL 项目):** 击败 Boss 后，进入“天问”环节。这是一个以项目式学习（PBL）形式进行的深度考核（例如，设计、模拟、发射一个虚拟火箭）。成功通过后，玩家将收服该章节的“书魂印”。
+  5. **收服为“书魂印” (Skill Internalization):** 获得的书魂印将成为玩家的技能或被动能力，用于后续的战斗和PBL项目中，形成正向循环。
+
+---
+
+## 三、核心系统设计 (Core System Design)
+
+1.  **知识之笔 (Knowledge Pen):**
+    - **作用:** 教学引导、答题辅助（题眼勘破）、触发“知识锁定”（子弹时间答题模式），以及在“顿悟试炼”中作为核心交互工具。
+    - **资源交互:** 消耗或产出“文气”。
+
+2.  **文气 (Ink Energy):**
+    - **战斗资源:** 通过普通攻击或成功闪避获得。文气值积满后，可触发“知识锁定”状态。
+
+3.  **ARPG 战斗 (VATS-like Combat):**
+    - **基础操作:** 实时移动、闪避、近战攻击（点墨/挥毫）。
+    - **知识锁定 (子弹时间):** 文气满时可激活，游戏进入慢动作状态，屏幕上出现题目，让玩家可以从容作答。
+    - **答题反馈:** 答题正确会触发强大的“破妄一击”（终结技）；答错则会受到惩罚（如硬直、文气清空）。
+
+4.  **书魂印 (Book-Soul Seals):**
+    - **定义:** 玩家通过“顿悟”或“收服”将知识法则内化成的技能印章，分为主魂印和辅魂印。
+    - **主魂印:** 决定玩家的战斗风格、主动技能和终结技形态。
+    - **辅魂印:** 提供各种被动属性加成或场景增益。
+    - **设计目标:** 书魂印是玩家能力（技能）的直接体现，而非独立的宠物或伙伴。
+
+5.  **技能树 (“百川归海”倒置树):**
+    - **结构:** 初始时，技能树由大量代表基础概念的“源泉技能”构成。
+    - **成长:** 当相关的源泉技能熟练度达到上限后，会触发“顿悟三阶试炼”。
+    - **内化:** 成功完成试炼后，多个源泉技能会被内化、折叠，并合并成一个更高级的“主干技能”，使玩家的技能界面保持简洁和高层级。
+
+6.  **顿悟三阶试炼 (Active Enlightenment Trial):**
+    - **阶段一 - 学习 (问道):** 通过高级教程和动态逻辑蓝图，学习知识点之间的联系。
+    - **阶段二 - 练习 (演法):** 与“拟态心魔”进行高频练习，提升技能熟练度。
+    - **阶段三 - 考核 (证道):** 独立完成一个无提示的综合应用问题（小型PBL或Boss级考核），通过后才算顿悟成功。
+
+7.  **天问 PBL (Project-Based Learning):**
+    - **触发:** 击败章节 Boss 后触发的深度应用项目。
+    - **形式:** 在沙盒编辑器或模拟器中进行设计、调试、执行等操作。
+    - **价值:** 项目的完成度决定了所获书魂印的品质和成长潜力。

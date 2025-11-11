@@ -1,69 +1,48 @@
-# Tech Context: Godot ARPG
+# Tech Context: 《执笔问道录》
 
-## 1. Game Engine
-- **Engine:** Godot 4.x
-- **Rationale:** The user has specified Godot as the engine of choice. Version 4.x offers significant improvements in rendering, scripting, and performance, making it suitable for an ARPG.
+## 1. 游戏引擎 (Game Engine)
+- **引擎:** Godot 4.x
+- **语言:** GDScript (强制使用静态类型)
+- **理由:** Godot 4.x 提供了强大的功能和性能，而 GDScript 与引擎的紧密集成能够实现快速开发。静态类型能显著提升代码质量和可维护性。
 
-## 2. Primary Language
-- **Language:** GDScript
-- **Rationale:** GDScript is tightly integrated with the Godot API, offering a rapid development workflow. Its syntax is clear and easy to learn. We will assume GDScript unless the user specifies a preference for C#.
-- **Typing:** All new GDScript code **must** use static typing (`var my_var: Type = value`) to improve code clarity, enable better autocompletion, and reduce runtime errors.
+## 2. 核心架构模式 (Core Architectural Patterns)
 
-## 3. Core Architectural Patterns
+### 2.1. 数据驱动的实体架构
+这是项目的基石。
+- **哲学:** 数据与逻辑分离。游戏内实体的属性和行为在 `Resource` 文件 (`.tres`) 中定义，而场景 (`.tscn`) 和脚本 (`.gd`) 则是解释这些数据的通用“容器”。
+- **实现:**
+    - **`base_actor.tscn`**: 所有角色的通用模板。
+    - **`ActorData.gd`**: 定义角色属性和行为的 `Resource`。在新设计下，它将包含与“乱墨妖”绑定的 `QuestionData`。
+    - **`BookSoulSealData.gd`**: 定义“书魂印”（技能）的 `Resource`，包括其效果和类型。
+    - **`QuestionData.gd`**: 定义题目的 `Resource`，包含题干、答案、题型和评估逻辑。
 
-### 3.1. Data-Driven Entity Architecture
-This is the most important pattern in the project.
-- **Philosophy:** Separate data from logic. An entity's properties and behaviors are defined in `Resource` files (`.tres`), while the scenes (`.tscn`) and scripts (`.gd`) are generic "containers" that interpret that data.
-- **Actor Creation:**
-    - **`base_actor.tscn`**: A generic `CharacterBody2D` scene that acts as a template for all living entities. It contains common components (`HealthComponent`, `StatsComponent`) but no specific logic.
-    - **`ActorData.gd`**: A custom `Resource` that defines an actor's stats (`max_hp`, `move_speed`) and, crucially, its **behaviors**.
-    - **`AIBehaviorData.gd`**: A custom `Resource` that defines a piece of AI logic (e.g., `WanderBehavior`, `ChasePlayerBehavior`). These are composable.
-    - **Workflow:** To create a new enemy, a designer creates a new `ActorData` `.tres` file, configures its stats, and populates its `behaviors` array with `AIBehaviorData` resources. The game then spawns a `base_actor.tscn` instance and assigns this new `.tres` file to it.
-- **Weapon Creation:**
-    - A similar pattern is used for weapons. `WeaponData.gd` is a `Resource` that defines everything about a weapon (damage, fire rate, visual appearance, projectile type, etc.). The `WeaponComponent` is a generic script that simply reads from a `WeaponData` resource to function.
+### 2.2. 组件化设计 (Component-Based Design)
+- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent` 和新的 `InkEnergyComponent`。
 
-### 3.2. Component-Based Design
-- **Scenes as Components:** We favor composition over deep inheritance. Game objects are built by composing smaller, reusable scenes (e.g., `HealthComponent.tscn`, `StatsComponent.tscn`).
-- **Scripts as Components:** The `Actor` script itself acts as a central "brain" component that coordinates the other components attached to it.
+### 2.3. 全局事件总线 (Global Event Bus)
+- **`EventBus` Autoload:** 继续作为解耦系统间通信的首选方案，用于广播 `skill_unlocked` 或 `pbl_project_completed` 等全局事件。
 
-### 3.3. Global Event Bus
-- **`EventBus` Autoload:** A global singleton used for communication between decoupled systems. This is preferred for game-wide events (e.g., `actor_died`, `quest_completed`) to avoid direct references between major systems like UI, Questing, and Actors.
+## 3. 版本控制 (Version Control)
+- **系统:** Git
+- **配置:** 必须正确配置 `.gitattributes` 以优化对 Godot 文本格式场景 (`.tscn`) 和资源 (`.tres`) 文件的处理。
 
-## 4. Version Control
-- **System:** Git
-- **Recommendation:** It is highly recommended to use a version control system like Git from the very beginning to track changes and collaborate effectively. We should configure it to handle Godot's text-based scene files (`.tscn`) and resources (`.tres`) properly.
+## 4. 离线优先的技术架构建议 (Offline-First Technical Architecture)
 
-## 5. Specific System Implementations
+### 4.1. 客户端 (Godot 4.x)
+- **职责:** 渲染、战斗逻辑、UI、PBL 编辑器交互、本地题库管理以及与本地评估服务的通信。
+- **存储:** 本地数据优先使用 SQLite 或结构化的 JSON 文件。
+- **PBL 沙盒模拟:** 利用 Godot 内置的物理引擎或编写专用的模拟模块，对 PBL 提交方案进行本地模拟，并返回关键性能指标（KPIs）。
 
-### 5.1. Physics Model for Entities
-- **Player/Enemies:** Implemented as `CharacterBody2D`. This provides direct control over movement via `velocity` and `move_and_slide()`, which is ideal for player and AI-controlled characters.
-- **Vehicles:** Implemented as `RigidBody2D`. This was a deliberate choice to solve collision issues where `CharacterBody2D` enemies could push the vehicle. `RigidBody2D` is only affected by physics forces, not by `move_and_slide()` from other bodies.
-- **Top-Down Physics:** For the top-down perspective, `RigidBody2D` vehicles have their `gravity_scale` set to `0` to prevent them from falling. Movement is controlled by applying forces (`apply_central_force`) and managing angular velocity for turning.
+### 4.2. 本地评估引擎 (Local Evaluation Engine)
+这是实现离线评估的关键。MVP（最小可行产品）阶段不依赖联网 LLM。
+- **架构:** 客户端-本地服务模式。Godot 客户端通过本地网络请求（HTTP）与一个在后台运行的 Python 服务进行通信。
+- **技术选型 (方案 A - 优先):**
+    - **打包一个独立的 Python 运行时:** 在游戏发行包中内嵌一个轻量级的 Python 环境。
+    - **集成 `SymPy` 库:** 将 SymPy 作为核心的符号计算库，用于处理数学题目的评估。
+    - **通信:** Godot 通过 `HTTPRequest` 节点向本地启动的轻量级 Web 服务（如使用 Flask 或 aiohttp）发送包含题目和答案的 JSON 数据。服务处理后返回评估结果。
+- **备选方案 (方案 B - 长期):**
+    - 为了更深度的集成和更小的打包体积，未来可以考虑用 C++ 或 Rust 重写一个轻量级的表达式解析和符号计算库，并通过 GDExtension 直接嵌入到 Godot 中。首个版本不采用此方案。
 
-### 5.2. Player-Vehicle Interaction
-- **State Management:** The player's state is managed via a `PlayerState` enum (`ON_FOOT`, `IN_VEHICLE`). This determines which logic block (`_handle_on_foot_logic` or `_handle_in_vehicle_logic`) is executed in `_physics_process`.
-- **Control Transfer:** When a player enters a vehicle, control is transferred to the vehicle. The player's `_physics_process` continues to run, but its primary role becomes synchronizing its position with the vehicle (`global_position = current_vehicle.global_position`) and handling passive logic (like basal metabolism). The player's visuals and physical collision shapes are disabled.
-- **Camera Control:** Camera control is also transferred. The player's `Camera2D` is disabled, and the vehicle's `Camera2D` is enabled.
-
-### 5.3. Physics Layers
-The project uses specific physics layers to manage collisions:
-- **Layer 1 (Default):** General purpose, currently unused for specific game elements.
-- **Layer 2 (Actors):** Used for the Player and Enemies.
-- **Layer 3 (World):** Used for static world geometry like walls and obstacles.
-- **Layer 4 (Unused):** Reserved for future use.
-- **Layer 5 (Vehicles):** Used for all vehicle bodies.
-- **Layer 6 (Interaction):** Used for `Area2D` nodes that detect interaction ranges (e.g., entering a vehicle).
-
-**Collision Matrix:**
-- **Player (Layer 2):** Collides with Layer 3 (World). Does not collide with Vehicles.
-- **Vehicle (Layer 5):** Collides with Layer 3 (World). Does not collide with Players or Enemies.
-- **Vehicle InteractionArea (Layer 6):** Scans for Layer 2 (Actors) to enable interaction prompts.
-
-### 5.4. Vehicle Controls
-Vehicles use a `RigidBody2D` with a custom script for tank-style controls.
-- **Movement:** Force is applied based on `Vector2.UP` as the forward direction.
-- **Turning:** Angular velocity is applied for turning.
-  - Turning is only possible when the vehicle is moving forward or backward.
-  - When reversing, the steering controls are inverted for realistic behavior.
-- **Camera:** The vehicle's camera is configured to not rotate with the vehicle, providing a fixed world-view orientation.
-- **Rendering:** The player (`z_index = 20`) is always rendered on top of the vehicle (`z_index = 10`).
+### 4.3. 物理系统与交互 (Physics & Interaction)
+- **实体类型:** 所有动态实体（玩家、敌人）统一使用 `CharacterBody2D`，因为它提供了对移动和碰撞的精确控制，非常适合 ARPG 的操作手感。
+- **物理层:** 将继续使用物理层来区分不同类型的交互（如角色、世界、伤害判定区），以确保碰撞检测的准确性和效率。旧的“Vehicle”相关物理层将被重新评估或移除。

@@ -1,20 +1,23 @@
-# Project Brief: Godot ARPG
+# Project Brief: 《执笔问道录》 (The Scribe's Odyssey)
 
-## Core Request
-The user wants to develop an Action RPG (ARPG) using the Godot game engine. The primary focus is on creating a robust and scalable architecture with an emphasis on strong code organization and high reusability.
+## 核心请求 (Core Request)
+用户希望开发一款教育性动作角色扮演游戏（ARPG），项目名为《执笔问道录》。游戏的核心是将“学习过程”与“游戏体验”深度融合，旨在创造一个既有趣又能有效提升学习效果的数字产品。
 
-## Key Goals
-- **Game Genre:** Action RPG (ARPG) with a strong educational focus on Biology.
-- **Engine:** Godot 4.x
-- **Architectural Requirements:**
-    - **Scalable & Data-Driven:** The architecture must support the addition of new content (enemies, items, weapons) primarily through the creation of data resources (`.tres` files), minimizing the need for new code or scenes.
-    - **Organized:** The project structure follows a feature-first approach, with clear separation between data, components, and features.
-    - **Reusable & Composable:** Core functionality is built into reusable components (e.g., `HealthComponent`). Entities are built by composing these components and are defined by data, rather than through deep inheritance hierarchies.
+## 关键目标 (Key Goals)
+- **游戏类型:** 教育性动作角色扮演游戏（ARPG），结合了深度学习系统和基于项目的学习（PBL）。
+- **目标用户:** 以 K-12 学生（首发小学数学）及其家长、教师为主。长期目标是扩展到更广泛的学科和年龄段。
+- **核心愿景:** 帮助学生从“会做题”提升到“知其所以然”。通过游戏化的战斗和PBL项目，强化“学-练-考-悟”的闭环学习体验。
+- **引擎:** Godot 4.x
+- **架构要求:**
+    - **可扩展与数据驱动:** 架构必须支持通过创建数据资源（`.tres` 文件）轻松添加新内容（如新知识点、题目、技能），最大程度地减少硬编码。
+    - **结构清晰:** 项目结构遵循功能优先的原则，明确分离数据、组件和功能模块。
+    - **可复用与组合:** 核心功能被构建为可复用的组件。游戏中的实体（如技能、敌人）通过组合这些组件来定义，而非依赖复杂的继承关系。
 
-## Initial Scope & Technical Approach
-The initial task is to build a robust architectural foundation for the ARPG. The chosen approach is a **Data-Driven, Component-Based Architecture**.
-- **Data Layer:** `Resource` files define all game entities.
-- **Logic Layer:** Generic scripts and components interpret and act upon the data.
-- **Scene Layer:** Scenes act as generic containers for components.
+## 技术与实现初步构想 (Initial Scope & Technical Approach)
+项目将基于一个强大的**数据驱动、组件化架构**来构建。
+- **数据层 (Data Layer):** 使用 `Resource` 文件定义所有游戏实体，包括知识点、题目、技能（书魂印）和敌人。
+- **逻辑层 (Logic Layer):** 通用脚本和组件负责解释并执行数据层定义的内容。
+- **场景层 (Scene Layer):** 场景作为承载组件的通用容器。
+- **离线优先评估 (Offline-First Evaluation):** 游戏的核心评估机制将优先在本地实现，通过内置的符号计算或规则引擎来判断答案的正确性，以确保核心玩法不依赖网络连接。
 
-This approach ensures that the key goals of scalability, organization, and reusability are met from the ground up.
+此方法旨在从一开始就确保项目的可扩展性、组织性和可复用性，为实现宏大的教育愿景奠定坚实的基础。

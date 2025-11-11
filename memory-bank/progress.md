@@ -1,137 +1,66 @@
-# Progress Tracker
+# Progress Tracker: 《执笔问道录》
 
-## Phase 1: Core Architecture & Setup (Complete)
+## 新起点：项目转型 (Project Pivot)
+项目已于2025年11月完成重大设计转型，从原有的生物学科ARPG概念转向以K-12教育为核心的《执笔问道录》。以下是新的开发进度追踪。原有的开发进度已归档，其技术积累（特别是数据驱动架构）将作为新项目的基础。
 
-- [x] Design and implement a feature-first project structure.
-- [x] Create a global event bus for decoupled communication.
-- [x] Implement a data-driven actor system with `ActorData` resources.
-- [x] Create base components for `Health` and `Stats`.
-- [x] Build a base `Actor` scene and script.
-- [x] Create `Player` and `Goblin` actors inheriting from the base actor.
-- [x] Implement a main game scene (`main.tscn`).
-- [x] Implement a main menu (`main_menu.tscn`) with navigation.
-- [x] Implement a character creation screen (`character_creation.tscn`).
-- [x] Implement a basic in-game HUD (`hud.tscn`) to display player info.
-- [x] Implement a pausable in-game system menu (`system_menu.tscn`).
-- [x] Debug and resolve all startup crashes and input handling issues.
+---
 
-## Phase 2: Save/Load System (Complete)
+## 长期规划与开发优先级 (Long-Term Planning & Priorities)
+- **开发优先级:** 游戏体验 > 做题功能 > AI增强 > 后台云服务
+    - 1. **游戏体验:** 首先实现可玩的战斗-答题循环原型，优先保证核心玩法的流畅性和乐趣。
+    - 2. **做题功能:** 在游戏循环跑通后，逐步完善题目评估系统，先用简单的字符串匹配，后续再集成离线评估引擎（Python+SymPy）。
+    - 3. **AI增强:** 基础AI（敌人移动/攻击）属于游戏范畴，题目生成/智能评估等高级AI为远期目标。
+    - 4. **后台云服务:** 所有云端功能（如数据同步、在线PBL分享等）在单机体验完善后再考虑。
 
-- [x] Design a save/load manager.
-- [x] Implement logic to save player data (name, position, stats).
-- [x] Implement logic to load player data.
-- [x] Integrate save/load functionality with the UI (e.g., "Continue" button).
-- [x] Implement multi-slot save/load functionality.
-- [x] Add "Quit to Menu" and "Quit to Desktop" options.
-- [x] Change system menu to be full-screen.
-- [x] Debug and resolve all scene hierarchy and loading issues.
+- **实施策略:** 先用“假判断”快速实现“真循环”，即先用简单判断实现战斗-答题流程，待核心体验稳定后再完善评估引擎。
 
-## Phase 3: World & Map System (Complete)
+---
 
-- [x] Debugged and fixed complex collision and AI behavior issues.
-- [x] Resolved node initialization order and group lookup timing problems.
-- [x] Designed a chunk-based dynamic map loading system.
-- [x] Created a `TileSet` resource from image assets.
-- [x] Implemented a `MapManager` singleton to handle loading map chunks.
-- [x] Integrated the `MapManager` to load the initial map chunk based on player position.
+## Phase 1: 《执笔问道录》 - 核心原型开发 (In Progress)
 
-## Phase 4: Core Gameplay & Biology Systems (Complete)
+此阶段的目标是验证新设计的核心技术和玩法循环是否可行。
 
-- [x] **Implement Glucose-ATP System:**
-    - [x] Refactor `ActorData` to include new biological stats (`max_hp`, `max_atp`, etc.).
-    - [x] Create `ATPComponent` to manage ATP logic with float precision.
-    - [x] Implement dynamic glucose consumption based on ATP demand.
-    - [x] Update HUD to display real-time Glucose and ATP values.
-    - [x] Implement biological energy conversion system (glucose → ATP).
-    - [x] Add basal metabolic rate for basic cellular maintenance.
-- [x] **Implement Sprint System:**
-    - [x] Add sprint functionality with Shift key input.
-    - [x] Implement speed boost during sprinting (1.8x multiplier).
-    - [x] Create tiered ATP consumption: Rest (2/sec) → Walking (5/sec) → Sprinting (11/sec).
-    - [x] Integrate sprint mechanics with glucose-ATP metabolism.
-- [x] **Refine Biological Accuracy:**
-    - [x] Implement demand-driven glucose consumption (only when ATP < max).
-    - [x] Balance ATP recovery rate to match consumption rate exactly.
-    - [x] Create realistic energy management system with resource pressure.
+- [ ] **搭建原型 - 离线评估引擎:**
+    - [ ] 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
+    - [ ] **目标:** 验证 Godot 能通过本地 HTTP 请求将数学题发送给 Python 脚本，脚本使用 SymPy 判断答案后将结果返回 Godot。**(最高优先级，需最先验证)**
+- [ ] **定义核心数据结构:**
+    - [ ] 在 Godot 中创建 `QuestionData.gd` 和 `BookSoulSealData.gd` 的 `Resource` 脚本。
+    - [ ] **目标:** 定义这些核心数据结构的具体字段，为后续系统开发提供数据基础。
+- [ ] **实现战斗-答题循环原型:**
+    - [ ] 创建一个基础的“乱墨妖”敌人，当其生命值降低到阈值时，触发答题界面。
+    - [ ] **目标:** 验证“战斗”与“答题”两个状态之间的切换流程。
+- [ ] **重构/清理旧代码:**
+    - [ ] 识别并逐步移除与旧载具系统和葡萄糖资源相关的代码和资源文件。
+    - [ ] **目标:** 保持代码库的整洁，移除不再需要的历史包袱。
 
-## Phase 5: Enhanced Gameplay Systems (Complete)
+---
 
-- [x] **Implement Player-Vehicle System:**
-    - [x] Create a base `Vehicle` scene.
-    - [x] Implement logic for player to enter/exit vehicle.
-    - [x] Separate player and vehicle stats and controls.
-    - [x] Implement `RigidBody2D` physics for the vehicle for realistic collisions.
-    - [x] Implement tank-style controls (forward/backward movement, realistic reverse steering).
-    - [x] Simplify exit mechanism by removing collisions between player and vehicle.
-    - [x] Ensure AI correctly tracks the player inside the vehicle.
-    - [x] Implement comprehensive HUD integration for real-time vehicle status display.
-- [x] **Implement Core Combat Loop:**
-    - [x] Implement secondary weapon combo system with asynchronous, rhythmic firing.
-    - [x] Implement main weapon charging system.
-    - [x] Fix weapon data duplication bug for multiple secondary weapons.
-    - [x] Implement a centralized weapon effect system for vehicles.
-    - [x] Implement projectile system using `Area2D` for non-physical collision.
-    - [x] Implement dynamic, animated damage numbers on actors.
-    - [x] Implement projectile hit effects (explosions).
-    - [x] Implement a generic actor death sequence (animation and cleanup).
+## 已归档的前期架构探索 (Archived: "Legends of Uncharted Life" Prototype)
 
-## Phase 6: Data-Driven Architecture Refactor (Complete)
+以下是项目转型前已完成的工作。这些工作为当前项目奠定了坚实的数据驱动架构基础。
 
-- [x] **Data-Driven Weapon System:**
-    - [x] Refactored `WeaponData` to include all visual and behavioral properties (texture, offset, scale, bullet type, etc.).
-    - [x] `WeaponComponent` now purely reads data from the `WeaponData` resource to configure itself.
-    - [x] Fixed resource duplication issues to ensure weapon stats load correctly.
-- [x] **Data-Driven Health System:**
-    - [x] Removed hard-coded `max_health` from `HealthComponent`.
-    - [x] `Actor` now sets its `HealthComponent`'s max health from `ActorData` on initialization.
-- [x] **Data-Driven AI System:**
-    - [x] Created a generic `AIBehaviorData` resource system.
-    - [x] Implemented specific, reusable behaviors like `WanderBehavior` and `ChasePlayerBehavior` as resources.
-    - [x] Refactored `ActorData` to include an array of `AIBehaviorData` resources.
-    - [x] Refactored the base `Actor` script to execute behaviors from its data, removing all hard-coded AI logic.
-    - [x] Cleaned up the old `goblin.gd` script and `goblin.tscn` scene to use the new data-driven approach.
-- [x] **Achieved "Resource-Only" Entity Creation:**
-    - [x] The system now supports creating new enemies by simply creating a new `ActorData` `.tres` file and composing behaviors, without writing new code or creating new scenes.
-    - [x] Fixed collision issues with dynamically spawned actors by ensuring `base_actor.tscn` has a default, valid `CollisionShape2D`.
+- **Phase 1: Core Architecture & Setup (Complete)**
+    - [x] Designed and implemented a feature-first project structure.
+    - [x] Created a global event bus for decoupled communication.
+    - [x] Implemented a data-driven actor system with `ActorData` resources.
+    - [x] Created base components for `Health` and `Stats`.
+    - [x] Built a base `Actor` scene and script.
+    - [x] Implemented a main game scene, main menu, character creation, HUD, and system menu.
 
-## Phase 7: Next Steps (In Progress)
+- **Phase 2: Save/Load System (Complete)**
+    - [x] Designed and implemented a multi-slot save/load manager.
 
-- [ ] **目录结构与资源引用规范化：**
-    - [x] 目录结构已完成梳理与规范化，所有资源、组件、功能模块分层清晰。
-    - [x] WorldData资源类型已引入，地图区块场景引用已实现数据驱动，消除硬编码路径。
-    - [ ] 持续推进所有资源、场景、数据的Inspector导出变量引用，彻底消除硬编码路径。
-- [ ] **Implement "Just Frame" mechanic.**
-- [ ] **Implement Virtual Lab (First Pass):**
-    - [ ] Create the basic UI for the lab.
-    - [ ] Implement the "Virtual Microscope" feature for viewing item details.
-- [ ] **Advanced Energy Systems:**
-    - [ ] Implement Hemo-Energy and Entropy Energy systems.
-    - [ ] Create skill-based energy consumption mechanics.
-    - [ ] Add environmental factors affecting metabolism.
+- **Phase 3: World & Map System (Complete)**
+    - [x] Designed and implemented a chunk-based dynamic map loading system.
 
-## Key Achievements Summary
+- **Phase 4: Core Gameplay & Biology Systems (Complete)**
+    - [x] Implemented a complete Glucose-ATP energy management system.
+    - [x] Implemented a sprint system with tiered energy consumption.
 
-### Biological Systems Foundation ✅
-The game now has a complete, scientifically-grounded energy management system:
-- **Glucose as Universal Resource**: Serves as both currency and energy source
-- **ATP as Action Energy**: Required for all player activities with realistic consumption rates  
-- **Demand-Driven Metabolism**: Glucose consumption matches actual energy needs
-- **Activity-Responsive System**: Energy costs scale realistically with activity intensity
+- **Phase 5: Enhanced Gameplay Systems (Complete)**
+    - [x] Implemented a full Player-Vehicle system with `RigidBody2D` physics.
+    - [x] Implemented a core combat loop with combo/charging mechanics and visual feedback.
 
-### Core Gameplay Mechanics ✅  
-- **Multi-tiered Movement System**: Walk and sprint with appropriate energy costs
-- **Real-time Resource Management**: Live glucose and ATP tracking via HUD
-- **Biological Accuracy**: System reflects real cellular energy processes
-- **Strategic Depth**: Players must balance speed vs energy conservation
-- **Vehicle System**: Robust vehicle implementation with `RigidBody2D` physics, tank-style controls, and a simplified enter/exit mechanism based on a non-collision design.
-- **Combat Visuals & Feedback**: A rich and responsive combat experience with animated damage numbers, projectile hit effects, and a unified weapon effect system.
-- **Actor Lifecycle**: A complete lifecycle for actors, including a generic death sequence with animation and cleanup.
-
-### Technical Excellence ✅
-- **Combat/Weapon/AI Unified & Reusable**: All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components (`CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`). This enables any entity to perform attacks, and all logic is reusable and extensible.
-- **Data-Driven Architecture**: Core entities like enemies and weapons are now defined almost entirely by `Resource` files, enabling rapid content creation and iteration without new code.
-- **Component-Based Design**: Logic is encapsulated in reusable components (`HealthComponent`, `StatsComponent`) and composable behaviors (`WanderBehavior`, `ChasePlayerBehavior`).
-- **Float Precision Energy**: Accurate per-frame energy calculations.
-- **Asynchronous Logic**: Use of `await` for timed, non-blocking actions like rhythmic combo firing.
-- **Advanced Physics Handling**: Solved complex `RigidBody2D` interaction issues by using physics layers to prevent collisions between players and vehicles.
-- **目录结构与资源引用规范化**：所有核心资源（如地图区块、武器、组件等）已按功能和用途分层，WorldData等资源型引用已替代硬编码路径，资源引用逐步数据驱动化。
+- **Phase 6: Data-Driven Architecture Refactor (Complete)**
+    - [x] Fully refactored weapon, health, and AI systems to be data-driven.
+    - [x] Achieved "Resource-Only" entity creation, allowing designers to create new enemies by editing `.tres` files without writing code.
