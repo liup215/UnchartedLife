@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://7rcsyrqgfrjk"]
+[gd_scene load_steps=10 format=3 uid="uid://7rcsyrqgfrjk"]
 
 [ext_resource type="Script" uid="uid://qhuvoa0s7ean" path="res://systems/main_game_manager.gd" id="1_choun"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="2_ya4ey"]
 [ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="3_eb6dy"]
 [ext_resource type="PackedScene" uid="uid://e5dy5ow2xsdx" path="res://features/vehicle/base_vehicle.tscn" id="4_trceg"]
 [ext_resource type="Resource" uid="uid://cdbxd4u1pa2lh" path="res://data/vehicles/basic_tank_data.tres" id="5_a8y0u"]
-[ext_resource type="PackedScene" uid="uid://d3e4f5g6h7i8j" path="res://features/actor/base_actor.tscn" id="6_jkv2x"]
 [ext_resource type="Resource" uid="uid://duveh6r1rbdni" path="res://data/actors/enemies/head_cutter/goblin_data.tres" id="7_jbj1t"]
 [ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="8_muem4"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="9_dp3eg"]
@@ -20,12 +19,6 @@ actor_data = ExtResource("3_eb6dy")
 
 [node name="Vehicle" parent="." instance=ExtResource("4_trceg")]
 vehicle_data = ExtResource("5_a8y0u")
-
-[node name="Goblin2" parent="." instance=ExtResource("6_jkv2x")]
-position = Vector2(387, 22)
-collision_layer = 4
-collision_mask = 23
-actor_data = ExtResource("7_jbj1t")
 
 [node name="HUD" parent="." instance=ExtResource("8_muem4")]
 
