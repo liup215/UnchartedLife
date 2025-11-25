@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqqvgymk8llub"]
+
+[ext_resource type="Script" uid="uid://cm76jo3t67p7r" path="res://ui/backpack/backpack_ui.gd" id="1_rvkhq"]
+
+[node name="Backpack" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_rvkhq")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_right = 404.0
+offset_bottom = 727.0
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+columns = 5

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmv6b42cuumyl"]
+
+[ext_resource type="Script" uid="uid://cffejeugj1k4k" path="res://tests/backpack_test.gd" id="1_5rxtm"]
+
+[node name="BackpackTest" type="Node2D"]
+script = ExtResource("1_5rxtm")

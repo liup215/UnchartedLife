@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://jv5gj7mh6jao"]
+
+[ext_resource type="Script" uid="uid://cuyip1vd045pj" path="res://ui/backpack/item_slot.gd" id="1_xraox"]
+
+[node name="ItemSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(64, 64)
+offset_right = 64.0
+offset_bottom = 64.0
+script = ExtResource("1_xraox")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="QuantityLabel" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.9166399, 0.91663986, 0.9166398, 1)
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="SelectionBorder" type="Panel" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+mouse_filter = 2
