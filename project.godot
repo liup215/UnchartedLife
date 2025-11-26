@@ -13,7 +13,7 @@ name="UnchartedLife"
 [application]
 
 config/name="UnchartedLife"
-run/main_scene="res://ui/main_menu/main_menu.tscn"
+run/main_scene="uid://6x6cte2n87sn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
@@ -26,10 +26,9 @@ InventoryManager="*res://systems/inventory_manager.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
-window/size/mode=3
-window/stretch/mode="viewport"
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
 
 [groups]
 

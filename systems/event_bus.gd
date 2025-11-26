@@ -16,6 +16,14 @@ signal actor_died(actor: Node)
 # Carries the ItemData resource and the quantity.
 signal inventory_item_added(item_data: ItemData, quantity: int)
 
+# Signal emitted when a weapon requests a quiz reload.
+# Carries the WeaponData resource.
+signal request_quiz_reload(weapon_data: Resource)
+
+# Signal emitted when a quiz is completed.
+# Carries whether the quiz was answered correctly.
+signal quiz_completed(success: bool)
+
 # Add other global signals here as the game grows.
 # For example:
 # signal quest_started(quest_id: String)

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="QuestionData" load_steps=2 format=3 uid="uid://q3enzyme"]
+
+[ext_resource type="Script" path="res://data/definitions/bio_blitz/question_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+question_text = "If you boil an enzyme, it stops working because:"
+options = Array[String](["It runs out of energy", "It becomes denatured", "It replicates too fast", "It turns into a lipid"])
+correct_option_index = 1

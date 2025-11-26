@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="QuestionData" load_steps=2 format=3 uid="uid://q1mitochondria"]
+
+[ext_resource type="Script" path="res://data/definitions/bio_blitz/question_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+question_text = "What is the powerhouse of the cell?"
+options = Array[String](["Nucleus", "Mitochondria", "Ribosome", "Golgi Apparatus"])
+correct_option_index = 1
+type = 0

@@ -17,16 +17,16 @@ signal charge_updated(charge_level: int)
 signal ammo_updated(current_ammo: int)
 
 func _ready():
-	pass # Defer setup until weapon_data is assigned
+	EventBus.quiz_completed.connect(_on_quiz_completed)
 
 func setup_weapon():
 	if weapon_data:
 		current_ammo = weapon_data.ammo_capacity
-		if has_node("Sprite2D"):
-			var sprite = get_node("Sprite2D")
-			if weapon_data.weapon_texture:
-				sprite.texture = weapon_data.weapon_texture
-				sprite.offset = weapon_data.weapon_offset
+	if has_node("Sprite2D"):
+		var sprite = get_node("Sprite2D")
+		if weapon_data.weapon_texture:
+			sprite.texture = weapon_data.weapon_texture
+			sprite.offset = weapon_data.weapon_offset
 
 func start_charging():
 	if not weapon_data or is_charging:
@@ -50,7 +50,10 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	var origin_pos = global_position
 
 	if weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
-		if current_charge <= 0 or current_ammo <= 0:
+		if current_charge <= 0:
+			return
+		if current_ammo <= 0:
+			reload()
 			return
 		# Consume ammo
 		current_ammo -= 1
@@ -60,6 +63,15 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# Reset charge
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
+	elif weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
+		if current_ammo <= 0:
+			reload()
+			return
+		# Consume ammo
+		current_ammo -= 1
+		emit_signal("ammo_updated", current_ammo)
+		# Emit fire signal
+		emit_signal("weapon_fired", weapon_data, 1)
 	else: # SUB_WEAPON
 		# 副炮发射子弹
 		emit_signal("weapon_fired", weapon_data, 1)
@@ -112,5 +124,13 @@ func get_atp_cost() -> float:
 func reload():
 	if not weapon_data:
 		return
-	current_ammo = weapon_data.ammo_capacity
-	emit_signal("ammo_updated", current_ammo)
+
+	if weapon_data.requires_quiz_reload:
+		EventBus.request_quiz_reload.emit(weapon_data)
+	else:
+		current_ammo = weapon_data.ammo_capacity
+		emit_signal("ammo_updated", current_ammo)
+
+func _on_quiz_completed(success: bool):
+	if success and weapon_data and weapon_data.requires_quiz_reload:
+		current_ammo = weapon_data.ammo_capacity

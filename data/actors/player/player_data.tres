@@ -17,15 +17,5 @@
 [resource]
 script = ExtResource("11_5tary")
 animations = Array[ExtResource("1_l843g")]([ExtResource("2_4g83l"), ExtResource("3_ypxst"), ExtResource("4_vii1t"), ExtResource("5_mpckl"), ExtResource("6_yneg8"), ExtResource("7_o20qb"), ExtResource("8_le1ne"), ExtResource("9_lx2hi")])
-max_hp = 100
 collision_radius = 20.0
-base_metabolic_rate = 0.1
-neural_response_speed = 1.0
-muscle_coordination = 1.0
-move_speed = 250.0
 weapons = Array[ExtResource("12_x15il")]([ExtResource("13_6gfm2")])
-behaviors = Array[ExtResource("10_vb323")]([])
-max_atp = 100
-atp_conversion_rate = 5.0
-hemo_energy_capacity = 100
-entropy_energy_threshold = 100

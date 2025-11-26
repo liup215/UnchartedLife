@@ -1,0 +1,86 @@
+[gd_scene load_steps=7 format=3 uid="uid://d07vmasrms20q"]
+
+[ext_resource type="Script" uid="uid://bamny4p2flo46" path="res://features/bio_blitz/bio_blitz_manager.gd" id="1_manager"]
+[ext_resource type="Resource" uid="uid://bossdemo" path="res://data/questions/bio_blitz_demo/boss_demo.tres" id="2_boss"]
+[ext_resource type="Texture2D" uid="uid://2qenrjgf2xok" path="res://assets/effects/background/battle_bg.jpg" id="3_bg"]
+[ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="4_player"]
+[ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="4_ryk8j"]
+[ext_resource type="PackedScene" path="res://features/enemy/boss.tscn" id="5_boss"]
+
+[node name="BioBlitzBattle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_manager")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_bg")
+expand_mode = 1
+
+[node name="BackgroundDimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.8560673, 0.8560673, 0.85606724, 0.8745098)
+
+[node name="GameWorld" type="Node2D" parent="."]
+
+[node name="Player" parent="GameWorld" instance=ExtResource("4_player")]
+position = Vector2(300, 540)
+actor_data = ExtResource("4_ryk8j")
+
+[node name="Boss" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(1600, 540)
+actor_data = ExtResource("2_boss")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="QuizPanel" type="PanelContainer" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="HUD/QuizPanel"]
+layout_mode = 2
+
+[node name="QuestionLabel" type="Label" parent="HUD/QuizPanel/VBox"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Question Text Goes Here..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="OptionsGrid" type="GridContainer" parent="HUD/QuizPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ExitButton" type="Button" parent="HUD"]
+offset_left = 20.0
+offset_top = 30.0
+offset_right = 120.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 24
+text = "Exit"

@@ -1,0 +1,981 @@
+[
+  {
+    "text": "Which of the following processes requires energy in living organisms?",
+    "options": [
+      "Active transport",
+      "Facilitated diffusion",
+      "Simple diffusion",
+      "Osmosis"
+    ],
+    "correct_index": 0,
+    "type": "CONCEPT"
+  },
+  {
+    "text": "What is an example of mechanical work in cells that requires energy?",
+    "options": [
+      "Muscle contraction",
+      "DNA replication",
+      "Protein synthesis",
+      "Glycolysis"
+    ],
+    "correct_index": 0,
+    "type": "EXAMPLE"
+  },
+  {
+    "text": "Which of the following is an example of an anabolic reaction?",
+    "options": [
+      "DNA replication",
+      "Glycolysis",
+      "Krebs cycle",
+      "Oxidative phosphorylation"
+    ],
+    "correct_index": 0,
+    "type": "EXAMPLE"
+  },
+  {
+    "text": "Why is ATP suitable as the universal energy currency?",
+    "options": [
+      "It is water soluble and easily transported",
+      "It is insoluble in water",
+      "It releases a large amount of energy slowly",
+      "It cannot be regenerated"
+    ],
+    "correct_index": 0,
+    "type": "PROPERTY"
+  },
+  {
+    "text": "How much energy is released when ATP is hydrolysed to ADP + Pi?",
+    "options": [
+      "30.5 kJ/mol",
+      "15.2 kJ/mol",
+      "50.0 kJ/mol",
+      "2.5 kJ/mol"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "Which type of phosphorylation occurs in the electron transport chain?",
+    "options": [
+      "Oxidative phosphorylation",
+      "Substrate-level phosphorylation",
+      "Photophosphorylation",
+      "Glycolytic phosphorylation"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Where does glycolysis occur in eukaryotic cells?",
+    "options": [
+      "Cytoplasm",
+      "Mitochondrial matrix",
+      "Inner mitochondrial membrane",
+      "Nucleus"
+    ],
+    "correct_index": 0,
+    "type": "LOCATION"
+  },
+  {
+    "text": "What is the net ATP production in glycolysis per molecule of glucose?",
+    "options": [
+      "2 ATP",
+      "4 ATP",
+      "30 ATP",
+      "32 ATP"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "What happens to pyruvate in the link reaction?",
+    "options": [
+      "It is decarboxylated and dehydrogenated",
+      "It is phosphorylated",
+      "It is reduced",
+      "It is converted to glucose"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the final electron acceptor in the electron transport chain?",
+    "options": [
+      "Oxygen",
+      "NAD",
+      "FAD",
+      "Water"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the role of NAD and FAD in aerobic respiration?",
+    "options": [
+      "Hydrogen/electron carriers",
+      "Energy storage molecules",
+      "Enzymes",
+      "Structural components"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the function of the cristae in mitochondria?",
+    "options": [
+      "To increase surface area for the electron transport chain",
+      "To store DNA",
+      "To synthesize lipids",
+      "To break down glucose"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What are the products of anaerobic respiration in yeast?",
+    "options": [
+      "Ethanol and carbon dioxide",
+      "Lactate",
+      "Water and carbon dioxide",
+      "Pyruvate"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "How is the Respiratory Quotient (RQ) defined?",
+    "options": [
+      "Ratio of CO2 produced to O2 consumed",
+      "Ratio of O2 consumed to CO2 produced",
+      "Ratio of ATP produced to O2 consumed",
+      "Ratio of glucose consumed to ATP produced"
+    ],
+    "correct_index": 0,
+    "type": "DEFINITION"
+  },
+  {
+    "text": "Why do lipids have a higher energy value than carbohydrates?",
+    "options": [
+      "They have more C-H bonds",
+      "They are more soluble in water",
+      "They contain more oxygen",
+      "They are easier to break down"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "What is the role of oxygen in aerobic respiration?",
+    "options": [
+      "It acts as the final electron acceptor",
+      "It is used in glycolysis",
+      "It is a coenzyme for the Krebs cycle",
+      "It transports ATP out of the mitochondrion"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Which molecule enters the Krebs cycle?",
+    "options": [
+      "Acetyl CoA",
+      "Pyruvate",
+      "Glucose",
+      "Lactate"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Where does the Krebs cycle take place?",
+    "options": [
+      "Mitochondrial matrix",
+      "Cytoplasm",
+      "Inner mitochondrial membrane",
+      "Intermembrane space"
+    ],
+    "correct_index": 0,
+    "type": "LOCATION"
+  },
+  {
+    "text": "What is the effect of Rotenone on the mitochondrion?",
+    "options": [
+      "It inhibits electron transfer in the ETC",
+      "It uncouples oxidative phosphorylation",
+      "It inhibits glycolysis",
+      "It blocks the entry of pyruvate"
+    ],
+    "correct_index": 0,
+    "type": "EFFECT"
+  },
+  {
+    "text": "Why is the actual net ATP yield often less than the theoretical yield?",
+    "options": [
+      "Protons leak across the membrane",
+      "Glycolysis is inefficient",
+      "Oxygen is not always available",
+      "ATP is unstable"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "What is produced during anaerobic respiration in mammalian cells?",
+    "options": [
+      "Lactate",
+      "Ethanol",
+      "Carbon dioxide",
+      "Acetyl CoA"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Which substance is used to absorb carbon dioxide in a respirometer?",
+    "options": [
+      "Soda lime / KOH",
+      "Water",
+      "Glucose solution",
+      "Ethanol"
+    ],
+    "correct_index": 0,
+    "type": "METHOD"
+  },
+  {
+    "text": "What adaptation allows rice to grow in submerged conditions?",
+    "options": [
+      "Aerenchyma tissue",
+      "Deep roots",
+      "Thick cuticle",
+      "High rate of transpiration"
+    ],
+    "correct_index": 0,
+    "type": "ADAPTATION"
+  },
+  {
+    "text": "What is the function of ATP synthase?",
+    "options": [
+      "To produce ATP from ADP and Pi using a proton gradient",
+      "To pump protons into the intermembrane space",
+      "To transport electrons",
+      "To break down glucose"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Which stage of respiration produces the most ATP?",
+    "options": [
+      "Oxidative phosphorylation",
+      "Glycolysis",
+      "Link reaction",
+      "Krebs cycle"
+    ],
+    "correct_index": 0,
+    "type": "COMPARISON"
+  },
+  {
+    "text": "What is the specific role of lactate dehydrogenase in mammalian anaerobic respiration?",
+    "options": [
+      "Converts pyruvate to lactate",
+      "Converts lactate to pyruvate",
+      "Converts glucose to pyruvate",
+      "Converts ethanol to ethanal"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Which intermediate compound is formed when oxaloacetate accepts an acetyl group?",
+    "options": [
+      "Citrate",
+      "Pyruvate",
+      "Malate",
+      "Succinate"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the precise location of the electron transport chain?",
+    "options": [
+      "Inner mitochondrial membrane",
+      "Outer mitochondrial membrane",
+      "Matrix",
+      "Intermembrane space"
+    ],
+    "correct_index": 0,
+    "type": "LOCATION"
+  },
+  {
+    "text": "During oxidative phosphorylation, where are protons pumped to?",
+    "options": [
+      "Intermembrane space",
+      "Matrix",
+      "Cytoplasm",
+      "Stroma"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the function of the 'stalked particles' on the inner mitochondrial membrane?",
+    "options": [
+      "ATP synthesis",
+      "Electron transport",
+      "Proton pumping",
+      "Lipid synthesis"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "In yeast anaerobic respiration, pyruvate is first converted to which molecule?",
+    "options": [
+      "Ethanal",
+      "Ethanol",
+      "Lactate",
+      "Acetyl CoA"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Which enzyme is responsible for converting pyruvate to ethanal in yeast?",
+    "options": [
+      "Pyruvate decarboxylase",
+      "Lactate dehydrogenase",
+      "Ethanol dehydrogenase",
+      "ATP synthase"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Which of the following is the correct spelling for the process of ATP production using a proton gradient?",
+    "options": [
+      "Chemiosmosis",
+      "Chemi-osmosis",
+      "Chemoosmosis",
+      "Chemeosmosis"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Identify the correct spelling of the organelle where aerobic respiration occurs.",
+    "options": [
+      "Mitochondrion",
+      "Mitocondrion",
+      "Mitochondrian",
+      "Mitrochondrion"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "What is the correct term for the removal of a carboxyl group?",
+    "options": [
+      "Decarboxylation",
+      "Decarboxillation",
+      "De-carboxylation",
+      "Decarboxelation"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "How many ATP molecules are used to phosphorylate glucose in the initial stages of glycolysis?",
+    "options": [
+      "2",
+      "4",
+      "1",
+      "32"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "Why does the inner membrane of a mitochondrion remain intact in pure water?",
+    "options": [
+      "It is relatively impermeable to water",
+      "It is actively pumping water out",
+      "It has a rigid cell wall",
+      "It is permeable to protons"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "What is the immediate product of the lysis of fructose 1,6-bisphosphate?",
+    "options": [
+      "Triose phosphate",
+      "Pyruvate",
+      "Glucose phosphate",
+      "Acetyl CoA"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Identify the correct spelling for the addition of a phosphate group.",
+    "options": [
+      "Phosphorylation",
+      "Phosporylation",
+      "Phosphorilation",
+      "Phosforylation"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Identify the correct spelling for the first stage of respiration.",
+    "options": [
+      "Glycolysis",
+      "Glicolysis",
+      "Glycolisis",
+      "Glucolysis"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Identify the correct spelling for the removal of hydrogen.",
+    "options": [
+      "Dehydrogenation",
+      "Dehidrogenation",
+      "Dehydrogennation",
+      "De-hydrogenation"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "What is the first step in glycolysis?",
+    "options": [
+      "Phosphorylation of glucose",
+      "Lysis of glucose",
+      "Oxidation of triose phosphate",
+      "Production of ATP"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Which molecule is formed after the second phosphorylation event in glycolysis?",
+    "options": [
+      "Fructose 1,6-bisphosphate",
+      "Glucose phosphate",
+      "Triose phosphate",
+      "Pyruvate"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Why is glucose phosphorylated at the start of glycolysis?",
+    "options": [
+      "To prevent it from leaving the cell and activate it",
+      "To release energy immediately",
+      "To convert it to pyruvate directly",
+      "To produce NADH"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "How many carbon atoms are in a molecule of triose phosphate?",
+    "options": [
+      "3",
+      "6",
+      "2",
+      "4"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "What happens to triose phosphate immediately after it is formed?",
+    "options": [
+      "It is dehydrogenated/oxidized",
+      "It is phosphorylated again",
+      "It is converted to glucose",
+      "It enters the mitochondrion"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Which coenzyme is reduced during the oxidation of triose phosphate?",
+    "options": [
+      "NAD",
+      "FAD",
+      "Coenzyme A",
+      "ATP"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What type of phosphorylation produces ATP during the conversion of triose phosphate to pyruvate?",
+    "options": [
+      "Substrate-level phosphorylation",
+      "Oxidative phosphorylation",
+      "Photophosphorylation",
+      "Chemiosmosis"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the total (gross) number of ATP molecules produced during glycolysis per glucose molecule?",
+    "options": [
+      "4",
+      "2",
+      "32",
+      "38"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "Which enzyme type is responsible for the dehydrogenation of triose phosphate?",
+    "options": [
+      "Dehydrogenase",
+      "Decarboxylase",
+      "Isomerase",
+      "Kinase"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "In which part of the cell does the conversion of glucose to pyruvate take place?",
+    "options": [
+      "Cytoplasm",
+      "Mitochondrial matrix",
+      "Cristae",
+      "Nucleus"
+    ],
+    "correct_index": 0,
+    "type": "LOCATION"
+  },
+  {
+    "text": "What is the end product of glycolysis under aerobic conditions?",
+    "options": [
+      "Pyruvate",
+      "Lactate",
+      "Ethanol",
+      "Acetyl CoA"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Which molecule splits to form two molecules of triose phosphate?",
+    "options": [
+      "Fructose 1,6-bisphosphate",
+      "Glucose",
+      "Glucose phosphate",
+      "Pyruvate"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the specific reaction that removes a carbon atom from pyruvate?",
+    "options": [
+      "Decarboxylation",
+      "Dehydrogenation",
+      "Phosphorylation",
+      "Hydrolysis"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Which coenzyme accepts hydrogen during the link reaction?",
+    "options": [
+      "NAD",
+      "FAD",
+      "Coenzyme A",
+      "ATP"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the full name of the molecule formed when the acetyl group binds to Coenzyme A?",
+    "options": [
+      "Acetyl Coenzyme A",
+      "Pyruvate Coenzyme A",
+      "Citrate Coenzyme A",
+      "Oxaloacetate Coenzyme A"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Where exactly does the link reaction occur?",
+    "options": [
+      "Mitochondrial matrix",
+      "Cytoplasm",
+      "Inner mitochondrial membrane",
+      "Intermembrane space"
+    ],
+    "correct_index": 0,
+    "type": "LOCATION"
+  },
+  {
+    "text": "Is ATP produced in the link reaction?",
+    "options": [
+      "No",
+      "Yes, 1 ATP",
+      "Yes, 2 ATP",
+      "Yes, 32 ATP"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "Which 4-carbon molecule combines with Acetyl CoA to start the Krebs cycle?",
+    "options": [
+      "Oxaloacetate",
+      "Citrate",
+      "Malate",
+      "Succinate"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the 6-carbon molecule formed at the start of the Krebs cycle?",
+    "options": [
+      "Citrate",
+      "Oxaloacetate",
+      "Pyruvate",
+      "Glucose"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "How many molecules of CO2 are released per turn of the Krebs cycle?",
+    "options": [
+      "2",
+      "1",
+      "3",
+      "4"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "How many molecules of reduced NAD are produced per turn of the Krebs cycle?",
+    "options": [
+      "3",
+      "1",
+      "2",
+      "4"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "How many molecules of reduced FAD are produced per turn of the Krebs cycle?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "0"
+    ],
+    "correct_index": 0,
+    "type": "QUANTITY"
+  },
+  {
+    "text": "What type of phosphorylation produces ATP in the Krebs cycle?",
+    "options": [
+      "Substrate-linked phosphorylation",
+      "Oxidative phosphorylation",
+      "Photophosphorylation",
+      "Chemiosmosis"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "Which enzyme catalyzes the regeneration of oxaloacetate?",
+    "options": [
+      "Dehydrogenase",
+      "Decarboxylase",
+      "Kinase",
+      "Isomerase"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the role of Coenzyme A in the Krebs cycle?",
+    "options": [
+      "It delivers the acetyl group and is recycled",
+      "It accepts electrons",
+      "It synthesizes ATP",
+      "It is broken down to release energy"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the source of electrons for the electron transport chain?",
+    "options": [
+      "Reduced NAD and Reduced FAD",
+      "ATP",
+      "Oxygen",
+      "Glucose"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Which complex in the ETC pumps protons?",
+    "options": [
+      "Proton pumps / Carrier proteins",
+      "ATP synthase",
+      "Coenzyme A",
+      "Ribosomes"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "What is the specific term for the flow of protons through ATP synthase?",
+    "options": [
+      "Chemiosmosis",
+      "Osmosis",
+      "Diffusion",
+      "Active transport"
+    ],
+    "correct_index": 0,
+    "type": "PROCESS"
+  },
+  {
+    "text": "What is the final product formed when oxygen accepts electrons and protons?",
+    "options": [
+      "Water",
+      "Carbon dioxide",
+      "Glucose",
+      "ATP"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Why does reduced FAD produce less ATP than reduced NAD?",
+    "options": [
+      "It enters the ETC at a later stage/lower energy level",
+      "It carries fewer electrons",
+      "It is less stable",
+      "It is not used in the ETC"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "What creates the proton motive force?",
+    "options": [
+      "The difference in proton concentration/pH/charge across the inner membrane",
+      "The breakdown of ATP",
+      "The flow of electrons to oxygen",
+      "The movement of water"
+    ],
+    "correct_index": 0,
+    "type": "CONCEPT"
+  },
+  {
+    "text": "In mammalian muscle, what is pyruvate reduced to?",
+    "options": [
+      "Lactate",
+      "Ethanol",
+      "Acetyl CoA",
+      "Citrate"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Which enzyme catalyzes the reduction of pyruvate to lactate?",
+    "options": [
+      "Lactate dehydrogenase",
+      "Pyruvate decarboxylase",
+      "Ethanol dehydrogenase",
+      "ATP synthase"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Why is the regeneration of NAD essential in anaerobic respiration?",
+    "options": [
+      "To allow glycolysis to continue",
+      "To produce more ATP directly",
+      "To convert lactate back to pyruvate",
+      "To synthesize glucose"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "In yeast, what is the intermediate compound formed after decarboxylation of pyruvate?",
+    "options": [
+      "Ethanal",
+      "Ethanol",
+      "Lactate",
+      "Acetyl CoA"
+    ],
+    "correct_index": 0,
+    "type": "PRODUCT"
+  },
+  {
+    "text": "Is the conversion of pyruvate to lactate reversible in mammals?",
+    "options": [
+      "Yes",
+      "No",
+      "Only in the presence of oxygen",
+      "Only in the liver"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "Is the conversion of pyruvate to ethanol reversible in yeast?",
+    "options": [
+      "No",
+      "Yes",
+      "Only at high temperatures",
+      "Only in the presence of oxygen"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "What is the RQ value for lipids?",
+    "options": [
+      "Approx 0.7",
+      "Approx 1.0",
+      "Approx 0.9",
+      "Greater than 1.0"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "What is the RQ value for proteins?",
+    "options": [
+      "Approx 0.9",
+      "Approx 0.7",
+      "Approx 1.0",
+      "Greater than 1.0"
+    ],
+    "correct_index": 0,
+    "type": "FACT"
+  },
+  {
+    "text": "What does an RQ value greater than 1.0 indicate?",
+    "options": [
+      "Anaerobic respiration",
+      "Aerobic respiration of lipids",
+      "Aerobic respiration of carbohydrates",
+      "Starvation"
+    ],
+    "correct_index": 0,
+    "type": "CONCEPT"
+  },
+  {
+    "text": "Why is the RQ of lipids less than 1.0?",
+    "options": [
+      "More oxygen required for oxidation relative to CO2 produced",
+      "Less oxygen required for oxidation relative to CO2 produced",
+      "Lipids contain more oxygen than carbohydrates",
+      "Lipids are not fully oxidized"
+    ],
+    "correct_index": 0,
+    "type": "REASONING"
+  },
+  {
+    "text": "What is the name of the tissue with air spaces in rice stems?",
+    "options": [
+      "Aerenchyma",
+      "Parenchyma",
+      "Collenchyma",
+      "Sclerenchyma"
+    ],
+    "correct_index": 0,
+    "type": "STRUCTURE"
+  },
+  {
+    "text": "Which enzyme allows rice roots to tolerate high ethanol concentrations?",
+    "options": [
+      "Ethanol dehydrogenase",
+      "Lactate dehydrogenase",
+      "Pyruvate decarboxylase",
+      "ATP synthase"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "How does ethene affect the growth of rice stems?",
+    "options": [
+      "Stimulates internode elongation",
+      "Inhibits growth",
+      "Promotes root growth",
+      "Causes leaf fall"
+    ],
+    "correct_index": 0,
+    "type": "FUNCTION"
+  },
+  {
+    "text": "Correct spelling of the cycle also known as the Citric Acid Cycle.",
+    "options": [
+      "Krebs cycle",
+      "Krebb's cycle",
+      "Crebs cycle",
+      "Krebbs cycle"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Correct spelling of the molecule that accepts electrons from the ETC.",
+    "options": [
+      "Oxygen",
+      "Oxigen",
+      "Oxygene",
+      "Oxegen"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Correct spelling of the enzyme that synthesizes ATP.",
+    "options": [
+      "ATP synthase",
+      "ATP synthaze",
+      "ATP syntase",
+      "ATP sinthase"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  },
+  {
+    "text": "Correct spelling of the intermediate 3-carbon sugar in glycolysis.",
+    "options": [
+      "Triose phosphate",
+      "Trios phosphate",
+      "Tryose phosphate",
+      "Triose fosfate"
+    ],
+    "correct_index": 0,
+    "type": "SPELLING"
+  }
+]

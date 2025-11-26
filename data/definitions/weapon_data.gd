@@ -29,6 +29,8 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 @export var rate_of_fire: float = 1.0
 ## The maximum ammo capacity.
 @export var ammo_capacity: int = 20
+## Whether this weapon requires a quiz to reload.
+@export var requires_quiz_reload: bool = false
 
 @export_group("Charge Properties")
 ## Maximum charge level for this weapon (1-5)

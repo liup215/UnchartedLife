@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="QuestionData" load_steps=2 format=3 uid="uid://q2osmosis"]
+
+[ext_resource type="Script" path="res://data/definitions/bio_blitz/question_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+question_text = "Water moves from high water potential to low water potential through a semi-permeable membrane. This is called:"
+options = Array[String](["Diffusion", "Active Transport", "Osmosis", "Facilitated Diffusion"])
+correct_option_index = 2
+type = 1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BossData" load_steps=7 format=3 uid="uid://bossdemo"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
+[ext_resource type="Script" uid="uid://ccvl42icwye4t" path="res://data/definitions/bio_blitz/boss_data.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior_data.gd" id="3_bsxkc"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="5_krgf5"]
+[ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="5_o21mq"]
+
+[sub_resource type="Resource" id="Resource_idle"]
+script = ExtResource("1_anim_data")
+animation_name = "idle"
+spritesheet = ExtResource("5_o21mq")
+frame_indices = Array[int]([0])
+
+[resource]
+script = ExtResource("1_script")
+boss_name = "Slime King"
+texture = ExtResource("5_o21mq")
+animations = Array[ExtResource("1_anim_data")]([SubResource("Resource_idle")])
+max_hp = 100000
