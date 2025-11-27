@@ -5,48 +5,46 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_xyz")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-mouse_filter = 2
-anchors_preset = 15
-anchor_right = 1.0
+[node name="PlayerInfoContainer" type="MarginContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_top = -200.0
+offset_right = 300.0
+grow_vertical = 0
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PlayerInfoContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 0
+size_flags_vertical = 8
 
-[node name="PlayerNameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="PlayerNameLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Player Name"
 
-[node name="GlucoseLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="GlucoseLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer"]
 layout_mode = 2
 text = "Glucose: 1000.0"
 
-[node name="HealthContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HealthContainer" type="HBoxContainer" parent="PlayerInfoContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 0
 
-[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/HealthContainer"]
+[node name="HealthLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/HealthContainer"]
 layout_mode = 2
 text = "Health:"
 
-[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HealthContainer"]
+[node name="HealthBar" type="ProgressBar" parent="PlayerInfoContainer/VBoxContainer/HealthContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(200, 20)
 value = 100.0
 show_percentage = false
 
-[node name="HealthValue" type="Label" parent="MarginContainer/VBoxContainer/HealthContainer/HealthBar"]
+[node name="HealthValue" type="Label" parent="PlayerInfoContainer/VBoxContainer/HealthContainer/HealthBar"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -63,21 +61,21 @@ text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ATPContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ATPContainer" type="HBoxContainer" parent="PlayerInfoContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ATPLabel" type="Label" parent="MarginContainer/VBoxContainer/ATPContainer"]
+[node name="ATPLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/ATPContainer"]
 layout_mode = 2
 text = "ATP:    "
 
-[node name="ATPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/ATPContainer"]
+[node name="ATPBar" type="ProgressBar" parent="PlayerInfoContainer/VBoxContainer/ATPContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(200, 20)
 value = 100.0
 show_percentage = false
 
-[node name="ATPValue" type="Label" parent="MarginContainer/VBoxContainer/ATPContainer/ATPBar"]
+[node name="ATPValue" type="Label" parent="PlayerInfoContainer/VBoxContainer/ATPContainer/ATPBar"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -94,24 +92,68 @@ text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TankStatusContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="TankStatusContainer" type="VBoxContainer" parent="PlayerInfoContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="TankNameLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+[node name="TankNameLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/TankStatusContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Tank: -"
 
-[node name="TankSpeedLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+[node name="TankSpeedLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/TankStatusContainer"]
 layout_mode = 2
 text = "Speed: -"
 
-[node name="TankDefenseLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+[node name="TankDefenseLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/TankStatusContainer"]
 layout_mode = 2
 text = "Defense: -"
 
-[node name="TankLoadLabel" type="Label" parent="MarginContainer/VBoxContainer/TankStatusContainer"]
+[node name="TankLoadLabel" type="Label" parent="PlayerInfoContainer/VBoxContainer/TankStatusContainer"]
 layout_mode = 2
 text = "Load: -"
+
+[node name="BossInfoContainer" type="MarginContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -80.0
+offset_right = 300.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BossInfoContainer"]
+layout_mode = 2
+
+[node name="BossNameLabel" type="Label" parent="BossInfoContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "BOSS NAME"
+horizontal_alignment = 1
+
+[node name="BossHealthBar" type="ProgressBar" parent="BossInfoContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(600, 30)
+value = 100.0
+show_percentage = false
+
+[node name="BossHealthValue" type="Label" parent="BossInfoContainer/VBoxContainer/BossHealthBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "100/100"
+horizontal_alignment = 1

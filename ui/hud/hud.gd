@@ -1,16 +1,22 @@
 extends CanvasLayer
 
-@onready var player_name_label: Label = $MarginContainer/VBoxContainer/PlayerNameLabel
-@onready var health_bar: ProgressBar = $MarginContainer/VBoxContainer/HealthContainer/HealthBar
-@onready var health_value: Label = $MarginContainer/VBoxContainer/HealthContainer/HealthBar/HealthValue
-@onready var atp_bar: ProgressBar = $MarginContainer/VBoxContainer/ATPContainer/ATPBar
-@onready var atp_value: Label = $MarginContainer/VBoxContainer/ATPContainer/ATPBar/ATPValue
-@onready var glucose_label: Label = $MarginContainer/VBoxContainer/GlucoseLabel
+@onready var player_name_label: Label = $PlayerInfoContainer/VBoxContainer/PlayerNameLabel
+@onready var health_bar: ProgressBar = $PlayerInfoContainer/VBoxContainer/HealthContainer/HealthBar
+@onready var health_value: Label = $PlayerInfoContainer/VBoxContainer/HealthContainer/HealthBar/HealthValue
+@onready var atp_bar: ProgressBar = $PlayerInfoContainer/VBoxContainer/ATPContainer/ATPBar
+@onready var atp_value: Label = $PlayerInfoContainer/VBoxContainer/ATPContainer/ATPBar/ATPValue
+@onready var glucose_label: Label = $PlayerInfoContainer/VBoxContainer/GlucoseLabel
 
-@onready var tank_name_label: Label = $MarginContainer/VBoxContainer/TankStatusContainer/TankNameLabel
-@onready var tank_speed_label: Label = $MarginContainer/VBoxContainer/TankStatusContainer/TankSpeedLabel
-@onready var tank_defense_label: Label = $MarginContainer/VBoxContainer/TankStatusContainer/TankDefenseLabel
-@onready var tank_load_label: Label = $MarginContainer/VBoxContainer/TankStatusContainer/TankLoadLabel
+@onready var tank_name_label: Label = $PlayerInfoContainer/VBoxContainer/TankStatusContainer/TankNameLabel
+@onready var tank_speed_label: Label = $PlayerInfoContainer/VBoxContainer/TankStatusContainer/TankSpeedLabel
+@onready var tank_defense_label: Label = $PlayerInfoContainer/VBoxContainer/TankStatusContainer/TankDefenseLabel
+@onready var tank_load_label: Label = $PlayerInfoContainer/VBoxContainer/TankStatusContainer/TankLoadLabel
+
+# Boss HUD elements
+@onready var boss_info_container: MarginContainer = $BossInfoContainer
+@onready var boss_name_label: Label = $BossInfoContainer/VBoxContainer/BossNameLabel
+@onready var boss_health_bar: ProgressBar = $BossInfoContainer/VBoxContainer/BossHealthBar
+@onready var boss_health_value: Label = $BossInfoContainer/VBoxContainer/BossHealthBar/BossHealthValue
 
 var player: Actor = null
 var vehicle: Node = null
@@ -27,7 +33,7 @@ func _update_tank_status():
 				break
 	
 	vehicle = found_vehicle
-
+	
 	if vehicle and vehicle.has_node("VehicleStatsComponent"):
 		var stats = vehicle.get_node("VehicleStatsComponent")
 		tank_name_label.text = "Tank: %s" % (vehicle.vehicle_data.vehicle_name if vehicle.vehicle_data else "Unknown")
@@ -63,6 +69,9 @@ func _ready():
 	# Initial glucose update
 	if PlayerData:
 		_update_glucose_label()
+	
+	# Hide boss info by default
+	hide_boss_health()
 
 func _find_player():
 	# Try to find the player in the scene
@@ -87,7 +96,7 @@ func _on_player_ready(player_node: Actor):
 		atp_component.atp_changed.connect(_on_player_atp_changed)
 		# Set initial ATP value
 		_on_player_atp_changed(atp_component.get_current_atp(), atp_component.get_max_atp())
-
+	
 	# Set initial health value
 	_on_player_health_changed(
 		player_node.health_component.get_current_health(),
@@ -116,3 +125,18 @@ func _physics_process(_delta):
 
 func _update_glucose_label():
 	glucose_label.text = "Glucose: %.1f" % PlayerData.glucose
+
+# --- Boss Health API ---
+
+func show_boss_health(boss_name: String, current_health: int, max_health: int):
+	boss_info_container.show()
+	boss_name_label.text = boss_name
+	update_boss_health(current_health, max_health)
+
+func update_boss_health(current_health: int, max_health: int):
+	boss_health_bar.max_value = max_health
+	boss_health_bar.value = current_health
+	boss_health_value.text = "%d/%d" % [current_health, max_health]
+
+func hide_boss_health():
+	boss_info_container.hide()

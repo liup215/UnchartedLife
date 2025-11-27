@@ -27,7 +27,7 @@ func _ready():
 	add_to_group("player")
 	add_to_group("saveable")
 	# Set player color
-	visuals.modulate = Color.DODGER_BLUE
+	# visuals.modulate = Color.DODGER_BLUE
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
 

@@ -8,9 +8,15 @@ class_name ActorData
 # const AnimationData = preload("res://data/components/animation_data.gd")
 
 # --- Player Character Stats ---
+@export_group("Identity")
+## The name of the actor.
+@export var actor_name: String = "Unknown Actor"
+
 @export_group("Visuals")
 ## The list of animations for this actor.
 @export var animations: Array[AnimationData]
+## The scale of the actor's sprite.
+@export var sprite_scale: Vector2 = Vector2.ONE
 
 @export_group("Base Physiological Indicators")
 ## The maximum health points of the actor's body.

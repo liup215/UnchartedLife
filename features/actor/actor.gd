@@ -32,11 +32,17 @@ func _ready():
 		health_component.set_max_health(stats_component.get_max_health())
 		atp_component.set_max_atp(stats_component.get_max_atp())
 		_setup_animations()
+
+		# Apply sprite scale
+		if visuals and actor_data.sprite_scale != Vector2.ZERO:
+			visuals.scale = actor_data.sprite_scale
+
 		# 动态设置碰撞半径
 		if has_node("CollisionShape2D") and actor_data.has_method("get_collision_radius"):
 			var shape = get_node("CollisionShape2D").shape
 			if shape and shape.has_method("set_radius"):
 				shape.set_radius(actor_data.get_collision_radius())
+		
 		# 动态加载战斗组件和武器
 		combat_component.owner_node = self
 		for weapon_data in actor_data.weapons:
@@ -82,14 +88,14 @@ func _setup_animations():
 		return
 
 	var sprite_frames = SpriteFrames.new()
-	
+
 	for anim_data in actor_data.animations:
 		if not anim_data or not anim_data.spritesheet:
 			continue
-		
+
 		sprite_frames.add_animation(anim_data.animation_name)
 		sprite_frames.set_animation_speed(anim_data.animation_name, anim_data.speed)
-		
+
 		var texture = anim_data.spritesheet
 		var frame_width = texture.get_width() / anim_data.h_frames
 		var frame_height = texture.get_height() / anim_data.v_frames
@@ -158,12 +164,12 @@ func _show_damage_number(amount: int):
 	
 	label.global_position = global_position + Vector2(randf_range(-20, 20), -50)
 	get_tree().get_root().add_child(label)
-
+	
 	var tween = get_tree().create_tween().set_parallel()
-
+	
 	tween.tween_property(label, "global_position:y", label.global_position.y - 60, 1.2).set_ease(Tween.EASE_OUT)
 	tween.tween_property(label, "modulate:a", 0.0, 1.2).set_ease(Tween.EASE_IN)
-
+	
 	tween.finished.connect(label.queue_free)
 
 # --- Save/Load Interface ---
@@ -184,14 +190,14 @@ func load_data(data: Dictionary):
 
 func _on_death():
 	actor_died.emit()
-
+	
 	if has_node("CollisionShape2D"):
 		get_node("CollisionShape2D").set_deferred("disabled", true)
-
+	
 	var tween = create_tween()
 	tween.set_parallel()
 	tween.tween_property(self, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
 	tween.tween_property(self, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
-
+	
 	await tween.finished
 	queue_free()

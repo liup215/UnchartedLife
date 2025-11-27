@@ -14,7 +14,6 @@ frame_indices = Array[int]([0])
 
 [resource]
 script = ExtResource("1_script")
-boss_name = "Slime King"
 texture = ExtResource("5_o21mq")
 animations = Array[ExtResource("1_anim_data")]([SubResource("Resource_idle")])
 max_hp = 1000

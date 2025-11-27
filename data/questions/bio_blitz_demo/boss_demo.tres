@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="BossData" load_steps=7 format=3 uid="uid://bossdemo"]
+[gd_resource type="Resource" script_class="BossData" load_steps=10 format=3 uid="uid://bossdemo"]
 
 [ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
 [ext_resource type="Script" uid="uid://ccvl42icwye4t" path="res://data/definitions/bio_blitz/boss_data.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior_data.gd" id="3_bsxkc"]
+[ext_resource type="Script" uid="uid://eyca6digsaij" path="res://data/definitions/ai_behavior/attack_behavior_data.gd" id="4_o21mq"]
 [ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="5_krgf5"]
 [ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="5_o21mq"]
+[ext_resource type="Resource" uid="uid://w1yi73y6nmcl" path="res://data/weapons/actor_weapons/enemy_weapons/enemy_gun.tres" id="6_krgf5"]
 
 [sub_resource type="Resource" id="Resource_idle"]
 script = ExtResource("1_anim_data")
@@ -12,9 +14,16 @@ animation_name = "idle"
 spritesheet = ExtResource("5_o21mq")
 frame_indices = Array[int]([0])
 
+[sub_resource type="Resource" id="Resource_mjbtu"]
+script = ExtResource("4_o21mq")
+metadata/_custom_type_script = "uid://eyca6digsaij"
+
 [resource]
 script = ExtResource("1_script")
-boss_name = "Slime King"
 texture = ExtResource("5_o21mq")
+actor_name = "Mutated Mitochondrion"
 animations = Array[ExtResource("1_anim_data")]([SubResource("Resource_idle")])
-max_hp = 100000
+sprite_scale = Vector2(0.6, 0.6)
+max_hp = 10
+weapons = Array[ExtResource("5_krgf5")]([ExtResource("6_krgf5")])
+behaviors = Array[ExtResource("3_bsxkc")]([SubResource("Resource_mjbtu")])
