@@ -11,7 +11,7 @@ class_name Vehicle
 @onready var interaction_ui: Control = $InteractionUI
 @onready var interaction_label: Label = $InteractionUI/InteractionLabel
 @onready var vehicle_camera: Camera2D = $Camera2D
-@onready var combat_component: CombatComponent = $CombatComponent
+@onready var vehicle_combat_component: VehicleCombatComponent = $VehicleCombatComponent
 @onready var _animated_sprite = $AnimatedSprite2D
 
 # Vehicle state
@@ -31,11 +31,11 @@ func _ready():
 		stats_component.recalculate_stats()
 
 	# Set owner_node for combat_component
-	if combat_component:
-		combat_component.owner_node = self
+	if vehicle_combat_component:
+		vehicle_combat_component.owner_node = self
 		for weapon in vehicle_data.weapons:
 			if weapon is WeaponData:
-				var weapon_comp = preload("res://components/weapon_component.tscn").instantiate()
+				var weapon_comp = preload("res://features/components/weapon_component.tscn").instantiate()
 				weapon_comp.weapon_data = weapon
 				weapon_comp.setup_weapon()
 				# add a random position offset to the weapon
@@ -43,9 +43,9 @@ func _ready():
 				weapon_comp.rotation = rotation
 				add_child(weapon_comp)
 				if weapon.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
-					combat_component.add_main_weapon(weapon_comp)
+					vehicle_combat_component.add_main_weapon(weapon_comp)
 				elif weapon.weapon_type == WeaponData.WeaponType.SUB_WEAPON:
-					combat_component.add_secondary_weapon(weapon_comp)
+					vehicle_combat_component.add_secondary_weapon(weapon_comp)
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
@@ -53,11 +53,11 @@ func _physics_process(delta: float):
 		_consume_fuel(delta)
 		_handle_combat_input()
 		# get weapon components and make them look at the mouse
-		var main_weapon_components = combat_component.main_weapons
+		var main_weapon_components = vehicle_combat_component.main_weapons
 		for wc in main_weapon_components:
 			wc.look_at(get_global_mouse_position())
 			wc.rotation_degrees += 90 # Add 90 degrees to correct the orientation
-		var secondary_weapon_components = combat_component.secondary_weapons
+		var secondary_weapon_components = vehicle_combat_component.secondary_weapons
 		for wc in secondary_weapon_components:
 			wc.look_at(get_global_mouse_position())
 			wc.rotation_degrees += 90 # Add 90 degrees to correct the orientation
@@ -218,16 +218,16 @@ func get_interaction_text() -> String:
 		return "Vehicle occupied"
 
 func _handle_combat_input():
-	if not combat_component:
+	if not vehicle_combat_component:
 		return
 
 	# Main weapon charging
 	if Input.is_action_just_pressed("main_attack"):
-		combat_component.start_main_charge()
+		vehicle_combat_component.start_main_charge()
 	elif Input.is_action_just_released("main_attack"):
-		combat_component.stop_main_charge()
-		combat_component.fire_main_weapons()
+		vehicle_combat_component.stop_main_charge()
+		vehicle_combat_component.fire_main_weapons()
 
 	# Light attack combos
 	if Input.is_action_just_pressed("light_attack"):
-		combat_component.perform_light_attack()
+		vehicle_combat_component.perform_light_attack()

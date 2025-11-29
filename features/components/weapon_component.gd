@@ -23,6 +23,8 @@ func _ready():
 
 func setup_weapon():
 	if weapon_data:
+		print("Setting up weapon: %s" % weapon_data.weapon_name)
+		print("Weapon ammo capacity: %d" % weapon_data.ammo_capacity)
 		current_ammo = weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
@@ -47,6 +49,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		return
 	
 	var target_pos = p_target_pos
+
 	if target_pos == Vector2.ZERO:
 		target_pos = get_global_mouse_position()
 	var origin_pos = global_position

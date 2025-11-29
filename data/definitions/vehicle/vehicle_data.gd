@@ -28,7 +28,12 @@ class_name VehicleData
 
 @export_group("Weapons")
 ## The list of weapons this actor can equip.
-@export var weapons: Array[WeaponData] = []
+@export var main_weapons: Array[String] = []
+@export var secondary_weapons: Array[String] = []
+@export var max_main_weapon: int = 2
+@export var max_secondary_weapon: int = 2
+@export var equipped_main_weapons: Array[String] = []
+@export var equipped_secondary_weapons: Array[String] = []
 
 # --- Component Slots ---
 # These arrays will hold the actual Resource files for each component.

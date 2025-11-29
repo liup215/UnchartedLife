@@ -27,7 +27,7 @@ func execute(actor: Node, _delta: float):
 
         if distance_to_player < detection_radius:
             var direction_to_player = actor.global_position.direction_to(state.player.global_position)
-            actor.velocity = direction_to_player * actor.stats_component.get_move_speed()
+            actor.velocity = direction_to_player * actor.attribute_component.speed_component.get_current_speed()
         else:
             # If player is out of range, this behavior does nothing,
             # allowing other behaviors (like wandering) to take over.

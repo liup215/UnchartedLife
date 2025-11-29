@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4du32vidxs77"]
+
+[ext_resource type="Script" uid="uid://dn6573tj1boiw" path="res://features/components/attribute_component/metabolism_component.gd" id="1_5out5"]
+
+[node name="MetabolismComponent" type="Node2D"]
+script = ExtResource("1_5out5")

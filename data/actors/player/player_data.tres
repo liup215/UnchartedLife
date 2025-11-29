@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=14 format=3 uid="uid://bdo2suynn7vlm"]
+[gd_resource type="Resource" script_class="ActorData" load_steps=12 format=3 uid="uid://bdo2suynn7vlm"]
 
 [ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_l843g"]
 [ext_resource type="Resource" uid="uid://dk1al025fcl57" path="res://data/actors/player/animations/player_walk_down.tres" id="2_4g83l"]
@@ -11,11 +11,15 @@
 [ext_resource type="Resource" uid="uid://2rswbner35rp" path="res://data/actors/player/animations/player_idle_up.tres" id="9_lx2hi"]
 [ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior/ai_behavior_data.gd" id="10_vb323"]
 [ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/definitions/actor_data/actor_data.gd" id="11_5tary"]
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="12_x15il"]
-[ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="13_6gfm2"]
 
 [resource]
 script = ExtResource("11_5tary")
+actor_name = "Player"
 animations = Array[ExtResource("1_l843g")]([ExtResource("2_4g83l"), ExtResource("3_ypxst"), ExtResource("4_vii1t"), ExtResource("5_mpckl"), ExtResource("6_yneg8"), ExtResource("7_o20qb"), ExtResource("8_le1ne"), ExtResource("9_lx2hi")])
 collision_radius = 20.0
-weapons = Array[ExtResource("12_x15il")]([ExtResource("13_6gfm2")])
+current_speed = null
+weapons = Array[String](["res://data/weapons/actor_weapons/player_weapons/player_weapon_test.tscn"])
+equipped_weapons = Array[String](["res://data/weapons/actor_weapons/player_weapons/player_weapon_test.tscn", "res://data/weapons/actor_weapons/player_weapons/player_weapon_test.tscn"])
+weapon_number_limit = 2
+current_atp = null
+current_glucose = null

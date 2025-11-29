@@ -1,15 +1,20 @@
 # components/combat_component.gd
 # Main combat system component
 extends Node2D
-class_name CombatComponent
+class_name VehicleCombatComponent
 
-var owner_node = null  # Reference to the owning actor/vehicle, dynamic assignment only
-@export var max_main_weapons: int = 5
-@export var max_secondary_weapons: int = 5
+# var owner_node = null  # Reference to the owning actor/vehicle, dynamic assignment only
+# @export var max_main_weapons: int = 5
+# @export var max_secondary_weapons: int = 5
+@export var data_source: VehicleData = null
+
+var vehicle: Vehicle = get_parent() if get_parent() and get_parent() is Vehicle else null
+
+var actor_attribute_component = vehicle.driver.get_node("AttributeComponent") if vehicle and vehicle.driver and vehicle.driver.has_node("AttributeComponent") else null
 
 # Weapon arrays
-var main_weapons: Array = []
-var secondary_weapons: Array = []
+var main_weapons: Array[WeaponComponent] = []
+var secondary_weapons: Array[WeaponComponent] = []
 var actor_weapons: Array = [] # 新增：用于actor的所有武器
 
 # Combat state
@@ -18,8 +23,8 @@ var combo_counter: int = 0
 var last_combo_time: float = 0.0
 var combo_reset_time: float = 0.5  # Time window to continue combo
 
-# ATP component reference
-var atp_component: Node = null
+# # ATP component reference
+# var atp_component: Node = null
 
 # Weapon effect handler
 @onready var weapon_effect: BaseWeaponEffect = $BaseWeaponEffect
@@ -31,25 +36,40 @@ signal weapons_fired(weapon_type: String, count: int, charge_level: int)
 
 func _ready():
 	# Find ATP component in owner
-	if owner_node:
-		atp_component = owner_node.get_node("ATPComponent") if owner_node.has_node("ATPComponent") else null
+	# if owner_node:
+	# 	atp_component = owner_node.get_node("ATPComponent") if owner_node.has_node("ATPComponent") else null
+	pass
+
+func set_actor_data(data: VehicleData):
+	data_source = data
+	# 加载武器
+	for weapon_name in data.equipped_main_weapons:
+		if main_weapons.size() >= data.max_main_weapon:
+			break
+		var weapon_scene = load(weapon_name)
+		if weapon_scene:
+			var weapon_instance = weapon_scene.instantiate()
+			add_main_weapon(weapon_instance)
+	for weapon_name in data.equipped_secondary_weapons:
+		if secondary_weapons.size() >= data.max_secondary_weapon:
+			break
+		var weapon_scene = load(weapon_name)
+		if weapon_scene:
+			var weapon_instance = weapon_scene.instantiate()
+			add_secondary_weapon(weapon_instance)
+
 
 func add_main_weapon(weapon_component) -> bool:
-	if main_weapons.size() >= max_main_weapons:
+	if main_weapons.size() >= data_source.max_main_weapon:
 		return false
 	main_weapons.append(weapon_component)
 	_connect_weapon_signals(weapon_component)
 	return true
 
 func add_secondary_weapon(weapon_component) -> bool:
-	if secondary_weapons.size() >= max_secondary_weapons:
+	if secondary_weapons.size() >= data_source.max_secondary_weapons:
 		return false
 	secondary_weapons.append(weapon_component)
-	_connect_weapon_signals(weapon_component)
-	return true
-
-func add_actor_weapon(weapon_component) -> bool:
-	actor_weapons.append(weapon_component)
 	_connect_weapon_signals(weapon_component)
 	return true
 
@@ -137,13 +157,12 @@ func fire_main_weapons():
 			total_atp_cost += weapon.get_atp_cost()
 
 	# Check if we have enough ATP
-	if atp_component and atp_component.get_current_atp() < total_atp_cost:
+	if actor_attribute_component and actor_attribute_component.metabolism_component.get_current_atp() < total_atp_cost:
 		return  # Not enough energy
 
 	# Consume ATP
-	if atp_component:
-		atp_component.consume_atp(total_atp_cost)
-
+	if actor_attribute_component:
+		actor_attribute_component.metabolism_component.consume_atp(total_atp_cost)
 	# Fire weapons that match the max charge level
 	var fired_count = 0
 	for weapon in main_weapons:
@@ -192,12 +211,12 @@ func perform_light_attack():
 			total_atp_cost += secondary_weapons[i].get_atp_cost()
 
 	# Check if we have enough ATP
-	if atp_component and atp_component.get_current_atp() < total_atp_cost:
+	if actor_attribute_component and actor_attribute_component.metabolism_component.get_current_atp() < total_atp_cost:
 		return  # Not enough energy
 
 	# Consume ATP
-	if atp_component:
-		atp_component.consume_atp(total_atp_cost)
+	if actor_attribute_component:
+		actor_attribute_component.metabolism_component.consume_atp(total_atp_cost)
 
 	# Fire the weapons
 	for i in range(weapons_to_fire):

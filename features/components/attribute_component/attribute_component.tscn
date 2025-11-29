@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3 uid="uid://vcg10p6kd1ob"]
+
+[ext_resource type="Script" uid="uid://b5a4n8tabc5cy" path="res://features/components/attribute_component/attribute_component.gd" id="1_80jid"]
+[ext_resource type="PackedScene" uid="uid://b1x2y3v4a5s6d" path="res://features/components/attribute_component/health_component.tscn" id="2_yuwh8"]
+[ext_resource type="PackedScene" uid="uid://d4du32vidxs77" path="res://features/components/attribute_component/metabolism_component.tscn" id="3_xl88t"]
+[ext_resource type="PackedScene" uid="uid://cjsecnmjfylwj" path="res://features/components/attribute_component/speed_component.gd.tscn" id="4_mwxm0"]
+
+[node name="AttributeComponent" type="Node2D"]
+script = ExtResource("1_80jid")
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_yuwh8")]
+
+[node name="MetabolismComponent" parent="." instance=ExtResource("3_xl88t")]
+
+[node name="SpeedComponent_gd" parent="." instance=ExtResource("4_mwxm0")]

@@ -24,7 +24,7 @@ func execute(actor: Node, _delta: float):
 		_update_wander_direction(actor)
 		state.timer = wander_interval
 
-	actor.velocity = state.direction * (actor.stats_component.get_move_speed() * wander_speed_multiplier)
+	actor.velocity = state.direction * (actor.attribute_component.speed_component.get_current_speed() * wander_speed_multiplier)
 
 func _update_wander_direction(actor: Node):
 	var state = wander_states[actor]

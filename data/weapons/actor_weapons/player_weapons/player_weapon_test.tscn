@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://77jfnv1v37do"]
+
+[ext_resource type="Script" uid="uid://bn6o2ytv3646p" path="res://features/components/weapon_component.gd" id="1_uic7s"]
+[ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="2_h46oq"]
+
+[node name="PlayerWeaponTest" type="Node2D"]
+script = ExtResource("1_uic7s")
+weapon_data = ExtResource("2_h46oq")
+metadata/_custom_type_script = "uid://bn6o2ytv3646p"

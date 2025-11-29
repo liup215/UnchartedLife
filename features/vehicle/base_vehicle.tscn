@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://e5dy5ow2xsdx"]
 
 [ext_resource type="Script" uid="uid://dulkygutgbg8g" path="res://features/vehicle/base_vehicle.gd" id="1_vehicle"]
-[ext_resource type="PackedScene" uid="uid://ckr16c2wjeqpv" path="res://components/combat_component.tscn" id="3_g7ui6"]
+[ext_resource type="PackedScene" uid="uid://ckr16c2wjeqpv" path="res://features/components/vehicle_combat_component.tscn" id="3_g7ui6"]
 [ext_resource type="Texture2D" uid="uid://dsmy2rh1uybuv" path="res://assets/sprites/tanks_moving_1.png" id="4_4y3m5"]
-[ext_resource type="PackedScene" uid="uid://gk2uulbken43" path="res://components/vehicle_stats_component.tscn" id="4_qifqj"]
+[ext_resource type="PackedScene" uid="uid://gk2uulbken43" path="res://features/components/vehicle_stats_component.tscn" id="4_qifqj"]
 [ext_resource type="Texture2D" uid="uid://bpaaeeh66f6hi" path="res://assets/sprites/tanks_moving_2.png" id="5_qifqj"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_07o1g"]

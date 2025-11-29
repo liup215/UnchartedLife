@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d1e2f3g4h5i6j_atp"]
-
-[ext_resource type="Script" path="res://components/atp_component.gd" id="1_atp_script"]
-
-[node name="ATPComponent" type="Node"]
-script = ExtResource("1_atp_script")

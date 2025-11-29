@@ -47,7 +47,7 @@ func _handle_on_foot_logic(delta: float):
 	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
 
 	# Calculate movement speed based on sprinting state
-	var base_speed = stats_component.get_move_speed()
+	var base_speed = attribute_component.speed_component.get_current_speed()
 	var movement_speed = base_speed
 
 	if is_sprinting and direction.length() > 0:
@@ -64,7 +64,7 @@ func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes ---
 	_process_metabolism(delta, is_sprinting)
 
-	var weapons = combat_component.actor_weapons
+	var weapons = actor_combat_component.actor_weapons
 	for wc in weapons:
 		if wc and wc.has_method("look_at"):
 			wc.look_at(get_global_mouse_position())
@@ -106,27 +106,25 @@ func _handle_vehicle_interaction():
 				print("Exited vehicle")
 
 func _process_basal_metabolism(delta: float):
-	if not stats_component.data:
-		return
 
 	# Only basal ATP consumption when in vehicle
 	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
-	atp_component.consume_atp(base_atp_consumption)
+	attribute_component.metabolism_component.consume_atp(base_atp_consumption)
 
 	# ATP Recovery
-	if atp_component.current_atp < atp_component.max_atp:
+	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.max_atp:
 		var atp_to_recover = base_atp_consumption
-		var conversion_rate = stats_component.data.atp_conversion_rate
+		var conversion_rate = attribute_component.metabolism_component.atp_conversion_rate
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
-			if PlayerData.glucose >= glucose_for_atp:
-				PlayerData.glucose -= glucose_for_atp
-				atp_component.recover_atp(atp_to_recover)
+			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
+				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
+				attribute_component.metabolism_component.recover_atp(atp_to_recover)
 
 	# Basal metabolic rate (reduced in vehicle - player is resting)
-	var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.2  # Even more reduced in vehicle
-	if PlayerData.glucose > 0:
-		PlayerData.glucose -= basal_glucose_cost
+	var basal_glucose_cost = attribute_component.metabolism_component.glucose_consume_rate * delta * 0.2  # Even more reduced in vehicle
+	if attribute_component.metabolism_component.get_current_glucose() > 0:
+		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
 
 # --- Vehicle Interaction Interface ---
 # These methods are called by vehicles when player enters/exits interaction range
@@ -152,9 +150,6 @@ func set_in_vehicle_state(in_vehicle: bool):
 	# The player's physics process is not disabled, so AI can still track them.
 
 func _process_metabolism(delta: float, is_sprinting: bool = false):
-	if not stats_component.data:
-		return
-
 	# 1. ATP Consumption (Rest + Movement + Sprinting)
 	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
 	var movement_atp_consumption = 0.0
@@ -170,58 +165,38 @@ func _process_metabolism(delta: float, is_sprinting: bool = false):
 		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
 
 	var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
-	atp_component.consume_atp(total_atp_consumption)
+	attribute_component.metabolism_component.consume_atp(total_atp_consumption)
 
 	# 2. Glucose-Based ATP Recovery (matches actual ATP consumption rate)
-	if atp_component.current_atp < atp_component.max_atp:
+	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
 		# ATP recovery should match the consumption rate to maintain balance
 		# This ensures glucose consumption reflects the actual energy demand
 		var atp_to_recover = total_atp_consumption  # Match the consumption rate
 
 		# Calculate the glucose cost for that much ATP
-		var conversion_rate = stats_component.data.atp_conversion_rate
+		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
 
 			# Check if we have enough glucose
-			if PlayerData.actor_data.glucose >= glucose_for_atp:
-				PlayerData.actor_data.glucose -= glucose_for_atp
-				atp_component.recover_atp(atp_to_recover)
+			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
+				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
+				attribute_component.metabolism_component.recover_atp(atp_to_recover)
 			else:
 				# Out of glucose! Cannot recover ATP - this will lead to ATP depletion
 				pass
 
 	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
 	# This continues even when ATP is full, representing basic cellular maintenance
-	var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.3  # Reduced to 30% of original rate
-	if PlayerData.actor_data.glucose > 0:
-		PlayerData.actor_data.glucose -= basal_glucose_cost
-
-# --- Save/Load Interface ---
-
-func save_data() -> Dictionary:
-	return {
-		"position_x": position.x,
-		"position_y": position.y,
-		"current_health": health_component.current_health
-	}
-
-func load_data(data: Dictionary):
-	position.x = data.get("position_x", position.x)
-	position.y = data.get("position_y", position.y)
-
-	# Set health, ensuring it doesn't exceed max health
-	var loaded_health = data.get("current_health", health_component.max_health)
-	health_component.current_health = loaded_health
-
-	# We also need to update the HUD after loading
-	# The health_changed signal will do this automatically when we set health.
+	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.3  # Reduced to 30% of original rate
+	if attribute_component.metabolism_component.get_current_glucose() > 0:
+		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
 
 func _handle_combat_input():
-	if not combat_component:
+	if not actor_combat_component:
 		return
 	
 	# Actor武器发射（如手枪/步枪等）
 	if Input.is_action_just_pressed("light_attack"):
 		print("Firing actor weapon...")
-		combat_component.fire_actor_weapons()
+		actor_combat_component.fire_actor_weapons()

@@ -38,7 +38,7 @@ func execute(actor: Node, _delta: float):
 		var distance_to_player = actor.global_position.distance_to(state.player.global_position)
 		if distance_to_player <= attack_radius and state.cooldown <= 0.0:
 			# 发射武器（子弹）攻击玩家
-			var combat = actor.get_node_or_null("CombatComponent")
+			var combat = actor.get_node_or_null("ActorCombatComponent")
 			if combat:
 				combat.fire_actor_weapons(state.player.global_position)
 			else:
@@ -50,11 +50,11 @@ func execute(actor: Node, _delta: float):
 			state.cooldown = attack_cooldown
 			# Move到攻击距离
 			var direction = actor.global_position.direction_to(state.player.global_position)
-			actor.velocity = direction * actor.stats_component.get_move_speed()
+			actor.velocity = direction * actor.attribute_component.speed_component.get_current_speed()
 		elif distance_to_player > attack_radius:
 			# Move closer to player
 			var direction = actor.global_position.direction_to(state.player.global_position)
-			actor.velocity = direction * actor.stats_component.get_move_speed()
+			actor.velocity = direction * actor.attribute_component.speed_component.get_current_speed()
 		else:
 			# In cooldown, stop or idle
 			actor.velocity = Vector2.ZERO

@@ -98,9 +98,11 @@ func _on_player_ready(player_node: Actor):
 		_on_player_atp_changed(atp_component.get_current_atp(), atp_component.get_max_atp())
 	
 	# Set initial health value
+	print("Player HUD: Initializing health display")
+	print(player_node)
 	_on_player_health_changed(
-		player_node.health_component.get_current_health(),
-		player_node.health_component.get_max_health()
+		player_node.attribute_component.health_component.get_current_health(),
+		player_node.attribute_component.health_component.get_max_health()
 	)
 	
 	# Update player name
@@ -124,7 +126,7 @@ func _physics_process(_delta):
 	_update_tank_status()
 
 func _update_glucose_label():
-	glucose_label.text = "Glucose: %.1f" % PlayerData.actor_data.glucose
+	glucose_label.text = "Glucose: %.1f" % PlayerData.actor_data.current_glucose
 
 # --- Boss Health API ---
 

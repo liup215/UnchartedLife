@@ -10,12 +10,10 @@ signal actor_health_changed(current_health: int, max_health: int)
 signal actor_died()
 signal inventory_item_added(item_data: ItemData) # Example for future use
 
-# Components
-@onready var stats_component: StatsComponent = $StatsComponent
-@onready var health_component: HealthComponent = $HealthComponent
-@onready var atp_component: ATPComponent = $ATPComponent
+# @onready var atp_component: ATPComponent = $ATPComponent
+@onready var attribute_component: AttributeComponent = $AttributeComponent
 @onready var visuals: AnimatedSprite2D = %AnimatedSprite2D
-@onready var combat_component: CombatComponent = $CombatComponent
+@onready var actor_combat_component: ActorCombatComponent = $ActorCombatComponent
 
 # This property will be set by the spawner.
 @export var actor_data: ActorData
@@ -27,12 +25,8 @@ func _ready():
 	# This function is meant to be called by child classes AFTER they have
 	# assigned their specific ActorData to the stats_component.
 	if actor_data:
-		stats_component.data = actor_data
-		# Initialize components with data from the resource
-		health_component.set_max_health(stats_component.get_max_health())
-		atp_component.set_max_atp(stats_component.get_max_atp())
+		# Assign the metabolism component's data source
 		_setup_animations()
-
 		# Apply sprite scale
 		if visuals and actor_data.sprite_scale != Vector2.ZERO:
 			visuals.scale = actor_data.sprite_scale
@@ -44,19 +38,14 @@ func _ready():
 				shape.set_radius(actor_data.get_collision_radius())
 		
 		# 动态加载战斗组件和武器
-		combat_component.owner_node = self
-		for weapon_data in actor_data.weapons:
-			var weapon_comp = preload("res://components/weapon_component.tscn").instantiate()
-			weapon_comp.weapon_data = weapon_data
-			weapon_comp.setup_weapon()
-			add_child(weapon_comp)
-			combat_component.add_actor_weapon(weapon_comp)
+		actor_combat_component.set_actor_data(actor_data)
 
 		# Connect signals from components to the actor's own signals
-		health_component.health_changed.connect(
+		attribute_component.set_actor_data(actor_data)
+		attribute_component.health_component.health_changed.connect(
 			func(current, max_hp): actor_health_changed.emit(current, max_hp)
 		)
-		health_component.died.connect(_on_death)
+		attribute_component.health_component.died.connect(_on_death)
 	else:
 		printerr("Actor _ready() called, but no ActorData was assigned.")
 
@@ -152,7 +141,7 @@ func _update_animation():
 # --- Public API ---
 
 func take_damage(amount: int):
-	health_component.take_damage(amount)
+	attribute_component.health_component.take_damage(amount)
 	_show_damage_number(amount)
 
 func _show_damage_number(amount: int):
@@ -171,22 +160,6 @@ func _show_damage_number(amount: int):
 	tween.tween_property(label, "modulate:a", 0.0, 1.2).set_ease(Tween.EASE_IN)
 	
 	tween.finished.connect(label.queue_free)
-
-# --- Save/Load Interface ---
-
-func save_data() -> Dictionary:
-	return {
-		"position_x": position.x,
-		"position_y": position.y,
-		"current_health": health_component.current_health
-	}
-
-func load_data(data: Dictionary):
-	position.x = data.get("position_x", position.x)
-	position.y = data.get("position_y", position.y)
-	
-	var loaded_health = data.get("current_health", health_component.max_health)
-	health_component.current_health = loaded_health
 
 func _on_death():
 	actor_died.emit()

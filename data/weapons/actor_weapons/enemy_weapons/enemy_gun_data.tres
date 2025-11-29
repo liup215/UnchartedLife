@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=0 format=3]
+[gd_resource type="Resource" script_class="WeaponData" load_steps=6 format=3 uid="uid://1wsx8lb1digq"]
 
 [ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="2"]
@@ -6,37 +6,18 @@
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="5"]
 
-
 [resource]
-script = ExtResource(1)
-weapon_texture = ExtResource(3)
-weapon_offset = Vector2(0, 0)
+script = ExtResource("1")
+weapon_texture = ExtResource("3")
 weapon_name = "Enemy Machine Gun"
-weapon_type = 1 # SUB_WEAPON
-weight = 50.0
+weapon_type = 1
 energy_cost = 0
-
 damage = 12.0
-damage_type = 0 # PHYSICAL
-rate_of_fire = 2.0
 ammo_capacity = 999
-
-max_charge_level = 1
 charge_time = 0.0
 atp_cost_per_level = 0.0
-
-fire_sound = null
-muzzle_flash_effect = null
-
-bullet_scene = ExtResource(2)
+bullet_scene = ExtResource("2")
 bullet_speed = 600.0
-bullet_lifetime = 2.0
-bullet_texture = ExtResource(4)
-bullet_scale = Vector2(1, 1)
-
-hit_effect_texture = ExtResource(5)
-hit_effect_scale = Vector2(1, 1)
-hit_effect_h_frames = 1
-hit_effect_v_frames = 1
-hit_effect_frame_count = 1
+bullet_texture = ExtResource("4")
+hit_effect_texture = ExtResource("5")
 hit_effect_duration = 0.3
