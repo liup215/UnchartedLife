@@ -39,6 +39,7 @@ actor_data = ExtResource("2_boss")
 [node name="QuizHUD" type="CanvasLayer" parent="."]
 
 [node name="QuizPanel" type="PanelContainer" parent="QuizHUD"]
+process_mode = 2
 visible = false
 anchors_preset = 8
 anchor_left = 0.5

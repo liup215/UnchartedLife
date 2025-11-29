@@ -34,7 +34,7 @@ func _ready():
 	_setup_lifetime()
 
 func _setup_lifetime():
-	await get_tree().create_timer(lifetime).timeout
+	await get_tree().create_timer(lifetime, false).timeout
 	if is_instance_valid(self):
 		queue_free()
 

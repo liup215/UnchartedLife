@@ -72,12 +72,14 @@ func _ready() -> void:
 	else:
 		load_questions_from_dir(question_bank_path)
 
+
 func _on_request_quiz_reload(_weapon_data: Resource) -> void:
 	if quiz_panel.visible:
 		return
 	start_quiz()
 
 func start_quiz() -> void:
+	get_tree().paused = true
 	quiz_panel.visible = true
 	input_locked = false
 	display_random_question()
@@ -138,6 +140,7 @@ func handle_correct_answer() -> void:
 	quiz_panel.visible = false
 	question_label.modulate = Color.WHITE
 	EventBus.quiz_completed.emit(true)
+	get_tree().paused = false
 
 func handle_wrong_answer() -> void:
 	# Visual Feedback
@@ -154,6 +157,7 @@ func handle_wrong_answer() -> void:
 	display_random_question()
 
 func _on_exit_pressed() -> void:
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://features/bio_blitz/bio_blitz_selection.tscn")
 
 func _on_boss_died() -> void:
