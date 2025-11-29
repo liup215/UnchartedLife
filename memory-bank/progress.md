@@ -20,6 +20,14 @@
 
 此阶段的目标是验证新设计的核心技术和玩法循环是否可行。
 
+- [x] **武器与组件系统重构与集成:**
+    - [x] 新增玩家机关枪武器资源，包含伤害、射速、弹药等属性。
+    - [x] 新建玩家武器场景，集成新机关枪资源。
+    - [x] 实现 ActorCombatComponent，支持武器发射、蓄力、连击等机制。
+    - [x] 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
+    - [x] 新增 VehicleCombatComponent 和 VehicleStatsComponent，分别管理载具武器与性能。
+    - [x] WeaponComponent 负责武器逻辑（发射、蓄力、弹药管理）。
+    - [x] 现有组件已与新武器和战斗系统集成。
 - [ ] **搭建原型 - 离线评估引擎:**
     - [ ] 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
     - [ ] **目标:** 验证 Godot 能通过本地 HTTP 请求将数学题发送给 Python 脚本，脚本使用 SymPy 判断答案后将结果返回 Godot。**(最高优先级，需最先验证)**

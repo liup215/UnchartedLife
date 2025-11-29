@@ -6,6 +6,7 @@
 - **文档更新:** 所有核心设计文档 (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`) 已经更新，以反映新的世界观、游戏机制和技术方案。
 - **架构调整:** 保留并扩展了原有的数据驱动和组件化架构，使其能够支持新的核心系统，如“书魂印”、“离线评估引擎”和“PBL项目”。
 - **Bio Blitz 原型开发:** 正在完善 "Bio Blitz" 模式作为战斗-答题循环的原型。实现了基于章节（Chapter）加载特定 Boss 数据的功能，并优化了战斗界面视觉效果。
+- **武器与组件系统升级:** 新增玩家机关枪武器资源，开发了 ActorCombatComponent、AttributeComponent、VehicleCombatComponent、VehicleStatsComponent、WeaponComponent 等，支持武器发射、蓄力、连击、弹药管理等机制，并已集成到现有系统。
 
 ## 关键决策 (Key Decisions Made)
 1.  **确立新核心:** 游戏的核心不再是生物学模拟，而是“学-练-考-悟”的闭环学习体验。战斗、技能和成长系统都将围绕“解题”这一核心互动展开。
@@ -28,6 +29,14 @@
 2.  **明确技术路径:** 为新的核心功能（特别是离线评估引擎）确定了清晰、可行且风险可控的技术实现方案（Python + SymPy 本地服务）。
 3.  **统一团队认知:** 通过更新文档，为项目接下来的开发工作建立了统一、明确的蓝图和目标。
 4.  **视觉效果增强:** 实现了基于 Shader 和 FastNoiseLite 的动态细胞质背景，提升了游戏的生物学氛围。
+5.  **武器与组件系统重构:** 
+    - 新增玩家机关枪武器资源，包含伤害、射速、弹药等属性。
+    - 新建玩家武器场景，集成新机关枪资源。
+    - 实现 ActorCombatComponent，支持武器发射、蓄力、连击等机制。
+    - 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
+    - 新增 VehicleCombatComponent 和 VehicleStatsComponent，分别管理载具武器与性能。
+    - WeaponComponent 负责武器逻辑（发射、蓄力、弹药管理）。
+    - 现有组件已与新武器和战斗系统集成。
 
 ## 下一步计划 (Next Steps)
 1.  **搭建原型 - 离线评估引擎:**
