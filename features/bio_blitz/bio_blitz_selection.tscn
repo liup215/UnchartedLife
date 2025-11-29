@@ -58,15 +58,6 @@ text = "Select Chapter:"
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 
-[node name="ModeLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Select Mode:"
-
-[node name="ModeOption" type="OptionButton" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
 [node name="Spacer" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2

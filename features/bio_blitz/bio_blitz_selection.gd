@@ -15,8 +15,8 @@ var current_syllabus_path: String = ""
 # Boss Data Mapping
 # Map "Syllabus/Chapter.json" to BossData resources
 var chapter_boss_map: Dictionary = {
-	"Biology/cell_structure.json": preload("res://data/questions/bio_blitz_demo/boss_demo.tres"),
-	"Biology/12_respiration.json": preload("res://data/questions/bio_blitz_demo/boss_respiration.tres"),
+	"A2Biology/cell_structure.json": preload("res://data/questions/bio_blitz_demo/boss_demo.tres"),
+	"A2Biology/12_respiration.json": preload("res://data/questions/bio_blitz_demo/boss_respiration.tres"),
 	# Add more mappings here:
 	# "Math/fractions.json": preload("res://path/to/math_boss.tres"),
 }
@@ -25,11 +25,6 @@ func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	syllabus_option.item_selected.connect(_on_syllabus_selected)
-
-# Setup Mode Option
-	mode_option.add_item("Exam Mode", 0)
-	mode_option.add_item("Practice Mode", 1)
-	mode_option.select(0)
 
 	load_syllabi()
 
@@ -112,12 +107,6 @@ func _on_start_pressed() -> void:
 		if boss_map_key in chapter_boss_map and "boss_data" in battle_scene_instance:
 			battle_scene_instance.boss_data = chapter_boss_map[boss_map_key]
 			print("Loaded specific boss for chapter: " + boss_map_key)
-
-		# Set Game Mode
-		if "current_game_mode" in battle_scene_instance:
-			var selected_mode_index = mode_option.selected
-			# Assuming BioBlitzManager.GameMode enum: EXAM=0, PRACTICE=1
-			battle_scene_instance.current_game_mode = selected_mode_index
 
 		# Switch scene manually since we instantiated it
 		var root = get_tree().root
