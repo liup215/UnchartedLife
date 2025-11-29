@@ -119,12 +119,12 @@ func _on_player_atp_changed(current_atp: int, max_atp: int):
 
 func _physics_process(_delta):
 	# Continuously update glucose, as it can change frequently
-	if PlayerData:
-		_update_glucose_label()
+	# if PlayerData:
+	# 	# _update_glucose_label()
 	_update_tank_status()
 
 func _update_glucose_label():
-	glucose_label.text = "Glucose: %.1f" % PlayerData.glucose
+	glucose_label.text = "Glucose: %.1f" % PlayerData.actor_data.glucose
 
 # --- Boss Health API ---
 

@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="1_gve21"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_r151a"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="3_3pbod"]
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="4_00f15"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="4_00f15"]
 [ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="5_v70go"]
 
 [resource]

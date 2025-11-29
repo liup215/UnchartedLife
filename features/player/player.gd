@@ -26,8 +26,6 @@ func _ready():
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
 	add_to_group("saveable")
-	# Set player color
-	# visuals.modulate = Color.DODGER_BLUE
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
 
@@ -186,8 +184,8 @@ func _process_metabolism(delta: float, is_sprinting: bool = false):
 			var glucose_for_atp = atp_to_recover / conversion_rate
 
 			# Check if we have enough glucose
-			if PlayerData.glucose >= glucose_for_atp:
-				PlayerData.glucose -= glucose_for_atp
+			if PlayerData.actor_data.glucose >= glucose_for_atp:
+				PlayerData.actor_data.glucose -= glucose_for_atp
 				atp_component.recover_atp(atp_to_recover)
 			else:
 				# Out of glucose! Cannot recover ATP - this will lead to ATP depletion
@@ -196,8 +194,8 @@ func _process_metabolism(delta: float, is_sprinting: bool = false):
 	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
 	# This continues even when ATP is full, representing basic cellular maintenance
 	var basal_glucose_cost = stats_component.data.base_metabolic_rate * delta * 0.3  # Reduced to 30% of original rate
-	if PlayerData.glucose > 0:
-		PlayerData.glucose -= basal_glucose_cost
+	if PlayerData.actor_data.glucose > 0:
+		PlayerData.actor_data.glucose -= basal_glucose_cost
 
 # --- Save/Load Interface ---
 

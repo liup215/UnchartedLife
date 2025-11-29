@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AnimationData" load_steps=3 format=3 uid="uid://dg6ow4dwif11a"]
 
-[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_anim_data"]
 [ext_resource type="Texture2D" uid="uid://bl2dfwd3164r2" path="res://assets/sprites/enemy.png" id="2_igo24"]
 
 [resource]

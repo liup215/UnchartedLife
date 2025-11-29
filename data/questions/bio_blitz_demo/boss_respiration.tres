@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="BossData" load_steps=7 format=3 uid="uid://c3xey0kn3vq8u"]
 
-[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_anim_data"]
 [ext_resource type="Script" uid="uid://ccvl42icwye4t" path="res://data/definitions/bio_blitz/boss_data.gd" id="1_script"]
-[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior_data.gd" id="3_bsxkc"]
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="5_krgf5"]
+[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior/ai_behavior_data.gd" id="3_bsxkc"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="5_krgf5"]
 [ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="5_o21mq"]
 
 [sub_resource type="Resource" id="Resource_idle"]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" load_steps=6 format=3 uid="uid://cvc30g5d6sxx3"]
 
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="1_weapon"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="1_weapon"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_3e2wv"]
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="2_bullet_scene"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="4_hit_effect_texture"]

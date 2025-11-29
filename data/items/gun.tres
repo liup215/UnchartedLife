@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://cpfkvh3eeqfab"]
 
-[ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/item_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/inventory/item_data.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="1_n8ruv"]
 
 [resource]

@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ctjtq32keeo1f" path="res://features/effects/enemy_base_bullet.tscn" id="1_tcyhy"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_mgds6"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="3_577eg"]
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="4_iy3i1"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="4_iy3i1"]
 
 [resource]
 script = ExtResource("4_iy3i1")

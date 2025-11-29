@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AnimationData" load_steps=3 format=3 uid="uid://byg48j1xl2004"]
 
-[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation_data.gd" id="1_anim_data"]
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_anim_data"]
 [ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="2_spritesheet"]
 
 [resource]

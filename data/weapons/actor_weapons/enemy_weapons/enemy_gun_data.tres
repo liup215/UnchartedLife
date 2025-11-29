@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=0 format=3]
 
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/weapon_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="4"]

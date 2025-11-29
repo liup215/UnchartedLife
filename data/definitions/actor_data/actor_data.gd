@@ -25,6 +25,8 @@ class_name ActorData
 @export var collision_radius: float = 100.0
 ## Affects passive glucose consumption and natural ATP recovery.
 @export var base_metabolic_rate: float = 0.1 # Glucose per second
+@export var max_glucose: int = 100
+var glucose: float = max_glucose
 ## Affects the window size for "Just Frame" judgments.
 @export var neural_response_speed: float = 1.0
 ## Affects vehicle control precision and combo success rate.
