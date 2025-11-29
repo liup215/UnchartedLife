@@ -4,7 +4,21 @@
 extends Node
 
 var player_name: String = "Player"
-var current_slot: String = ""
+var actor_data: ActorData = ActorData.new()
 
-# The player's total glucose, which acts as currency and energy source.
-var glucose: float = 1000.0
+
+func to_dict() -> Dictionary:
+	return {
+		"player_name": player_name,
+		"actor_data": actor_data.to_dict() if actor_data else {},
+	}
+
+func from_dict(data: Dictionary) -> void:
+
+	if data.has("player_name"):
+		player_name = data["player_name"]
+
+	if data.has("actor_data"):
+		if not actor_data:
+			actor_data = ActorData.new()
+		actor_data.from_dict(data["actor_data"])

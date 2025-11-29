@@ -64,3 +64,16 @@ func get_collision_radius() -> float:
 # but it will be derived from vehicle stats later.
 func get_move_speed() -> float:
 	return move_speed
+
+func to_dict() -> Dictionary:
+	return {
+		"actor_name": actor_name,
+		"sprite_scale": sprite_scale,
+		"max_hp": max_hp,
+		"collision_radius": collision_radius,
+		"base_metabolic_rate": base_metabolic_rate,
+		"neural_response_speed": neural_response_speed,
+		"muscle_coordination": muscle_coordination,
+		"move_speed": move_speed,
+		"weapons": weapons,
+	}

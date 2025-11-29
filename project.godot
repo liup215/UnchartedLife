@@ -13,6 +13,7 @@ name="UnchartedLife"
 [application]
 
 config/name="UnchartedLife"
+config/version="0.0.1"
 run/main_scene="uid://6x6cte2n87sn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
@@ -24,6 +25,8 @@ SaveManager="*res://systems/save_manager.gd"
 MapManager="*res://systems/map_manager.gd"
 InventoryManager="*res://systems/inventory_manager.gd"
 AudioManager="*res://systems/audio_manager.gd"
+SceneManager="*res://systems/scene_manager.gd"
+GameProperties="*res://systems/game_properties.gd"
 
 [display]
 

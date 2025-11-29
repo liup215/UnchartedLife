@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkx9y8w7v6u5t"]
+[gd_scene load_steps=3 format=3 uid="uid://bkyay8w7v6u5t"]
 
-[ext_resource type="Script" path="res://ui/main_menu/main_menu.gd" id="1_abcde"]
+[ext_resource type="Script" uid="uid://ehanq4r0n2fb" path="res://ui/main_menu/main_menu.gd" id="1_abcde"]
+[ext_resource type="PackedScene" uid="uid://b7gm8qlmspc6k" path="res://ui/main_menu/new_game_settings.tscn" id="2_mu8pm"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -65,6 +66,9 @@ text = "Credits"
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer/MenuButtons"]
 layout_mode = 2
 text = "Quit"
+
+[node name="NewGameSettings" parent="." instance=ExtResource("2_mu8pm")]
+layout_mode = 1
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 1
