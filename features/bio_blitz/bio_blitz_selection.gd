@@ -2,7 +2,6 @@ extends Control
 
 @onready var syllabus_option: OptionButton = $VBoxContainer/SyllabusOption
 @onready var chapter_option: OptionButton = $VBoxContainer/ChapterOption
-@onready var mode_option: OptionButton = $VBoxContainer/ModeOption
 @onready var start_button: Button = $VBoxContainer/StartButton
 @onready var quit_button: Button = $VBoxContainer/QuitButton
 
@@ -17,6 +16,7 @@ var current_syllabus_path: String = ""
 var chapter_boss_map: Dictionary = {
 	"A2Biology/cell_structure.json": preload("res://data/questions/bio_blitz_demo/boss_demo.tres"),
 	"A2Biology/12_respiration.json": preload("res://data/questions/bio_blitz_demo/boss_respiration.tres"),
+	"中国历史/01_三皇五帝.json": preload("res://data/questions/bio_blitz_demo/boss_data/head_cutter/goblin_data.tres")
 	# Add more mappings here:
 	# "Math/fractions.json": preload("res://path/to/math_boss.tres"),
 }

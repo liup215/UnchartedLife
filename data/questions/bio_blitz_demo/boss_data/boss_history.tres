@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BossData" load_steps=7 format=3 uid="uid://dg1or5o3oeodj"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_qse36"]
+[ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="2_7r85s"]
+[ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior/ai_behavior_data.gd" id="3_or7i0"]
+[ext_resource type="Resource" uid="uid://b5ankkf4xahg7" path="res://data/ai_behavior/attack_behavior.tres" id="4_gydaa"]
+[ext_resource type="Script" uid="uid://ccvl42icwye4t" path="res://data/definitions/bio_blitz/boss_data.gd" id="5_pvtvw"]
+
+[sub_resource type="Resource" id="Resource_idle"]
+script = ExtResource("1_qse36")
+animation_name = "idle"
+spritesheet = ExtResource("2_7r85s")
+frame_indices = Array[int]([0])
+
+[resource]
+script = ExtResource("5_pvtvw")
+texture = ExtResource("2_7r85s")
+actor_name = "Mutated Mitochondrion"
+animations = Array[ExtResource("1_qse36")]([SubResource("Resource_idle")])
+sprite_scale = Vector2(0.6, 0.6)
+current_speed = null
+weapons = Array[String](["res://data/weapons/actor_weapons/enemy_weapons/enemy_weapon_test.tscn"])
+equipped_weapons = Array[String](["res://data/weapons/actor_weapons/enemy_weapons/enemy_weapon_test.tscn"])
+behaviors = Array[ExtResource("3_or7i0")]([ExtResource("4_gydaa")])
+current_atp = null
+current_glucose = null

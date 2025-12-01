@@ -49,6 +49,7 @@ func _ready() -> void:
 
 	# Setup Boss HUD
 	if boss and game_hud:
+		
 		var boss_name = "Boss"
 		if boss.actor_data and "actor_name" in boss.actor_data:
 			boss_name = boss.actor_data.actor_name
@@ -169,6 +170,7 @@ func _on_player_died() -> void:
 	victory_panel.visible = true
 
 func _on_restart_pressed() -> void:
+	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 # --- JSON Loading Logic ---

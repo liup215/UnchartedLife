@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="AnimationData" load_steps=3 format=3 uid="uid://d2mm3bn054tu7"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_yetw5"]
+[ext_resource type="Texture2D" uid="uid://bl2dfwd3164r2" path="res://assets/sprites/enemy.png" id="2_vo1h1"]
+
+[resource]
+script = ExtResource("1_yetw5")
+animation_name = "walk_left"
+spritesheet = ExtResource("2_vo1h1")
+h_frames = 4
+v_frames = 4
+frame_indices = Array[int]([4, 5, 6, 7])

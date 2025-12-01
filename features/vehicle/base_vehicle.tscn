@@ -104,7 +104,7 @@ vertical_alignment = 1
 [node name="Camera2D" type="Camera2D" parent="."]
 enabled = false
 
-[node name="CombatComponent" parent="." instance=ExtResource("3_g7ui6")]
+[node name="VehicleCombatComponent" parent="." instance=ExtResource("3_g7ui6")]
 
 [node name="MainWeaponMount1" type="Node2D" parent="."]
 position = Vector2(-20, 0)

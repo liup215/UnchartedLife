@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="AnimationData" load_steps=3 format=3 uid="uid://cehs33p72hvim"]
+
+[ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_1u5la"]
+[ext_resource type="Texture2D" uid="uid://bl2dfwd3164r2" path="res://assets/sprites/enemy.png" id="2_h1qol"]
+
+[resource]
+script = ExtResource("1_1u5la")
+animation_name = "walk_up"
+spritesheet = ExtResource("2_h1qol")
+h_frames = 4
+v_frames = 4
+frame_indices = Array[int]([12, 13, 14, 15])

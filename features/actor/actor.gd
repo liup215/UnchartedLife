@@ -72,6 +72,9 @@ func _physics_process(delta: float):
 	_update_animation()
 	move_and_slide()
 
+func reset_actor():
+	pass
+
 func _setup_animations():
 	if not actor_data or not actor_data.animations:
 		return

@@ -112,9 +112,9 @@ func _process_basal_metabolism(delta: float):
 	attribute_component.metabolism_component.consume_atp(base_atp_consumption)
 
 	# ATP Recovery
-	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.max_atp:
+	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
 		var atp_to_recover = base_atp_consumption
-		var conversion_rate = attribute_component.metabolism_component.atp_conversion_rate
+		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
 			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
@@ -122,7 +122,7 @@ func _process_basal_metabolism(delta: float):
 				attribute_component.metabolism_component.recover_atp(atp_to_recover)
 
 	# Basal metabolic rate (reduced in vehicle - player is resting)
-	var basal_glucose_cost = attribute_component.metabolism_component.glucose_consume_rate * delta * 0.2  # Even more reduced in vehicle
+	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.2  # Even more reduced in vehicle
 	if attribute_component.metabolism_component.get_current_glucose() > 0:
 		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
 

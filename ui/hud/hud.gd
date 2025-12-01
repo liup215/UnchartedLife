@@ -91,11 +91,11 @@ func _on_player_ready(player_node: Actor):
 	player_node.actor_health_changed.connect(_on_player_health_changed)
 	
 	# Check if the player has an ATP component before connecting
-	if player_node.has_node("ATPComponent"):
-		var atp_component = player_node.get_node("ATPComponent")
-		atp_component.atp_changed.connect(_on_player_atp_changed)
+	if player_node.has_node("AttributeComponent"):
+		var attribute_component = player_node.get_node("AttributeComponent")
+		attribute_component.metabolism_component.atp_changed.connect(_on_player_atp_changed)
 		# Set initial ATP value
-		_on_player_atp_changed(atp_component.get_current_atp(), atp_component.get_max_atp())
+		_on_player_atp_changed(attribute_component.metabolism_component.get_current_atp(), attribute_component.metabolism_component.get_max_atp())
 	
 	# Set initial health value
 	print("Player HUD: Initializing health display")

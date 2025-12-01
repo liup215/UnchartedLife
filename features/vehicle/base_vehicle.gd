@@ -32,20 +32,20 @@ func _ready():
 
 	# Set owner_node for combat_component
 	if vehicle_combat_component:
-		vehicle_combat_component.owner_node = self
-		for weapon in vehicle_data.weapons:
-			if weapon is WeaponData:
-				var weapon_comp = preload("res://features/components/weapon_component.tscn").instantiate()
-				weapon_comp.weapon_data = weapon
-				weapon_comp.setup_weapon()
-				# add a random position offset to the weapon
-				weapon_comp.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-				weapon_comp.rotation = rotation
-				add_child(weapon_comp)
-				if weapon.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
-					vehicle_combat_component.add_main_weapon(weapon_comp)
-				elif weapon.weapon_type == WeaponData.WeaponType.SUB_WEAPON:
-					vehicle_combat_component.add_secondary_weapon(weapon_comp)
+		vehicle_combat_component.set_actor_data(vehicle_data)
+		# for weapon in vehicle_data.weapons:
+		# 	if weapon is WeaponData:
+		# 		var weapon_comp = preload("res://features/components/weapon_component.tscn").instantiate()
+		# 		weapon_comp.weapon_data = weapon
+		# 		weapon_comp.setup_weapon()
+		# 		# add a random position offset to the weapon
+		# 		weapon_comp.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
+		# 		weapon_comp.rotation = rotation
+		# 		add_child(weapon_comp)
+		# 		if weapon.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
+		# 			vehicle_combat_component.add_main_weapon(weapon_comp)
+		# 		elif weapon.weapon_type == WeaponData.WeaponType.SUB_WEAPON:
+		# 			vehicle_combat_component.add_secondary_weapon(weapon_comp)
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
@@ -165,7 +165,7 @@ func enter_vehicle(player: Node2D) -> bool:
 	player.set_in_vehicle_state(true)
 
 	# hide player's weapon components
-	var combat = player.combat_component
+	var combat = player.actor_combat_component
 	if combat:
 		for weapon in combat.actor_weapons:
 			weapon.visible = false
