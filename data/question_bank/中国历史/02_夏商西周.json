@@ -1,0 +1,332 @@
+[
+  {
+    "text": "谁建立了夏朝？",
+    "options": [
+      "大禹",
+      "商汤",
+      "周武王",
+      "秦始皇"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "大禹因为什么事情而出名？",
+    "options": [
+      "治理洪水",
+      "发明火药",
+      "修建长城",
+      "造纸"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商朝的第一位国王是谁？",
+    "options": [
+      "周武王",
+      "商汤",
+      "大禹",
+      "孔子"
+    ],
+    "correct_index": 1,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商朝最后一位国王叫什么名字？",
+    "options": [
+      "商汤",
+      "纣王",
+      "周文王",
+      "大禹"
+    ],
+    "correct_index": 1,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "周武王打败了谁，建立了周朝？",
+    "options": [
+      "商纣王",
+      "大禹",
+      "秦始皇",
+      "汉武帝"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "姜子牙帮助谁建立了周朝？",
+    "options": [
+      "周武王",
+      "商纣王",
+      "大禹",
+      "秦始皇"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "“烽火戏诸侯”的故事讲的是哪位国王？",
+    "options": [
+      "周幽王",
+      "周武王",
+      "商汤",
+      "大禹"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "哪位国王因为喜欢喝酒享乐，最后失去了国家？",
+    "options": [
+      "商纣王",
+      "大禹",
+      "周武王",
+      "商汤"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "大禹的儿子是谁？他继承了王位。",
+    "options": [
+      "启",
+      "桀",
+      "汤",
+      "发"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "夏朝最后一位国王是谁？",
+    "options": [
+      "夏桀",
+      "大禹",
+      "商汤",
+      "周武王"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商朝有一位国王把都城搬到了“殷”，他是谁？",
+    "options": [
+      "盘庚",
+      "商汤",
+      "纣王",
+      "大禹"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "姜子牙在河边做什么的时候遇到了周文王？",
+    "options": [
+      "钓鱼",
+      "种地",
+      "打猎",
+      "睡觉"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "周武王和商纣王打仗的地方叫什么？",
+    "options": [
+      "牧野",
+      "长城",
+      "黄河",
+      "泰山"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "周武王去世后，谁帮助年纪小的周成王管理国家？",
+    "options": [
+      "周公",
+      "商汤",
+      "大禹",
+      "夏桀"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商朝有一位很厉害的女将军，她是商王的妻子，她叫什么？",
+    "options": [
+      "妇好",
+      "妲己",
+      "褒姒",
+      "女娲"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "目前发现最重的青铜器叫什么名字？",
+    "options": [
+      "后母戊鼎",
+      "四羊方尊",
+      "毛公鼎",
+      "利簋"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "传说大禹铸造了几个大鼎来代表九州？",
+    "options": [
+      "九个",
+      "一个",
+      "三个",
+      "五个"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "“烽火戏诸侯”里，周幽王是为了逗谁笑？",
+    "options": [
+      "褒姒",
+      "妲己",
+      "妇好",
+      "女娲"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "哪位周朝国王因为太凶暴，被国人赶跑了？",
+    "options": [
+      "周厉王",
+      "周文王",
+      "周武王",
+      "商汤"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商纣王非常宠爱的一位妃子叫什么？",
+    "options": [
+      "妲己",
+      "褒姒",
+      "妇好",
+      "西施"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "谁帮助商汤建立了商朝，还当过厨师？",
+    "options": [
+      "伊尹",
+      "姜子牙",
+      "周公",
+      "比干"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商纣王的叔叔，因为劝说纣王而被杀害的大臣是谁？",
+    "options": [
+      "比干",
+      "伊尹",
+      "姜子牙",
+      "周公"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "传说中，哪位周朝国王特别喜欢旅游，还见过西王母？",
+    "options": [
+      "周穆王",
+      "周武王",
+      "周幽王",
+      "周厉王"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "是谁攻破了西周的都城，导致西周灭亡？",
+    "options": [
+      "犬戎",
+      "匈奴",
+      "突厥",
+      "蒙古"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "西周的都城叫什么名字？",
+    "options": [
+      "镐京",
+      "北京",
+      "南京",
+      "长安"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "夏朝曾经失去过国家，后来是谁把它夺回来的？（少康中兴）",
+    "options": [
+      "少康",
+      "大禹",
+      "启",
+      "桀"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "大禹的父亲是谁？他因为治水失败被惩罚。",
+    "options": [
+      "鲧",
+      "舜",
+      "尧",
+      "启"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商纣王为了享乐，建造了什么？",
+    "options": [
+      "酒池肉林",
+      "长城",
+      "兵马俑",
+      "大运河"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "商纣王最后是在哪里自焚而死的？",
+    "options": [
+      "鹿台",
+      "烽火台",
+      "泰山",
+      "长城"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  },
+  {
+    "text": "哪位周朝国王南巡的时候，在汉水里淹死了？",
+    "options": [
+      "周昭王",
+      "周武王",
+      "周文王",
+      "周穆王"
+    ],
+    "correct_index": 0,
+    "type": "PERSON_EVENT"
+  }
+]

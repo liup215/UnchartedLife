@@ -5,7 +5,7 @@ extends Control
 const QuestionDataScript = preload("res://data/definitions/bio_blitz/question_data.gd")
 
 @export var question_pool: Array[Resource] = [] # Type hint: Array[QuestionData]
-@export var question_bank_path: String = "res://data/question_bank/"
+@export var question_bank_path: String = ""
 @export var battle_music: AudioStream
 
 var question_deck: Array[Resource] = [] # Type hint: Array[QuestionData]

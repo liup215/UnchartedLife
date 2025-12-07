@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://df1grkhu8bf5u"]
 
-[ext_resource type="Script" uid="uid://c7v1mlh1vhnbe" path="res://features/components/actor_combat_component.gd" id="1_p8303"]
+[ext_resource type="Script" uid="uid://c7v1mlh1vhnbe" path="res://features/components/combat_component/actor_combat_component.gd" id="1_p8303"]
 [ext_resource type="PackedScene" uid="uid://c05kfewedfddc" path="res://features/effects/base_weapon_effect.tscn" id="2_58b02"]
 
 [node name="CombatComponent" type="Node2D"]

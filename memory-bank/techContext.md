@@ -17,7 +17,7 @@
     - **`QuestionData.gd`**: 定义题目的 `Resource`，包含题干、答案、题型和评估逻辑。
 
 ### 2.2. 组件化设计 (Component-Based Design)
-- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent` 和新的 `InkEnergyComponent`。
+- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent`、`InkEnergyComponent`、`VehicleCombatComponent`、`VehicleStatsComponent`、`InteractableComponent`、`InventoryComponent`、`Pickup` 等，支持主副武器管理、物品存取、拾取交互等功能。
 
 ### 2.3. 全局事件总线 (Global Event Bus)
 - **`EventBus` Autoload:** 继续作为解耦系统间通信的首选方案，用于广播 `skill_unlocked` 或 `pbl_project_completed` 等全局事件。
@@ -29,7 +29,7 @@
 ## 4. 离线优先的技术架构建议 (Offline-First Technical Architecture)
 
 ### 4.1. 客户端 (Godot 4.x)
-- **职责:** 渲染、战斗逻辑、UI、PBL 编辑器交互、本地题库管理以及与本地评估服务的通信。
+- **职责:** 渲染、战斗逻辑、UI、PBL 编辑器交互、本地题库管理以及与本地评估服务的通信。集成车辆武器系统与 ATP 消耗机制，支持角色菜单、拾取反馈等 UI 组件与信号通信。
 - **存储:** 本地数据优先使用 SQLite 或结构化的 JSON 文件。
 - **PBL 沙盒模拟:** 利用 Godot 内置的物理引擎或编写专用的模拟模块，对 PBL 提交方案进行本地模拟，并返回关键性能指标（KPIs）。
 

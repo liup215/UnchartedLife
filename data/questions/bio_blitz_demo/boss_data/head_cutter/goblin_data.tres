@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=14 format=3 uid="uid://ci1o4kv8blk11"]
+[gd_resource type="Resource" script_class="ActorData" load_steps=13 format=3 uid="uid://ci1o4kv8blk11"]
 
 [ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_k5frh"]
 [ext_resource type="Resource" uid="uid://bjvdejn3dhw1r" path="res://data/questions/bio_blitz_demo/boss_data/head_cutter/animations/goblin_walk_down.tres" id="2_8ilon"]
@@ -10,7 +10,6 @@
 [ext_resource type="Resource" uid="uid://dyacv7y0dwbk3" path="res://data/questions/bio_blitz_demo/boss_data/head_cutter/animations/goblin_idle_right.tres" id="8_on0br"]
 [ext_resource type="Resource" uid="uid://b64nujeyslont" path="res://data/questions/bio_blitz_demo/boss_data/head_cutter/animations/goblin_idle_up.tres" id="9_eb83s"]
 [ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior/ai_behavior_data.gd" id="10_e8uba"]
-[ext_resource type="Resource" uid="uid://b5ankkf4xahg7" path="res://data/ai_behavior/attack_behavior.tres" id="11_ditip"]
 [ext_resource type="Resource" uid="uid://bjg7yy4uboq1j" path="res://data/ai_behavior/patrol_behavior.tres" id="12_3ilbo"]
 [ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/definitions/actor_data/actor_data.gd" id="13_8ksvn"]
 
@@ -21,7 +20,7 @@ collision_radius = 60.0
 current_speed = null
 weapons = Array[String](["res://data/weapons/actor_weapons/enemy_weapons/enemy_weapon_test.tscn"])
 equipped_weapons = Array[String](["res://data/weapons/actor_weapons/enemy_weapons/enemy_weapon_test.tscn"])
-behaviors = Array[ExtResource("10_e8uba")]([ExtResource("11_ditip"), ExtResource("12_3ilbo")])
+behaviors = Array[ExtResource("10_e8uba")]([ExtResource("12_3ilbo")])
 max_atp = 50
 current_atp = null
 current_glucose = null

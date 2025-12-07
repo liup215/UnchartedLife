@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://d3e4f5g6h7i8j"]
+[gd_scene load_steps=7 format=3 uid="uid://d3e4f5g6h7i8j"]
 
 [ext_resource type="Script" uid="uid://d3ifpac5jqt5u" path="res://features/actor/actor.gd" id="1_actor_script"]
 [ext_resource type="PackedScene" uid="uid://b1x2y3v4a5s6d" path="res://features/components/attribute_component/health_component.tscn" id="2_health_comp"]
 [ext_resource type="PackedScene" uid="uid://vcg10p6kd1ob" path="res://features/components/attribute_component/attribute_component.tscn" id="4_c5xt3"]
-[ext_resource type="PackedScene" uid="uid://df1grkhu8bf5u" path="res://features/components/actor_combat_component.tscn" id="5_g21jm"]
+[ext_resource type="PackedScene" uid="uid://cxisxun04ixka" path="res://features/components/inventory_component/inventory_component.tscn" id="5_bq51l"]
+[ext_resource type="PackedScene" uid="uid://df1grkhu8bf5u" path="res://features/components/combat_component/actor_combat_component.tscn" id="5_g21jm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_default"]
 radius = 100.0
@@ -25,3 +26,5 @@ shape = SubResource("CircleShape2D_default")
 [node name="AttributeComponent" parent="." instance=ExtResource("4_c5xt3")]
 
 [node name="ActorCombatComponent" parent="." instance=ExtResource("5_g21jm")]
+
+[node name="InventoryComponent" parent="." instance=ExtResource("5_bq51l")]

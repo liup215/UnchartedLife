@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://6x6cte2n87sn"]
 
-[ext_resource type="Script" uid="uid://e4x7pkmlyy2c" path="res://features/bio_blitz/bio_blitz_selection.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://e4x7pkmlyy2c" path="res://scenes/blitz_battle/bio_blitz_selection.gd" id="1_script"]
 
 [node name="BioBlitzSelection" type="Control"]
 layout_mode = 3

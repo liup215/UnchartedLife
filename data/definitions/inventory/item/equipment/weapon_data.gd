@@ -1,18 +1,18 @@
 # data/components/weapon_data.gd
 # Defines the properties of a vehicle weapon.
-extends Resource
+extends ItemData
 class_name WeaponData
 
 enum WeaponType { MAIN_CANNON, SUB_WEAPON, ACTOR_WEAPON }
 enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 
-@export_group("Core Properties")
-## The texture for the weapon's sprite.
-@export var weapon_texture: Texture2D
-## The positional offset for the weapon's sprite.
+# @export_group("Core Properties")
+# ## The texture for the weapon's sprite.
+# @export var weapon_texture: Texture2D
+ ## The positional offset for the weapon's sprite.
 @export var weapon_offset: Vector2 = Vector2.ZERO
-## The name of the weapon.
-@export var weapon_name: String = "50mm Cannon"
+# ## The name of the weapon.
+# @export var weapon_name: String = "50mm Cannon"
 ## The type of weapon.
 @export var weapon_type: WeaponType = WeaponType.MAIN_CANNON
 ## The weight of the weapon.

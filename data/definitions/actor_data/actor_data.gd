@@ -38,8 +38,8 @@ class_name ActorData
 
 @export_group("Weapons")
 ## The list of weapons this actor can equip.
-@export var weapons: Array[String] = []
-@export var equipped_weapons: Array[String] = []
+@export var weapons: Array[WeaponData] = []
+@export var equipped_weapons: Array[WeaponData] = []
 @export var weapon_number_limit: int = 1
 
 @export_group("AI Behaviors")
@@ -58,6 +58,11 @@ class_name ActorData
 @export var atp_production_rate: float = 5.0
 @export var atp_conversion_rate: float = 5.0
 
+
+@export_group("Inventory")
+## Configuration for the actor's inventory containers.
+## Key: Container Name (String), Value: InventoryData Resource Path (String)
+@export var inventory_config: Dictionary[String, InventoryData] = {}
 
 func to_dict() -> Dictionary:
 	return {

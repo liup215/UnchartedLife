@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://d07vmasrms20q"]
+[gd_scene load_steps=14 format=3 uid="uid://d07vmasrms20q"]
 
-[ext_resource type="Script" uid="uid://bamny4p2flo46" path="res://features/bio_blitz/bio_blitz_manager.gd" id="1_manager"]
+[ext_resource type="Script" uid="uid://bamny4p2flo46" path="res://scenes/blitz_battle/bio_blitz_manager.gd" id="1_manager"]
 [ext_resource type="AudioStream" uid="uid://c7v4hqv4i5hnl" path="res://assets/audio/music/MatelMax.mp3" id="2_61qja"]
 [ext_resource type="PackedScene" uid="uid://c180jx0bul7fw" path="res://features/effects/background/cell_background.tscn" id="3_cell_bg"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="4_player"]
@@ -10,6 +10,9 @@
 [ext_resource type="Resource" uid="uid://ci1o4kv8blk11" path="res://data/questions/bio_blitz_demo/boss_data/head_cutter/goblin_data.tres" id="7_6pb0o"]
 [ext_resource type="PackedScene" uid="uid://e5dy5ow2xsdx" path="res://features/vehicle/base_vehicle.tscn" id="8_6pb0o"]
 [ext_resource type="Resource" uid="uid://cdbxd4u1pa2lh" path="res://data/vehicles/basic_tank_data.tres" id="9_fh0v0"]
+[ext_resource type="PackedScene" uid="uid://dyws2nafnxvaf" path="res://features/interactive/pickup/pickup.tscn" id="10_g0bql"]
+[ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="11_5xd7q"]
+[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="13_5xd7q"]
 
 [node name="BioBlitzBattle" type="Control"]
 layout_mode = 3
@@ -19,6 +22,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_manager")
+question_bank_path = "res://data/question_bank/中国历史/02_夏商西周.json"
 battle_music = ExtResource("2_61qja")
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
@@ -27,6 +31,7 @@ layer = -1
 [node name="CellBackground" parent="BackgroundLayer" instance=ExtResource("3_cell_bg")]
 
 [node name="GameWorld" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="Player" parent="GameWorld" instance=ExtResource("4_player")]
 position = Vector2(300, 540)
@@ -41,7 +46,14 @@ visible = false
 position = Vector2(1713, 927)
 vehicle_data = ExtResource("9_fh0v0")
 
+[node name="Pickup" parent="GameWorld" instance=ExtResource("10_g0bql")]
+z_index = 1
+position = Vector2(301, 431)
+item_data = ExtResource("11_5xd7q")
+
 [node name="GameHUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="SystemMenu" parent="." instance=ExtResource("13_5xd7q")]
 
 [node name="QuizHUD" type="CanvasLayer" parent="."]
 
@@ -116,5 +128,6 @@ text = "Exit"
 
 [node name="ExitButton" type="Button" parent="QuizHUD"]
 process_mode = 3
+visible = false
 offset_left = 20.0
 text = "Exit"

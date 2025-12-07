@@ -17,6 +17,7 @@ class InventorySlotData:
 @export var is_unlimited: bool = false
 # slots is a Dictionary: key -> InventorySlotData
 @export var slots: Dictionary = {}
+@export var accepted_types: Array[ItemData.ItemType] = []
 
 func _init() -> void:
 	slots = {}
@@ -28,8 +29,17 @@ func _key_base(item: ItemData) -> String:
 		return item.resource_path
 	return "inst://" + str(item.get_instance_id())
 
+func can_accept_item(item: ItemData) -> bool:
+	if item == null:
+		return false
+	if accepted_types.size() == 0:
+		return true
+	return item.item_type in accepted_types
+
 func add_item(item: ItemData, amount: int = 1) -> bool:
 	if item == null or amount <= 0:
+		return false
+	if not can_accept_item(item):
 		return false
 	var base := _key_base(item)
 	if item.stackable:

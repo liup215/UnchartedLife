@@ -29,14 +29,23 @@
 2.  **明确技术路径:** 为新的核心功能（特别是离线评估引擎）确定了清晰、可行且风险可控的技术实现方案（Python + SymPy 本地服务）。
 3.  **统一团队认知:** 通过更新文档，为项目接下来的开发工作建立了统一、明确的蓝图和目标。
 4.  **视觉效果增强:** 实现了基于 Shader 和 FastNoiseLite 的动态细胞质背景，提升了游戏的生物学氛围。
-5.  **武器与组件系统重构:** 
-    - 新增玩家机关枪武器资源，包含伤害、射速、弹药等属性。
-    - 新建玩家武器场景，集成新机关枪资源。
-    - 实现 ActorCombatComponent，支持武器发射、蓄力、连击等机制。
-    - 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
-    - 新增 VehicleCombatComponent 和 VehicleStatsComponent，分别管理载具武器与性能。
+5.  **武器与组件系统重构与功能扩展:** 
+    - 新增 VehicleCombatComponent，支持主副武器管理、充能、发射、连击、ATP 消耗等机制。
+    - 实现 ActorCombatComponent，支持角色武器发射、蓄力、连击等机制。
     - WeaponComponent 负责武器逻辑（发射、蓄力、弹药管理）。
+    - 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
+    - 新增 VehicleStatsComponent，管理载具性能。
+    - 新增 InteractableComponent，支持玩家与拾取物交互。
+    - 新增 InventoryComponent，支持物品存取与背包管理。
+    - 新增 Pickup 类，实现物品收集与视觉反馈。
+    - 新建玩家机关枪武器资源，包含伤害、射速、弹药等属性，并集成新武器场景。
     - 现有组件已与新武器和战斗系统集成。
+6.  **BioBlitz 系统与 UI:** 
+    - 建立 BioBlitzManager，负责基于答题的战斗循环。
+    - 创建 BioBlitzSelection 场景，支持章节/知识点选择。
+    - 新增角色菜单 UI，支持玩家选项操作。
+7.  **架构与文档同步:** 
+    - 所有上述系统的实现已同步更新至 memory bank，确保文档与代码进展一致，便于团队协作与后续维护。
 
 ## 下一步计划 (Next Steps)
 1.  **搭建原型 - 离线评估引擎:**

@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyws2nafnxvaf"]
+
+[ext_resource type="Script" uid="uid://c1d3rbh1g0t1u" path="res://features/interactive/pickup/pickup.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dlwa3ya3bnryk" path="res://features/components/interactable_component/interactable_component.gd" id="2_interact"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 32.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wyabk"]
+
+[node name="Pickup" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="InteractableComponent" type="Area2D" parent="."]
+y_sort_enabled = true
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("2_interact")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractableComponent"]
+shape = SubResource("CircleShape2D_1")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_wyabk")

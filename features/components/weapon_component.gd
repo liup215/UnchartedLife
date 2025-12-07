@@ -23,13 +23,13 @@ func _ready():
 
 func setup_weapon():
 	if weapon_data:
-		print("Setting up weapon: %s" % weapon_data.weapon_name)
+		print("Setting up weapon: %s" % weapon_data.item_name)
 		print("Weapon ammo capacity: %d" % weapon_data.ammo_capacity)
 		current_ammo = weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
-			if weapon_data.weapon_texture:
-				sprite.texture = weapon_data.weapon_texture
+			if weapon_data.icon:
+				sprite.texture = weapon_data.icon
 				sprite.offset = weapon_data.weapon_offset
 
 func start_charging():

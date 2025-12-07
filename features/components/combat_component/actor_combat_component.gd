@@ -38,12 +38,13 @@ func _ready():
 func set_actor_data(data: ActorData):
 	data_source = data
 	# 加载武器
-	for weapon_scene_path in data.equipped_weapons:
+	for weapon_data in data.equipped_weapons:
 		if actor_weapons.size() >= data.weapon_number_limit:
 			break
-		var weapon_scene = load(weapon_scene_path)
+		var weapon_scene = preload("res://features/components/weapon_component.tscn")
 		if weapon_scene:
 			var weapon_instance = weapon_scene.instantiate()
+			weapon_instance.weapon_data = weapon_data
 			weapon_instance.setup_weapon()
 			add_child(weapon_instance)
 			add_actor_weapon(weapon_instance)
@@ -69,7 +70,7 @@ func _connect_weapon_signals(weapon_component):
 func _on_weapon_fired(_weapon_data: WeaponData, _charge_level: int):
 	# Handle weapon firing logic
 	# You can also emit a signal or update HUD here
-	print("[COMBAT] Weapon fired:", _weapon_data.weapon_name if _weapon_data else "Unknown Weapon", "Charge Level:", _charge_level)
+	print("[COMBAT] Weapon fired:", _weapon_data.item_name if _weapon_data else "Unknown Weapon", "Charge Level:", _charge_level)
 
 func _on_weapon_charge_updated(_charge_level: int):
 	# Handle charge level updates
@@ -86,7 +87,7 @@ func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
 	print("Firing all actor weapons, total:", actor_weapons.size())
 
 	for weapon in actor_weapons:
-		print("[COMBAT] Firing actor weapon:", weapon.weapon_data.weapon_name if weapon.weapon_data else "Unknown Weapon")
+		print("[COMBAT] Firing actor weapon:", weapon.weapon_data.item_name if weapon.weapon_data else "Unknown Weapon")
 		weapon.fire(weapon_effect, target_pos)
 		await get_tree().create_timer(0.2).timeout
 	# Emit signal

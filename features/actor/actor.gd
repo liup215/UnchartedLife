@@ -14,6 +14,7 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 @onready var attribute_component: AttributeComponent = $AttributeComponent
 @onready var visuals: AnimatedSprite2D = %AnimatedSprite2D
 @onready var actor_combat_component: ActorCombatComponent = $ActorCombatComponent
+@onready var inventory_component: InventoryComponent = $InventoryComponent
 
 # This property will be set by the spawner.
 @export var actor_data: ActorData

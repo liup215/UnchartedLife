@@ -20,14 +20,21 @@
 
 此阶段的目标是验证新设计的核心技术和玩法循环是否可行。
 
-- [x] **武器与组件系统重构与集成:**
-    - [x] 新增玩家机关枪武器资源，包含伤害、射速、弹药等属性。
-    - [x] 新建玩家武器场景，集成新机关枪资源。
-    - [x] 实现 ActorCombatComponent，支持武器发射、蓄力、连击等机制。
-    - [x] 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
-    - [x] 新增 VehicleCombatComponent 和 VehicleStatsComponent，分别管理载具武器与性能。
+- [x] **武器与组件系统重构与功能扩展:**
+    - [x] 新增 VehicleCombatComponent，支持主副武器管理、充能、发射、连击、ATP 消耗等机制。
+    - [x] 实现 ActorCombatComponent，支持角色武器发射、蓄力、连击等机制。
     - [x] WeaponComponent 负责武器逻辑（发射、蓄力、弹药管理）。
+    - [x] 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
+    - [x] 新增 VehicleStatsComponent，管理载具性能。
+    - [x] 新增 InteractableComponent，支持玩家与拾取物交互。
+    - [x] 新增 InventoryComponent，支持物品存取与背包管理。
+    - [x] 新增 Pickup 类，实现物品收集与视觉反馈。
+    - [x] 新建玩家机关枪武器资源，包含伤害、射速、弹药等属性，并集成新武器场景。
     - [x] 现有组件已与新武器和战斗系统集成。
+- [x] **BioBlitz 系统与 UI:**
+    - [x] 建立 BioBlitzManager，负责基于答题的战斗循环。
+    - [x] 创建 BioBlitzSelection 场景，支持章节/知识点选择。
+    - [x] 新增角色菜单 UI，支持玩家选项操作。
 - [ ] **搭建原型 - 离线评估引擎:**
     - [ ] 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
     - [ ] **目标:** 验证 Godot 能通过本地 HTTP 请求将数学题发送给 Python 脚本，脚本使用 SymPy 判断答案后将结果返回 Godot。**(最高优先级，需最先验证)**

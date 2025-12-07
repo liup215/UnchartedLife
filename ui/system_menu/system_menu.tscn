@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1d2e3f4g5h6i"]
+[gd_scene load_steps=3 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" uid="uid://utidfl0kj3if" path="res://ui/system_menu/system_menu.gd" id="1_menu_script"]
+[ext_resource type="PackedScene" uid="uid://dy2610pxsf1i8" path="res://ui/system_menu/charactor_menu.tscn" id="2_3d1e2"]
 
 [node name="SystemMenu" type="CanvasLayer"]
 process_mode = 3
@@ -27,6 +28,7 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 10
@@ -40,21 +42,9 @@ current_tab = 0
 
 [node name="Character" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/TabContainer"]
 layout_mode = 2
-current_tab = 0
-tab_count = 1
-tab_0/title = "Character"
 metadata/_tab_index = 0
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Character"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Player stats and information will be displayed here."
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="CharactorMenu" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Character" instance=ExtResource("2_3d1e2")]
 
 [node name="Inventory" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/TabContainer"]
 visible = false

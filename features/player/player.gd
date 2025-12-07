@@ -23,11 +23,16 @@ func _ready():
 	# actor_data = load("res://data/items/player_data.tres")
 	# Call the parent's _ready function to initialize health, animations etc.
 	super()
+	# Initialize the actor's inventory 
+	if inventory_component.containers.is_empty():
+		inventory_component.set_data(actor_data)
+	
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
 	add_to_group("saveable")
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
+
 
 func _physics_process(delta: float) -> void:
 	# Handle vehicle interaction input

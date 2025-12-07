@@ -5,4 +5,5 @@
 [resource]
 script = ExtResource("1_fc0yv")
 is_unlimited = true
+accepted_types = Array[int]([0])
 metadata/_custom_type_script = "uid://dgw7bafww1182"

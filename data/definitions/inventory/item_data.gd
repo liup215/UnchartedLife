@@ -3,10 +3,10 @@
 class_name ItemData
 extends Resource
 
-enum ItemType { WEAPON, ARMOR, CONSUMABLE, MISC }
+enum ItemType { WEAPON, ARMOR, CONSUMABLE, KEY_ITEM }
 
 @export var item_name: String = "New Item"
-@export var item_type: ItemType = ItemType.MISC
+@export var item_type: ItemType = ItemType.KEY_ITEM
 @export_multiline var description: String = ""
 
 @export var icon: Texture2D

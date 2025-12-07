@@ -119,13 +119,19 @@ A clean directory structure is crucial. The project now follows a feature-first 
     - All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components: `CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`. This enables any entity to perform attacks, and all logic is reusable and extensible.
     - `WeaponEffect` supports flexible attack effects and visual feedback, and can be configured for different weapon types and entities.
     - `AIBehavior` is assigned via data resources, allowing both player and enemy to use the same behavior system, fully data-driven.
-    - **2025.11系统升级：**
+    - **2025.11系统升级及后续扩展：**
+        - 新增 `VehicleCombatComponent`，支持主副武器管理、充能、发射、连击、ATP 消耗等机制，专为载具战斗设计。
         - 新增 `ActorCombatComponent`，专为角色（玩家/敌人）管理武器发射、蓄力、连击等机制。
-        - 新增 `AttributeComponent`，统一管理角色属性（如生命、代谢等）。
-        - 新增 `VehicleCombatComponent` 和 `VehicleStatsComponent`，分别管理载具武器与性能。
         - `WeaponComponent` 负责武器逻辑（发射、蓄力、弹药管理）。
+        - 新增 `AttributeComponent`，统一管理角色属性（如生命、代谢等）。
+        - 新增 `VehicleStatsComponent`，管理载具性能。
+        - 新增 `InteractableComponent`，支持玩家与拾取物交互。
+        - 新增 `InventoryComponent`，支持物品存取与背包管理。
+        - 新增 `Pickup` 类，实现物品收集与视觉反馈。
         - 玩家机关枪武器及其资源、场景已集成至上述组件体系。
         - 组件间通过唯一数据引用和接口解耦，支持灵活扩展与维护。
+        - `BioBlitzManager` 负责基于答题的战斗循环，`BioBlitzSelection` 场景支持章节/知识点选择。
+        - 新增角色菜单 UI，支持玩家选项操作。
 - **Prejecsilm2D`)**: (`Area2D`)
     - Projectiresj(liees ull(tu)l)eemimplpmnnted atd`Are 2D` aosAs. Tre` nll. sTthlmoto dececttllllisiiowtwith hPhysicsB`dy` dodysd(lik  ekeeiis) wishoutwouplyi g physical poryeg prevehtingsunwcnaef pushr,g effectsn
 w   - an g`bodf_ected`igo triggr ht ogic
