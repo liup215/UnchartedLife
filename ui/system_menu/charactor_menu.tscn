@@ -1,6 +1,40 @@
-[gd_scene load_steps=2 format=3 uid="uid://dy2610pxsf1i8"]
+[gd_scene load_steps=3 format=3 uid="uid://dy2610pxsf1i8"]
 
 [ext_resource type="Script" uid="uid://ji53biyu7dcc" path="res://ui/system_menu/charactor_menu.gd" id="1_ah6jm"]
+[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="2_t26sa"]
 
 [node name="CharactorMenu" type="Node2D"]
 script = ExtResource("1_ah6jm")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("2_t26sa")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Name: Player"
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Level: 10"
+
+[node name="ProgressBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "HP: 100"
