@@ -43,7 +43,8 @@
 ### Creating New Content
 1.  **New Enemy:** Create `ActorData` resource -> Assign `AIBehaviorData` resources -> Use `base_actor.tscn`.
 2.  **New Weapon:** Create `WeaponData` resource -> Assign to Actor/Vehicle data.
-3.  **New Logic:** Create a Component (`Node` or `Node2D`) -> Add to the entity scene -> Expose configuration via `@export`.
+3.  **New Item:** Create `ItemData` resource -> Configure properties (icon, description, type) -> Add to inventory via `InventoryComponent`.
+4.  **New Logic:** Create a Component (`Node` or `Node2D`) -> Add to the entity scene -> Expose configuration via `@export`.
 
 ## Critical Workflows
 
@@ -105,14 +106,29 @@
 ## Inventory & Equipment System
 
 ### Inventory Architecture
-- **InventoryData Resources:** Define container configurations (backpack, equipment slots).
-- **InventoryComponent:** Manages item storage, retrieval, and UI updates.
-- **Item Categories:** Weapons, armor, consumables, quest items.
+- **InventoryData Resources:** Define container configurations (backpack, equipment slots) with capacity, accepted item types, and stored items.
+- **InventoryComponent:** Manages multiple item containers with add/remove operations and signal emissions.
+- **ItemData Resources:** Define individual items with name, description, icon, stackability, and item type.
+- **Item Categories:** Weapons, armor, consumables, quest items, materials.
 
 ### Equipment Integration
-- **WeaponData:** Defines damage, fire rate, ammo capacity, visual effects.
+- **WeaponData:** Defines damage, fire rate, ammo capacity, visual effects, and ATP costs.
 - **Equipping:** Weapons assigned to actors/vehicles via `ActorData.equipped_weapons` array.
 - **Combat Integration:** `ActorCombatComponent`/`VehicleCombatComponent` read equipped weapons and create `WeaponComponent` instances.
+
+### Inventory UI System
+- **Tabbed Interface:** Multiple containers displayed as separate tabs in `system_menu/inventory_ui.tscn`.
+- **Grid Layout:** Items displayed in 8-column scrollable grid with visual slots.
+- **Item Details Panel:** Right-side panel showing selected item information (name, icon, description, quantity).
+- **Tooltip System:** Hover tooltips with formatted item information using `_make_custom_tooltip()`.
+- **Capacity Display:** Shows "Capacity: X / Y" for each container tab.
+- **Item Slots:** Individual `item_slot.tscn` components with click handling and visual feedback.
+
+### Creating New Items
+1. **Create ItemData Resource:** `data/items/new_item.tres` with icon, description, stackability.
+2. **Configure Properties:** Set item_type, stackable flag, and other attributes.
+3. **Add to Inventory:** Use `InventoryComponent.add_item(item_data, quantity)` to add programmatically.
+4. **UI Integration:** Items automatically appear in inventory UI with proper categorization.
 
 ## Save/Load System
 
@@ -179,6 +195,31 @@ func take_damage(amount: int) -> void:
         died.emit()
 ```
 
+### Inventory Component Pattern
+```gdscript
+# Example: InventoryComponent usage
+extends Node
+class_name InventoryComponent
+
+signal inventory_updated(container_name, inventory_data)
+signal item_added(item, amount, container_name)
+
+var containers: Dictionary[String, InventoryData] = {}
+
+func set_data(data: ActorData):
+    containers.clear()
+    if data.inventory_config:
+        containers = data.inventory_config.duplicate()
+
+func add_item(item: ItemData, amount: int = 1) -> bool:
+    # Implementation for adding items to appropriate containers
+    # Returns true if successful, emits signals for UI updates
+    pass
+
+func get_all_containers() -> Dictionary:
+    return containers
+```
+
 ### Component Communication
 - **Signals:** Components emit signals for state changes (health_changed, died, etc.)
 - **EventBus:** Use for cross-component communication when direct coupling isn't appropriate
@@ -234,7 +275,7 @@ func _on_health_changed(actor: Node, current: int, max: int):
 ```
 
 ### UI-Game Logic Separation
-- **UI Scenes:** Handle presentation only (`ui/hud/`, `ui/main_menu/`)
+- **UI Scenes:** Handle presentation only (`ui/hud/`, `ui/main_menu/`, `ui/system_menu/`)
 - **Game Logic:** Managed in features/ and systems/
 - **Communication:** Always through EventBus signals, never direct references
 
@@ -419,6 +460,13 @@ func evaluate_answer(question: QuestionData, answer: String) -> bool:
 4. **Assign to Entities:** Add to ActorData.equipped_weapons array
 5. **Test Integration:** Verify in ActorCombatComponent/VehicleCombatComponent
 
+### Creating New Items
+1. **Create ItemData Resource:** `data/items/new_item.tres`
+2. **Configure Properties:** Set name, description, icon, stackability, item_type
+3. **Add to Inventory:** Use `InventoryComponent.add_item(item_data, quantity)` programmatically
+4. **UI Integration:** Items automatically appear in inventory UI with proper categorization
+5. **Test Display:** Verify in system_menu inventory interface
+
 ### Creating New Questions
 1. **Add to JSON:** `data/question_bank/biology_questions.json`
 2. **Follow Schema:** question_text, options array, correct_option_index, type
@@ -452,6 +500,7 @@ func evaluate_answer(question: QuestionData, answer: String) -> bool:
 ### Commit Patterns
 - **Feature Commits:** "feat: add new enemy type with WanderBehavior"
 - **Data Commits:** "data: update slime enemy stats"
+- **Item Commits:** "item: add health potion with healing effect"
 - **Fix Commits:** "fix: correct ATP consumption calculation"
 - **Refactor Commits:** "refactor: extract weapon firing logic to component"
 
@@ -459,6 +508,7 @@ func evaluate_answer(question: QuestionData, answer: String) -> bool:
 
 ### Sprite Organization
 - **AnimationData Resources:** Centralize animation configurations
+- **Item Icons:** Store item textures in `assets/` with consistent 64x64 resolution
 - **Sprite Scaling:** Use consistent scale factors across similar entities
 - **Texture Optimization:** Compress textures in export settings
 
@@ -495,6 +545,8 @@ func _ready():
 - **Main Scene:** `scenes/main.tscn` as entry point
 - **Feature Scenes:** Modular scenes in `features/` directory
 - **UI Scenes:** Overlay scenes in `ui/` directory
+  - `ui/system_menu/`: System menu scenes (inventory_ui, character_menu) with tabbed interfaces
+  - `ui/backpack/`: Legacy backpack UI scenes (superseded by system_menu)
 
 ## Directory Structure
 - `features/`: Core gameplay modules (actor, player, vehicle).
@@ -503,11 +555,6 @@ func _ready():
 - `data/[type]/`: The actual `.tres` data files (the content).
 - `systems/`: Global managers (Autoloads).
 - **UI:** UI logic should be separate from game logic, communicating via `EventBus` or signals.
+  - `ui/system_menu/`: System menu UI (inventory, character, settings) with tabbed interfaces.
+  - `ui/backpack/`: Legacy backpack UI (superseded by system_menu).
 - **Save System:** Add nodes to `saveable` group and implement `save_data() -> Dictionary` to persist state.
-
-## Directory Structure
-- `features/`: Core gameplay modules (actor, player, vehicle).
-- `components/`: Reusable logic blocks.
-- `data/definitions/`: GDScript `Resource` definitions (the schema).
-- `data/[type]/`: The actual `.tres` data files (the content).
-- `systems/`: Global managers (Autoloads).

@@ -3,38 +3,152 @@
 [ext_resource type="Script" uid="uid://ji53biyu7dcc" path="res://ui/system_menu/charactor_menu.gd" id="1_ah6jm"]
 [ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="2_t26sa"]
 
-[node name="CharactorMenu" type="Node2D"]
+[node name="CharactorMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_ah6jm")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 1
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 850.0
+offset_bottom = 450.0
 
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
-visible = false
+[node name="LeftPanel" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CharacterImage" type="TextureRect" parent="HBoxContainer/LeftPanel"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
 texture = ExtResource("2_t26sa")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="RightPanel" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="BasicInfo" type="VBoxContainer" parent="HBoxContainer/RightPanel"]
 layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="NameLabel" type="Label" parent="HBoxContainer/RightPanel/BasicInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Name: Player"
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="LevelLabel" type="Label" parent="HBoxContainer/RightPanel/BasicInfo"]
 layout_mode = 2
-text = "Level: 10"
+theme_override_font_sizes/font_size = 14
+text = "Level: 1"
 
-[node name="ProgressBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/RightPanel"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/GridContainer"]
+[node name="StatsContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel"]
 layout_mode = 2
-text = "HP: 100"
+theme_override_constants/separation = 8
+
+[node name="HealthContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel/StatsContainer"]
+layout_mode = 2
+
+[node name="HealthLabel" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/HealthContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Health"
+
+[node name="HealthBar" type="ProgressBar" parent="HBoxContainer/RightPanel/StatsContainer/HealthContainer"]
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="HealthValue" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/HealthContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "100 / 100"
+horizontal_alignment = 1
+
+[node name="ATPContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel/StatsContainer"]
+layout_mode = 2
+
+[node name="ATPLabel" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/ATPContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "ATP (Energy)"
+
+[node name="ATPBar" type="ProgressBar" parent="HBoxContainer/RightPanel/StatsContainer/ATPContainer"]
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="ATPValue" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/ATPContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "100 / 100"
+horizontal_alignment = 1
+
+[node name="GlucoseContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel/StatsContainer"]
+layout_mode = 2
+
+[node name="GlucoseLabel" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/GlucoseContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Glucose (Currency)"
+
+[node name="GlucoseBar" type="ProgressBar" parent="HBoxContainer/RightPanel/StatsContainer/GlucoseContainer"]
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="GlucoseValue" type="Label" parent="HBoxContainer/RightPanel/StatsContainer/GlucoseContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "100 / 100"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+
+[node name="AttributesContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="AttributesLabel" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Attributes:"
+
+[node name="AttributesGrid" type="GridContainer" parent="HBoxContainer/RightPanel/AttributesContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="NeuralResponseLabel" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "Neural Response:"
+
+[node name="NeuralResponseValue" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "1.0"
+
+[node name="MuscleCoordinationLabel" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "Muscle Coordination:"
+
+[node name="MuscleCoordinationValue" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "1.0"
+
+[node name="BaseSpeedLabel" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "Base Speed:"
+
+[node name="BaseSpeedValue" type="Label" parent="HBoxContainer/RightPanel/AttributesContainer/AttributesGrid"]
+layout_mode = 2
+text = "250"

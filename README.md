@@ -49,6 +49,33 @@ Common functionalities are encapsulated in reusable components (both scenes and 
 **Unified Combat/Weapon/AI System:**  
 All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components (`CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`). This enables any entity to perform attacks, and all logic is reusable and extensible. WeaponEffect supports flexible attack effects and visual feedback, and can be configured for different weapon types and entities. AIBehavior is assigned via data resources, allowing both player and enemy to use the same behavior system, fully data-driven.
 
+### Inventory System
+The inventory system provides a comprehensive item management interface with data-driven containers and intuitive UI.
+
+**Core Components:**
+-   `InventoryComponent`: Manages multiple item containers with configurable capacity and accepted item types
+-   `InventoryData`: Resource defining container properties (capacity, accepted types, stored items)
+-   `ItemData`: Resource defining individual items (name, description, icon, stackability, etc.)
+
+**UI Features:**
+-   **Tabbed Interface:** Multiple containers (backpack, equipment slots, etc.) displayed as separate tabs
+-   **Grid Layout:** Items displayed in an 8-column grid with visual slots
+-   **Item Details Panel:** Right-side panel showing selected item information (name, icon, description, quantity)
+-   **Tooltip System:** Hover tooltips display formatted item information with rich text support
+-   **Capacity Display:** Shows current usage vs. maximum capacity for each container
+
+**Data-Driven Design:**
+-   Container configurations stored in `ActorData` resources
+-   Items defined as `Resource` files for easy content creation
+-   Automatic UI generation based on container data
+-   Support for unlimited capacity containers and item stacking
+
+**Workflow Example: Adding Items to Player**
+1.  **Configure Data:** Add inventory containers to `player_data.tres` (e.g., backpack with 30 slots)
+2.  **Create Items:** Define new items as `ItemData` resources with icons and descriptions
+3.  **Runtime Management:** Use `InventoryComponent.add_item()` to add items programmatically
+4.  **UI Updates:** Inventory UI automatically reflects changes and updates displays
+
 ### Physics Model
 -   **Actors (`CharacterBody2D`):** For direct, predictable control over player and AI movement.
 -   **Vehicles (`RigidBody2D`):** For realistic physics-based collisions and to prevent being pushed by other entities.
@@ -63,7 +90,8 @@ The project has completed several major development phases, establishing a robus
 -   **Phase 4 (Complete):** The foundational biological energy system (Glucose-ATP metabolism) and sprint mechanics are fully implemented.
 -   **Phase 5 (Complete):** The core combat loop, including player-vehicle systems, weapon mechanics, and visual feedback (damage numbers, effects), is complete.
 -   **Phase 6 (Complete):** A major refactor to a fully data-driven architecture has been completed. Enemies, weapons, and core stats are now defined almost entirely by `Resource` files.
--   **Phase 7 (In Progress):** Focus is now on building out advanced gameplay features like the "Just Frame" mechanic and the Virtual Lab.
+-   **Phase 7 (Complete):** Comprehensive inventory system with tabbed containers, item management, and detailed UI implemented.
+-   **Phase 8 (In Progress):** Focus is now on building out advanced gameplay features like the "Just Frame" mechanic and the Virtual Lab.
 
 ---
 
@@ -92,9 +120,12 @@ The project follows a feature-first directory structure to keep related code org
 /
 ├── scenes/                 # Entry scenes (main.tscn)
 ├── features/               # Core feature modules (actor, player, enemy, vehicle, effects, etc.)
-├── components/             # Reusable components (health_component, etc.)
-├── data/                   # All data resources and definitions (actors, vehicles, weapons, ai_behavior, definitions, etc.)
+├── components/             # Reusable components (health_component, inventory_component, etc.)
+├── data/                   # All data resources and definitions (actors, vehicles, weapons, items, ai_behavior, definitions, etc.)
 ├── assets/                 # Raw art and audio assets
-├── systems/                # Global managers (event_bus, map_manager, etc.)
-├── ui/                     # UI scenes and scripts
+├── systems/                # Global managers (event_bus, map_manager, inventory_manager, etc.)
+├── ui/                     # UI scenes and scripts (system_menu, backpack, character_creation, hud, etc.)
+│   ├── system_menu/        # System menu UI (inventory, character, settings)
+│   ├── backpack/           # Legacy backpack UI (superseded by system_menu)
+│   └── ...
 └── project.godot           # Godot project file

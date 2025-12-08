@@ -41,6 +41,9 @@ func _ready():
 		# 动态加载战斗组件和武器
 		actor_combat_component.set_actor_data(actor_data)
 
+		# Initialize inventory component
+		inventory_component.set_data(actor_data)
+
 		# Connect signals from components to the actor's own signals
 		attribute_component.set_actor_data(actor_data)
 		attribute_component.health_component.health_changed.connect(
