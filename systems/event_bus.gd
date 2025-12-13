@@ -20,6 +20,10 @@ signal inventory_item_added(item_data: ItemData, quantity: int)
 # Carries the actor, item, and success status.
 signal item_used(actor: Actor, item: ItemData, success: bool)
 
+# Signal emitted when equipment changes (equip/unequip).
+# Carries the actor whose equipment changed.
+signal equipment_changed(actor: Actor)
+
 # Signal emitted when item use fails.
 # Carries the actor, item, and failure reason.
 signal item_use_failed(actor: Actor, item: ItemData, reason: String)
@@ -44,10 +48,24 @@ signal request_quiz_reload(weapon_data: Resource)
 # Carries whether the quiz was answered correctly.
 signal quiz_completed(success: bool)
 
+# --- Quest System Signals ---
+# Emitted when a quest is started.
+# Carries the quest_id.
+signal quest_started(quest_id: String)
+
+# Emitted when any objective updates.
+# Carries the quest_id, objective path (indices in hierarchy), progress, and completion state.
+signal objective_updated(quest_id: String, objective_path: Array[int], progress: float, complete: bool)
+
+# Emitted when a quest is completed.
+# Carries the quest_id.
+signal quest_completed(quest_id: String)
+
+# Emitted when a quest fails.
+# Carries the quest_id and reason.
+signal quest_failed(quest_id: String, reason: String)
+
 # Add other global signals here as the game grows.
-# For example:
-# signal quest_started(quest_id: String)
-# signal quest_completed(quest_id: String)
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."
 # This is expected and normal for a global event bus. These signals are emitted from

@@ -8,10 +8,6 @@ func _ready():
 	save_game_button.pressed.connect(_on_save_game_pressed)
 	quit_to_menu_button.pressed.connect(_on_quit_to_menu_pressed)
 	quit_to_desktop_button.pressed.connect(_on_quit_to_desktop_pressed)
-	# 添加背包UI
-	# var backpack_ui_scene = preload("res://ui/backpack/backpack_ui.tscn")
-	# var backpack_ui = backpack_ui_scene.instantiate()
-	# $Panel.add_child(backpack_ui)
 
 func _on_save_game_pressed():
 	if PlayerData.current_save_slot_id.is_empty():

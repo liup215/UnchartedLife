@@ -39,14 +39,22 @@ func use_item(actor: Actor, item: ItemData, source_container: String) -> bool:
 	if not _can_use_item(actor, item):
 		return false
 
-	var success = _execute_item_effects(actor, item)
+	var success: bool = _execute_item_effects(actor, item)
 
 	if success:
-		_handle_consumption(actor, item, source_container)
+		if item and item.item_type == ItemData.ItemType.WEAPON:
+			# Weapons are moved from inventory into equipment on equip.
+			if actor and actor.inventory_component and not source_container.is_empty():
+				actor.inventory_component.remove_item(item, 1, source_container)
+			EventBus.equipment_changed.emit(actor)
+		else:
+			_handle_consumption(actor, item, source_container)
 		_apply_cooldown(actor, item)
 		item_used.emit(actor, item, true)
+		EventBus.item_used.emit(actor, item, true)
 	else:
 		item_use_failed.emit(actor, item, "Effect execution failed")
+		EventBus.item_use_failed.emit(actor, item, "Effect execution failed")
 
 	return success
 
@@ -54,18 +62,22 @@ func _can_use_item(actor: Actor, item: ItemData) -> bool:
 	# Check if item is usable
 	if not item.usable:
 		item_use_failed.emit(actor, item, "Item is not usable")
+		EventBus.item_use_failed.emit(actor, item, "Item is not usable")
 		return false
 
 	# Check cooldown
 	if _is_on_cooldown(actor, item):
 		var remaining = _get_cooldown_remaining(actor, item)
-		item_use_failed.emit(actor, item, "Item on cooldown: %.1f seconds remaining" % remaining)
+		var reason: String = "Item on cooldown: %.1f seconds remaining" % remaining
+		item_use_failed.emit(actor, item, reason)
+		EventBus.item_use_failed.emit(actor, item, reason)
 		return false
 
 	# Check requirements
 	var requirement_check = _check_requirements(actor, item)
 	if not requirement_check.success:
 		item_use_failed.emit(actor, item, requirement_check.reason)
+		EventBus.item_use_failed.emit(actor, item, requirement_check.reason)
 		return false
 
 	return true
@@ -287,4 +299,34 @@ func _equip_weapon(actor: Actor, item: ItemData) -> bool:
 	weapon_instance.setup_weapon()
 	actor.actor_combat_component.add_child(weapon_instance)
 	actor.actor_combat_component.add_actor_weapon(weapon_instance)
+	return true
+
+func unequip_weapon(actor: Actor, target_container: String = "weapons") -> bool:
+	if actor == null or actor.actor_combat_component == null:
+		return false
+
+	var combat: ActorCombatComponent = actor.actor_combat_component
+	if combat.actor_weapons.is_empty():
+		return false
+
+	var weapon_component: WeaponComponent = combat.actor_weapons[0]
+	if weapon_component == null or weapon_component.weapon_data == null:
+		combat.remove_actor_weapon(0)
+		return false
+
+	var weapon_item: ItemData = weapon_component.weapon_data
+
+	combat.remove_actor_weapon(0)
+	if is_instance_valid(weapon_component):
+		weapon_component.queue_free()
+
+	if actor.inventory_component:
+		var inv: InventoryComponent = actor.inventory_component
+		var added: bool = false
+		if not target_container.is_empty() and inv.containers.has(target_container):
+			added = inv.add_item_to_container(target_container, weapon_item, 1)
+		if not added:
+			inv.add_item(weapon_item, 1)
+
+	EventBus.equipment_changed.emit(actor)
 	return true

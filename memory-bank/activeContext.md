@@ -40,6 +40,10 @@
     - 新增 Pickup 类，实现物品收集与视觉反馈。
     - 新建玩家机关枪武器资源，包含伤害、射速、弹药等属性，并集成新武器场景。
     - 现有组件已与新武器和战斗系统集成。
+6.  **背包与装备 UI/流程打通:**
+    - System Menu 的 Inventory 页支持多容器 Tab、格子展示、物品详情与 Use 按钮。
+    - Equipment 页采用固定槽位（Weapon/Armor/Gloves/Helmet/Boots），武器槽显示伤害/射速/弹匣/当前弹药。
+    - ItemUseService 统一武器装备/卸载：装备时从背包容器移除到战斗组件；卸载时把武器放回指定背包容器（默认 "weapons"），并通过 EventBus.equipment_changed 推动 UI 刷新。
 6.  **BioBlitz 系统与 UI:** 
     - 建立 BioBlitzManager，负责基于答题的战斗循环。
     - 创建 BioBlitzSelection 场景，支持章节/知识点选择。

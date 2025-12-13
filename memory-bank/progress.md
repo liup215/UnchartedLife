@@ -35,6 +35,10 @@
     - [x] 建立 BioBlitzManager，负责基于答题的战斗循环。
     - [x] 创建 BioBlitzSelection 场景，支持章节/知识点选择。
     - [x] 新增角色菜单 UI，支持玩家选项操作。
+- [x] **背包与装备 UI/流程打通:**
+    - [x] System Menu Inventory 页：多容器 Tab、物品格子、详情与 Use 按钮。
+    - [x] Equipment 页固定槽位（Weapon/Armor/Gloves/Helmet/Boots），显示武器伤害/射速/弹匣/弹药。
+    - [x] 武器装备/卸载闭环：ItemUseService 装备时从背包移出、卸载时回填到 "weapons" 容器；EventBus.equipment_changed 驱动 UI 刷新。
 - [ ] **搭建原型 - 离线评估引擎:**
     - [ ] 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
     - [ ] **目标:** 验证 Godot 能通过本地 HTTP 请求将数学题发送给 Python 脚本，脚本使用 SymPy 判断答案后将结果返回 Godot。**(最高优先级，需最先验证)**

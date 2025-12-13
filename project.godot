@@ -27,6 +27,7 @@ AudioManager="*res://systems/audio_manager.gd"
 SceneManager="*res://systems/scene_manager.gd"
 GameProperties="*res://systems/game_properties.gd"
 ItemUseService="*res://systems/item_use_service.gd"
+QuestManager="*res://systems/quest_manager.gd"
 
 [display]
 

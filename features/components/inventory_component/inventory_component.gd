@@ -49,6 +49,16 @@ func _try_add_to_container(name: String, item: ItemData, amount: int) -> bool:
 		return true
 	return false
 
+func add_item_to_container(container_name: String, item: ItemData, amount: int = 1) -> bool:
+	if item == null or amount <= 0:
+		return false
+	if not containers.has(container_name):
+		return false
+	var data: InventoryData = containers[container_name]
+	if not data.can_accept_item(item):
+		return false
+	return _try_add_to_container(container_name, item, amount)
+
 # 获取所有容器的数据，方便UI遍历生成界面
 func get_all_containers() -> Dictionary:
 	return containers

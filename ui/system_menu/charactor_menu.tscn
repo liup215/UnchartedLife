@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dy2610pxsf1i8"]
+[gd_scene load_steps=2 format=3 uid="uid://dy2610pxsf1i8"]
 
 [ext_resource type="Script" uid="uid://ji53biyu7dcc" path="res://ui/system_menu/charactor_menu.gd" id="1_ah6jm"]
-[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="2_t26sa"]
 
 [node name="CharactorMenu" type="Control"]
 layout_mode = 3
@@ -24,7 +23,6 @@ custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
-texture = ExtResource("2_t26sa")
 expand_mode = 1
 stretch_mode = 5
 

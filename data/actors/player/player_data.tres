@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=15 format=3 uid="uid://bdo2suynn7vlm"]
+[gd_resource type="Resource" script_class="ActorData" load_steps=18 format=3 uid="uid://bdo2suynn7vlm"]
 
 [ext_resource type="Script" uid="uid://iv2r3o2kdghs" path="res://data/definitions/animation/animation_data.gd" id="1_l843g"]
 [ext_resource type="Resource" uid="uid://dk1al025fcl57" path="res://data/actors/player/animations/player_walk_down.tres" id="2_4g83l"]
@@ -13,9 +13,10 @@
 [ext_resource type="Script" uid="uid://c250y7s7kqdi8" path="res://data/definitions/actor_data/actor_data.gd" id="11_5tary"]
 [ext_resource type="Script" uid="uid://dgw7bafww1182" path="res://data/definitions/inventory/inventory_data.gd" id="11_d07ih"]
 [ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/inventory/item_data.gd" id="11_w13xg"]
-
-[sub_resource type="Resource" id="InventoryData_backpack"]
-script = ExtResource("11_d07ih")
+[ext_resource type="Resource" uid="uid://b2yjbyd4a36sg" path="res://data/inventory/player_weapon_inventory.tres" id="13_w13xg"]
+[ext_resource type="Resource" uid="uid://n33f5ohjy7rw" path="res://data/inventory/player_armor_inventory.tres" id="14_661mb"]
+[ext_resource type="Resource" uid="uid://c47wofrke5ke5" path="res://data/inventory/player_comsumable_inventory.tres" id="15_uep00"]
+[ext_resource type="Resource" uid="uid://cv2kn0i5iid7v" path="res://data/inventory/player_key_item_inventory.tres" id="16_1hbo6"]
 
 [resource]
 script = ExtResource("11_5tary")
@@ -26,5 +27,8 @@ current_speed = null
 current_atp = null
 current_glucose = null
 inventory_config = Dictionary[String, ExtResource("11_d07ih")]({
-"backpack": SubResource("InventoryData_backpack")
+"armor": ExtResource("14_661mb"),
+"comsumable": ExtResource("15_uep00"),
+"key item": ExtResource("16_1hbo6"),
+"weapons": ExtResource("13_w13xg")
 })

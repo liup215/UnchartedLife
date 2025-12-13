@@ -1,0 +1,88 @@
+[gd_scene load_steps=3 format=3 uid="uid://bddi1h8lxrwxd"]
+
+[ext_resource type="Script" uid="uid://dssuv275gwgcn" path="res://ui/system_menu/equipment_ui.gd" id="1_equipment_script"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_5nu8l"]
+
+[node name="EquipmentUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_equipment_script")
+placeholder_icon = ExtResource("2_5nu8l")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 1050.0
+offset_bottom = 850.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftPanel" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="HBoxContainer/LeftPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Equipment"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/LeftPanel"]
+layout_mode = 2
+
+[node name="Slots" type="VBoxContainer" parent="HBoxContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WeaponButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
+layout_mode = 2
+text = "Weapon: (Empty)"
+
+[node name="ArmorButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
+layout_mode = 2
+text = "Armor: (Empty)"
+
+[node name="GlovesButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
+layout_mode = 2
+text = "Gloves: (Empty)"
+
+[node name="HelmetButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
+layout_mode = 2
+text = "Helmet: (Empty)"
+
+[node name="BootsButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
+layout_mode = 2
+text = "Boots: (Empty)"
+
+[node name="RightPanel" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Select a weapon to view details"
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/RightPanel/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatsLabel" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="UnequipButton" type="Button" parent="HBoxContainer/RightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Unequip"
+disabled = true
