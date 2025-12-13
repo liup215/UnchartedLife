@@ -38,8 +38,8 @@ class_name ActorData
 
 @export_group("Weapons")
 ## The list of weapons this actor can equip.
-@export var weapons: Array[WeaponData] = []
-@export var equipped_weapons: Array[WeaponData] = []
+@export var weapons: Array[ItemData] = []
+@export var equipped_weapons: Array[ItemData] = []
 @export var weapon_number_limit: int = 1
 
 @export_group("AI Behaviors")

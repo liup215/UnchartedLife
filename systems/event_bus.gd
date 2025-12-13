@@ -16,6 +16,26 @@ signal actor_died(actor: Node)
 # Carries the ItemData resource and the quantity.
 signal inventory_item_added(item_data: ItemData, quantity: int)
 
+# Signal emitted when an item is used.
+# Carries the actor, item, and success status.
+signal item_used(actor: Actor, item: ItemData, success: bool)
+
+# Signal emitted when item use fails.
+# Carries the actor, item, and failure reason.
+signal item_use_failed(actor: Actor, item: ItemData, reason: String)
+
+# Signal emitted when a buff is applied.
+# Carries the actor, buff_id, and duration.
+signal buff_applied(actor: Actor, buff_id: String, duration: float)
+
+# Signal emitted when a quest is triggered.
+# Carries the quest_id and step.
+signal quest_triggered(quest_id: String, step: int)
+
+# Signal emitted when an area is unlocked.
+# Carries the area_id.
+signal area_unlocked(area_id: String)
+
 # Signal emitted when a weapon requests a quiz reload.
 # Carries the WeaponData resource.
 signal request_quiz_reload(weapon_data: Resource)

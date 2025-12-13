@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://ccvl42icwye4t" path="res://data/definitions/bio_blitz/boss_data.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://f3cqynj0a6nh" path="res://data/definitions/ai_behavior/ai_behavior_data.gd" id="3_mjbtu"]
 [ext_resource type="Resource" uid="uid://b5ankkf4xahg7" path="res://data/ai_behavior/attack_behavior.tres" id="4_o21mq"]
-[ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="5_mjbtu"]
+[ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/inventory/item_data.gd" id="5_mjbtu"]
 [ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="5_o21mq"]
 [ext_resource type="Script" uid="uid://dgw7bafww1182" path="res://data/definitions/inventory/inventory_data.gd" id="6_g0ut5"]
 

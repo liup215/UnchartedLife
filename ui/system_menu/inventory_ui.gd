@@ -117,7 +117,7 @@ func update_container_display(container_name: String):
 		var slot_data = container_data.slots[slot_key]
 		if slot_data is InventoryData.InventorySlotData:
 			var item_slot = ITEM_SLOT_SCENE.instantiate()
-			item_slot.setup(slot_data.item, slot_data.quantity)
+			item_slot.setup(slot_data.item, slot_data.quantity, container_name)
 			item_slot.connect("slot_clicked", Callable(self, "_on_item_slot_clicked").bind(container_name))
 			grid_container.add_child(item_slot)
 			item_slots[container_name].append(item_slot)
@@ -127,7 +127,7 @@ func update_container_display(container_name: String):
 		var empty_slots = capacity - container_data.slots.size()
 		for i in range(empty_slots):
 			var empty_slot = ITEM_SLOT_SCENE.instantiate()
-			empty_slot.setup(null, 0)  # Empty slot
+			empty_slot.setup(null, 0, container_name)  # Empty slot
 			grid_container.add_child(empty_slot)
 			item_slots[container_name].append(empty_slot)
 

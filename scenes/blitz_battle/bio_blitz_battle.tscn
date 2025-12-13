@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://e5dy5ow2xsdx" path="res://features/vehicle/base_vehicle.tscn" id="8_6pb0o"]
 [ext_resource type="Resource" uid="uid://cdbxd4u1pa2lh" path="res://data/vehicles/basic_tank_data.tres" id="9_fh0v0"]
 [ext_resource type="PackedScene" uid="uid://dyws2nafnxvaf" path="res://features/interactive/pickup/pickup.tscn" id="10_g0bql"]
-[ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="11_5xd7q"]
+[ext_resource type="Resource" uid="uid://c743j6w03iujo" path="res://data/weapons/actor_weapons/player_weapons/player_default_weapon.tres" id="11_lar5l"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="13_5xd7q"]
 
 [node name="BioBlitzBattle" type="Control"]
@@ -49,7 +49,7 @@ vehicle_data = ExtResource("9_fh0v0")
 [node name="Pickup" parent="GameWorld" instance=ExtResource("10_g0bql")]
 z_index = 1
 position = Vector2(301, 431)
-item_data = ExtResource("11_5xd7q")
+item_data = ExtResource("11_lar5l")
 
 [node name="GameHUD" parent="." instance=ExtResource("6_hud")]
 

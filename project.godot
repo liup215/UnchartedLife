@@ -23,10 +23,10 @@ EventBus="*res://systems/event_bus.gd"
 PlayerData="*res://data/definitions/system/player_data_global.gd"
 SaveManager="*res://systems/save_manager.gd"
 MapManager="*res://systems/map_manager.gd"
-InventoryManager="*res://systems/inventory_manager.gd"
 AudioManager="*res://systems/audio_manager.gd"
 SceneManager="*res://systems/scene_manager.gd"
 GameProperties="*res://systems/game_properties.gd"
+ItemUseService="*res://systems/item_use_service.gd"
 
 [display]
 

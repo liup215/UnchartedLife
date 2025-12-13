@@ -1,6 +1,6 @@
 # data/components/weapon_data.gd
 # Defines the properties of a vehicle weapon.
-extends ItemData
+extends Resource
 class_name WeaponData
 
 enum WeaponType { MAIN_CANNON, SUB_WEAPON, ACTOR_WEAPON }

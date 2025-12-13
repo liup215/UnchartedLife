@@ -52,3 +52,12 @@ func _try_add_to_container(name: String, item: ItemData, amount: int) -> bool:
 # 获取所有容器的数据，方便UI遍历生成界面
 func get_all_containers() -> Dictionary:
 	return containers
+
+func remove_item(item: ItemData, amount: int, source_container: String) -> bool:
+	if not containers.has(source_container):
+		return false
+	var data: InventoryData = containers[source_container]
+	if data.remove_item(item, amount):
+		inventory_updated.emit(source_container, data)
+		return true
+	return false

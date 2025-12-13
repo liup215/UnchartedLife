@@ -3,7 +3,7 @@
 extends Node2D
 class_name WeaponComponent
 
-@export var weapon_data: WeaponData
+@export var weapon_data: ItemData
 
 # Weapon state
 var current_charge: int = 0
@@ -13,7 +13,7 @@ var charge_start_time: float = 0.0
 @export var current_ammo: int = 0
 
 # Signals
-signal weapon_fired(weapon_data: WeaponData, charge_level: int)
+signal weapon_fired(weapon_data: ItemData, charge_level: int)
 signal charge_updated(charge_level: int)
 signal ammo_updated(current_ammo: int)
 
@@ -24,13 +24,13 @@ func _ready():
 func setup_weapon():
 	if weapon_data:
 		print("Setting up weapon: %s" % weapon_data.item_name)
-		print("Weapon ammo capacity: %d" % weapon_data.ammo_capacity)
-		current_ammo = weapon_data.ammo_capacity
+		print("Weapon ammo capacity: %d" % weapon_data.weapon_data.ammo_capacity)
+		current_ammo = weapon_data.weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
 			if weapon_data.icon:
 				sprite.texture = weapon_data.icon
-				sprite.offset = weapon_data.weapon_offset
+				sprite.offset = weapon_data.weapon_data.weapon_offset
 
 func start_charging():
 	if not weapon_data or is_charging:
@@ -54,7 +54,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		target_pos = get_global_mouse_position()
 	var origin_pos = global_position
 	
-	if weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
+	if weapon_data.weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
 		if current_charge <= 0:
 			return
 		if current_ammo <= 0:
@@ -69,7 +69,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# Reset charge
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
-	elif weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
+	elif weapon_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
 		if current_ammo <= 0:
 			reload()
 			return
@@ -85,13 +85,13 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	
 	# Call the weapon_data's fire method, which now just needs the effect_node
 	if effect_node:
-		weapon_data.fire(origin_pos, target_pos, effect_node)
+		weapon_data.weapon_data.fire(origin_pos, target_pos, effect_node)
 	else:
 		# Fallback if no effect node is provided (though it should be)
 		# This might happen for non-vehicle actors, so we create a temporary effect node
 		var temp_effect_node = Node2D.new()
 		get_tree().current_scene.add_child(temp_effect_node)
-		weapon_data.fire(origin_pos, target_pos, temp_effect_node)
+		weapon_data.weapon_data.fire(origin_pos, target_pos, temp_effect_node)
 		temp_effect_node.queue_free() # Clean up after use
 
 func _process(_delta):
@@ -132,12 +132,12 @@ func reload():
 	if not weapon_data:
 		return
 	
-	if weapon_data.requires_quiz_reload:
+	if weapon_data.weapon_data.requires_quiz_reload:
 		EventBus.request_quiz_reload.emit(weapon_data)
 	else:
-		current_ammo = weapon_data.ammo_capacity
+		current_ammo = weapon_data.weapon_data.ammo_capacity
 		emit_signal("ammo_updated", current_ammo)
 
 func _on_quiz_completed(success: bool):
-	if success and weapon_data and weapon_data.requires_quiz_reload:
-		current_ammo = weapon_data.ammo_capacity
+	if success and weapon_data and weapon_data.weapon_data.requires_quiz_reload:
+		current_ammo = weapon_data.weapon_data.ammo_capacity

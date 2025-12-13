@@ -67,7 +67,7 @@ func _connect_weapon_signals(weapon_component):
 	if weapon_component and weapon_component.has_signal("ammo_updated"):
 		weapon_component.ammo_updated.connect(_on_weapon_ammo_updated)
 
-func _on_weapon_fired(_weapon_data: WeaponData, _charge_level: int):
+func _on_weapon_fired(_weapon_data: ItemData, _charge_level: int):
 	# Handle weapon firing logic
 	# You can also emit a signal or update HUD here
 	print("[COMBAT] Weapon fired:", _weapon_data.item_name if _weapon_data else "Unknown Weapon", "Charge Level:", _charge_level)

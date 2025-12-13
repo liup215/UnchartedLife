@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://c743j6w03iujo"]
+
+[ext_resource type="Script" uid="uid://cqqwgho1owjhk" path="res://data/definitions/item/item_effect_data.gd" id="1_l5qsg"]
+[ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/inventory/item_data.gd" id="2_0en65"]
+[ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="2_pbhbt"]
+[ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="4_ikfni"]
+
+[resource]
+script = ExtResource("2_0en65")
+item_name = "Player Default Weapon"
+item_type = 0
+description = "Player Default Weapon"
+icon = ExtResource("2_pbhbt")
+weapon_data = ExtResource("4_ikfni")
+metadata/_custom_type_script = "uid://by6ym07087qd4"
