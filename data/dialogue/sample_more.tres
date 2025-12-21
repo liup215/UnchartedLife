@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3 uid="uid://d37swrqg2a0aw"]
+
+[ext_resource type="Script" uid="uid://eienoun3on3w" path="res://data/definitions/dialogue/dialogue_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://bxccdm3w6mv41" path="res://data/definitions/dialogue/dialogue_choice_data.gd" id="1_l2bvy"]
+[ext_resource type="Script" uid="uid://5w1msyl1gvxy" path="res://data/definitions/dialogue/dialogue_line_data.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="3_knc6n"]
+[ext_resource type="Texture2D" uid="uid://crjex1ppgs57y" path="res://assets/sprites/tanks_main_gun.png" id="4_olu4h"]
+
+[sub_resource type="Resource" id="Resource_gsro8"]
+script = ExtResource("2")
+speaker_id = "NPC"
+speaker_name = "NPC"
+speaker_name_key = "NPC"
+text = "Hi"
+text_key = "Hi"
+portrait = ExtResource("3_knc6n")
+metadata/_custom_type_script = "uid://5w1msyl1gvxy"
+
+[sub_resource type="Resource" id="Resource_5b1hw"]
+script = ExtResource("2")
+speaker_id = "Weapon"
+speaker_name = "Weapon"
+speaker_name_key = "Weapon"
+text = "I'm a weapon"
+text_key = "Weapono"
+portrait = ExtResource("4_olu4h")
+metadata/_custom_type_script = "uid://5w1msyl1gvxy"
+
+[resource]
+script = ExtResource("1")
+id = "npc_mito_more"
+lines = Array[ExtResource("2")]([SubResource("Resource_gsro8"), SubResource("Resource_5b1hw")])
+typing_speed = 0.02

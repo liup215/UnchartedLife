@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3 uid="uid://b7c5tewfd3nca"]
+
+[ext_resource type="Script" uid="uid://eienoun3on3w" path="res://data/definitions/dialogue/dialogue_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://5w1msyl1gvxy" path="res://data/definitions/dialogue/dialogue_line_data.gd" id="2"]
+[ext_resource type="Script" uid="uid://bxccdm3w6mv41" path="res://data/definitions/dialogue/dialogue_choice_data.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="3_47pyr"]
+[ext_resource type="Texture2D" uid="uid://bogtiajwrewua" path="res://assets/sprites/mitochondria.png" id="6"]
+
+[sub_resource type="Resource" id="Resource_vl8le"]
+script = ExtResource("2")
+speaker_id = "NPC"
+speaker_name = "NPC"
+speaker_name_key = "NPC"
+text = "Hello, this is the first dialogue."
+text_key = "first_dialogure"
+portrait = ExtResource("3_47pyr")
+metadata/_custom_type_script = "uid://5w1msyl1gvxy"
+
+[sub_resource type="Resource" id="Resource_jr7x8"]
+script = ExtResource("2")
+speaker_id = "Actor"
+speaker_name = "Actor"
+speaker_name_key = "Actor"
+text = "Hello, nice to meet you!"
+text_key = "hello"
+portrait = ExtResource("6")
+metadata/_custom_type_script = "uid://5w1msyl1gvxy"
+
+[resource]
+script = ExtResource("1")
+id = "npc_mito_intro"
+lines = Array[ExtResource("2")]([SubResource("Resource_vl8le"), SubResource("Resource_jr7x8")])
+typing_speed = 0.02

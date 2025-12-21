@@ -45,6 +45,19 @@ func get_active_quests() -> Array[QuestRuntimeState]:
 			arr.append(st)
 	return arr
 
+func get_quest_status(id: String) -> int:
+	if _quest_states.has(id):
+		var st: QuestRuntimeState = _quest_states[id]
+		return st.status
+	return STATUS_INACTIVE
+
+func complete_quest(id: String) -> void:
+	if not _quest_states.has(id):
+		return
+	var st: QuestRuntimeState = _quest_states[id]
+	st.status = STATUS_COMPLETED
+	EventBus.quest_completed.emit(id)
+
 # Advance a leaf objective or mark composite child as complete.
 # objective_path: indices through the hierarchy (e.g., [0, 2] means objectives[0].sub_objectives[2])
 func advance_objective(quest_id: String, objective_path: Array[int], amount: float = 1.0) -> void:

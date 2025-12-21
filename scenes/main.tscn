@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://duveh6r1rbdni" path="res://data/actors/enemies/head_cutter/goblin_data.tres" id="7_jbj1t"]
 [ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="8_muem4"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="9_dp3eg"]
+[ext_resource type="PackedScene" path="res://ui/dialogue/dialogue_panel.tscn" id="11_dlgpn"]
 [ext_resource type="PackedScene" uid="uid://78f67tcx1baf" path="res://features/enemy/enemy.tscn" id="10_0ld40"]
 
 [node name="Main" type="Node2D"]
@@ -23,6 +24,8 @@ vehicle_data = ExtResource("5_a8y0u")
 [node name="HUD" parent="." instance=ExtResource("8_muem4")]
 
 [node name="SystemMenu" parent="." instance=ExtResource("9_dp3eg")]
+
+[node name="DialoguePanel" parent="." instance=ExtResource("11_dlgpn")]
 
 [node name="Enemy" parent="." instance=ExtResource("10_0ld40")]
 position = Vector2(-72, 126)

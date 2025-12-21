@@ -15,12 +15,13 @@
     - **`ActorData.gd`**: 定义角色属性和行为的 `Resource`。在新设计下，它将包含与“乱墨妖”绑定的 `QuestionData`。
     - **`BookSoulSealData.gd`**: 定义“书魂印”（技能）的 `Resource`，包括其效果和类型。
     - **`QuestionData.gd`**: 定义题目的 `Resource`，包含题干、答案、题型和评估逻辑。
+    - **`DialogueData.gd`**: 定义对话树的 `Resource`，包含行、选项、条件和效果。
 
 ### 2.2. 组件化设计 (Component-Based Design)
-- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent`、`InkEnergyComponent`、`VehicleCombatComponent`、`VehicleStatsComponent`、`InteractableComponent`、`InventoryComponent`、`Pickup` 等，支持主副武器管理、物品存取、拾取交互等功能。
+- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent`、`InkEnergyComponent`、`VehicleCombatComponent`、`VehicleStatsComponent`、`InteractableComponent`、`InventoryComponent`、`DialogueComponent`、`Pickup` 等，支持主副武器管理、物品存取、拾取交互、NPC对话等功能。
 
 ### 2.3. 全局事件总线 (Global Event Bus)
-- **`EventBus` Autoload:** 继续作为解耦系统间通信的首选方案，用于广播 `skill_unlocked` 或 `pbl_project_completed` 等全局事件。
+- **`EventBus` Autoload:** 继续作为解耦系统间通信的首选方案，用于广播 `skill_unlocked`、`pbl_project_completed`、`dialogue_started` 等全局事件。
 
 ## 3. 版本控制 (Version Control)
 - **系统:** Git
@@ -46,3 +47,11 @@
 ### 4.3. 物理系统与交互 (Physics & Interaction)
 - **实体类型:** 所有动态实体（玩家、敌人）统一使用 `CharacterBody2D`，因为它提供了对移动和碰撞的精确控制，非常适合 ARPG 的操作手感。
 - **物理层:** 将继续使用物理层来区分不同类型的交互（如角色、世界、伤害判定区），以确保碰撞检测的准确性和效率。旧的“Vehicle”相关物理层将被重新评估或移除。
+
+### 4.4. 对话系统 (Dialogue System)
+- **架构:** 
+    - **`DialogueManager` (Autoload):** 负责对话状态机、流程控制、条件检查和效果执行。
+    - **`DialogueComponent`:** 挂载于 NPC，负责触发对话。
+    - **`DialoguePanel`:** 负责 UI 渲染、打字机效果和用户输入。
+- **数据流:** `DialogueComponent` -> `DialogueManager` -> `EventBus` -> `DialoguePanel`。
+- **特性:** 支持富文本、头像显示、语音音效 (`voice_sfx`)、分支选项、任务状态集成。

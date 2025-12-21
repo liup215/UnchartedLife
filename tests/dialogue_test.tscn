@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://clgxr212rvkvu"]
+
+[ext_resource type="Script" uid="uid://d3iocdy746qbv" path="res://tests/dialogue_test.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="2"]
+[ext_resource type="Resource" uid="uid://b7c5tewfd3nca" path="res://data/dialogue/sample_intro.tres" id="2_ph0lc"]
+[ext_resource type="Resource" uid="uid://d37swrqg2a0aw" path="res://data/dialogue/sample_more.tres" id="3_ic4nq"]
+
+[node name="DialogueTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+intro_data = ExtResource("2_ph0lc")
+more_data = ExtResource("3_ic4nq")
+
+[node name="DialoguePanel" parent="." instance=ExtResource("2")]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 250.0
+offset_bottom = 200.0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Dialogue Test Scene"
+
+[node name="IntroButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start Intro Dialogue"
+
+[node name="MoreButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start More Dialogue"
+
+[node name="ResetButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Reset / Clear"
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Ready"

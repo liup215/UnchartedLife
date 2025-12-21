@@ -1,0 +1,109 @@
+extends CanvasLayer
+
+@export var default_typing_interval: float = 0.03
+@export var auto_hide_on_end: bool = true
+@export var pause_on_dialogue: bool = true
+
+@onready var panel: PanelContainer = $Panel
+@onready var portrait: TextureRect = $Panel/MarginContainer/VBoxContainer/HBoxContainer/Portrait
+@onready var speaker_label: Label = $Panel/MarginContainer/VBoxContainer/HBoxContainer/SpeakerName
+@onready var body_label: RichTextLabel = $Panel/MarginContainer/VBoxContainer/Body
+@onready var choices_container: VBoxContainer = $Panel/MarginContainer/VBoxContainer/Choices
+@onready var typing_timer: Timer = $TypingTimer
+
+var _current_line: DialogueLineData
+var _typing: bool = false
+var _full_text: String = ""
+var _current_choices: Array[DialogueChoiceData] = []
+var _was_paused: bool = false
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	hide()
+	panel.hide()
+	typing_timer.timeout.connect(_on_typing_tick)
+	typing_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	EventBus.dialogue_started.connect(_on_dialogue_started)
+	EventBus.dialogue_line.connect(_on_dialogue_line)
+	EventBus.dialogue_choices.connect(_on_dialogue_choices)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+
+func _on_dialogue_started(_dialogue: DialogueData, _npc_id: String) -> void:
+	show()
+	panel.show()
+	_clear_choices()
+	body_label.text = ""
+	body_label.visible_characters = -1
+	_typing = false
+	if pause_on_dialogue:
+		_was_paused = get_tree().paused
+		get_tree().paused = true
+
+func _on_dialogue_line(line: DialogueLineData, _index: int, _total: int, _npc_id: String) -> void:
+	_current_line = line
+	_clear_choices()
+	portrait.texture = line.portrait
+	speaker_label.text = line.resolve_speaker_name()
+	_full_text = line.resolve_text()
+	body_label.text = _full_text
+	body_label.visible_characters = 0
+	_typing = true
+	var interval := line.typing_speed if line.typing_speed > 0.0 else default_typing_interval
+	typing_timer.wait_time = interval
+	typing_timer.start()
+
+func _on_dialogue_choices(choices: Array[DialogueChoiceData], _npc_id: String) -> void:
+	_typing = false
+	typing_timer.stop()
+	_current_choices = choices
+	choices_container.show()
+	for i in choices.size():
+		var btn := Button.new()
+		btn.text = choices[i].resolve_text()
+		btn.pressed.connect(_on_choice_pressed.bind(i))
+		choices_container.add_child(btn)
+
+func _on_dialogue_ended(_npc_id: String, _reason: String) -> void:
+	typing_timer.stop()
+	_typing = false
+	_clear_choices()
+	if auto_hide_on_end:
+		hide()
+		panel.hide()
+	if pause_on_dialogue:
+		get_tree().paused = _was_paused
+
+func _on_choice_pressed(index: int) -> void:
+	DialogueManager.choose(index)
+
+func _on_typing_tick() -> void:
+	if not _typing:
+		return
+	var current := body_label.visible_characters
+	if current < _full_text.length():
+		body_label.visible_characters = current + 1
+	else:
+		_typing = false
+		typing_timer.stop()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event.is_action_pressed("ui_accept"):
+		if _typing:
+			_finish_typing()
+		elif _current_choices.is_empty():
+			DialogueManager.request_advance()
+	elif event.is_action_pressed("ui_cancel"):
+		DialogueManager.interrupt("player_cancel")
+
+func _finish_typing() -> void:
+	body_label.visible_characters = -1
+	_typing = false
+	typing_timer.stop()
+
+func _clear_choices() -> void:
+	for child in choices_container.get_children():
+		child.queue_free()
+	choices_container.hide()
+	_current_choices.clear()

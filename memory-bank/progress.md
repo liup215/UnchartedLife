@@ -39,6 +39,12 @@
     - [x] System Menu Inventory 页：多容器 Tab、物品格子、详情与 Use 按钮。
     - [x] Equipment 页固定槽位（Weapon/Armor/Gloves/Helmet/Boots），显示武器伤害/射速/弹匣/弹药。
     - [x] 武器装备/卸载闭环：ItemUseService 装备时从背包移出、卸载时回填到 "weapons" 容器；EventBus.equipment_changed 驱动 UI 刷新。
+- [x] **对话系统实现:**
+    - [x] 设计并实现 `DialogueData` 及其子资源（Line, Choice, Condition, Effect）。
+    - [x] 实现 `DialogueManager` Autoload，管理对话流和状态。
+    - [x] 开发 `DialogueComponent` 和 `InteractableComponent`，支持 NPC 交互。
+    - [x] 制作 `DialoguePanel` UI，支持打字机效果、头像、选项和语音播放。
+    - [x] 集成任务系统与事件总线，支持对话触发任务和事件。
 - [ ] **搭建原型 - 离线评估引擎:**
     - [ ] 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
     - [ ] **目标:** 验证 Godot 能通过本地 HTTP 请求将数学题发送给 Python 脚本，脚本使用 SymPy 判断答案后将结果返回 Godot。**(最高优先级，需最先验证)**

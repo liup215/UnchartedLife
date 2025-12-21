@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/components/dialogue/dialogue_component.gd" id="1"]
+[ext_resource type="PackedScene" path="res://features/components/interactable_component/interactable_component.tscn" id="2"]
+
+[node name="DialogueComponent" type="Node"]
+script = ExtResource("1")
+
+[node name="InteractableComponent" parent="." instance=ExtResource("2")]

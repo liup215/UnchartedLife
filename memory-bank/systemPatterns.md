@@ -30,10 +30,13 @@ A clean directory structure is crucial. The project now follows a feature-first 
 │   ├── health_component.tscn
 │   ├── combat_component.tscn
 │   ├── stats_component.tscn
-│   └── weapon_component.tscn
+│   ├── weapon_component.tscn
+│   ├── interactable_component.tscn
+│   └── dialogue_component.tscn
 │
 ├── data/                   # All game data resources and definitions
-│   ├── definitions/        # Resource class scripts (e.g., actor_data.gd, world_data.gd)
+│   ├── definitions/        # Resource class scripts (e.g., actor_data.gd, dialogue_data.gd)
+│   │   └── dialogue/       # Dialogue-specific definitions
 │   ├── actors/             # Actor data (player, enemies, with per-entity folders)
 │   ├── vehicles/           # Vehicle data and components
 │   │   ├── basic_tank_data.tres
@@ -42,12 +45,29 @@ A clean directory structure is crucial. The project now follows a feature-first 
 │   │       └── chips/
 │   ├── weapons/            # Weapon data (actor_weapons, vehicle_weapons)
 │   ├── ai_behavior/        # AI behavior resource instances
+│   ├── dialogue/           # Dialogue resource instances (.tres)
 │   └── items/              # Item data
 │
 ├── assets/                 # Raw art/audio assets (png, wav, etc.)
 │   ├── sprites/
 │   ├── tilesets/
 │   └── effects/
+│
+├── systems/                # Global manager scripts (Autoloads)
+│   ├── event_bus.gd
+│   ├── save_manager.gd
+│   ├── main_game_manager.gd
+│   ├── map_manager.gd
+│   ├── quest_manager.gd
+│   └── dialogue_manager.gd
+│
+├── ui/                     # UI scenes and themes
+│   ├── hud/
+│   ├── main_menu/
+│   ├── character_creation/
+│   └── dialogue/           # Dialogue UI scenes
+│
+└── project.godot           # Godot project file
 │
 ├── systems/                # Global manager scripts (Autoloads)
 │   ├── event_bus.gd
@@ -80,6 +100,7 @@ A clean directory structure is crucial. The project now follows a feature-first 
         - `StatsComponent`: A bridge to the data resource.
         - `InkEnergyComponent`: Manages "文气" (Ink Energy).
         - `CollisionShape2D`: Provides a default physical body.
+        - `DialogueComponent`: Handles NPC interactions and dialogue triggering.
 - **`actor.gd`'s Role**:
     - It has an `@export var actor_data: ActorData`. This is the **only** thing that needs to be set from the outside to define what the actor *is*.
     - In `_ready()`, it reads from `actor_data` and configures its components (e.g., `health_component.set_max_health(actor_data.max_hp)`).
@@ -92,12 +113,20 @@ A clean directory structure is crucial. The project now follows a feature-first 
 - **`WeaponData.gd`**: A `Resource` script defining a weapon's stats, appearance, and projectile type.
 - **`AIBehaviorData.gd`**: A base `Resource` for AI behaviors.
     - **Concrete Behaviors**: `WanderBehaviorData.gd`, `ChasePlayerBehaviorData.gd`. These are also `Resource` scripts, allowing their parameters (like `detection_radius`) to be tweaked in the Inspector.
+- **`DialogueData.gd`**: A `Resource` script defining a conversation tree.
+    - **Structure**: Contains arrays of `DialogueLineData` (text, speaker) and `DialogueChoiceData` (options, branching).
+    - **Logic**: Supports conditions (`DialogueConditionData`) and effects (`DialogueEffectData`) for dynamic storytelling.
 
 ### 2.3. The Workflow
 1.  **To Create a New Enemy ("Slime")**:
     - **Create `slime_data.tres`**: A new `ActorData` resource.
     - **Configure `slime_data.tres`**:
         - Set `max_hp = 20`, `move_speed = 100`.
+2.  **To Create a New NPC Dialogue**:
+    - **Create `npc_intro.tres`**: A new `DialogueData` resource.
+    - **Add Lines**: Create `DialogueLineData` sub-resources for each speech bubble.
+    - **Add Choices**: Create `DialogueChoiceData` sub-resources for branching options.
+    - **Assign to NPC**: Drag `npc_intro.tres` into the `DialogueComponent` of the NPC scene.
         - In the `behaviors` array, add a `WanderBehavior.tres` and maybe a new `JumpAttackBehavior.tres`.
     - **To Spawn a Slime**:
         - Instance `base_actor.tscn`.

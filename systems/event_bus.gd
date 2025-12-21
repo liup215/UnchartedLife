@@ -65,6 +65,25 @@ signal quest_completed(quest_id: String)
 # Carries the quest_id and reason.
 signal quest_failed(quest_id: String, reason: String)
 
+# --- Dialogue System Signals ---
+# Emitted when a dialogue sequence begins.
+signal dialogue_started(dialogue: DialogueData, npc_id: String)
+
+# Emitted when a dialogue line should be displayed.
+signal dialogue_line(line: DialogueLineData, line_index: int, total_lines: int, npc_id: String)
+
+# Emitted when the dialogue presents choices to the player.
+signal dialogue_choices(choices: Array[DialogueChoiceData], npc_id: String)
+
+# Emitted when a choice is selected.
+signal dialogue_choice_made(choice: DialogueChoiceData, npc_id: String)
+
+# Emitted when a dialogue sequence ends (natural or interrupted).
+signal dialogue_ended(npc_id: String, reason: String)
+
+# Generic hook for dialogue-driven events.
+signal dialogue_event(event_name: String, payload: Dictionary)
+
 # Add other global signals here as the game grows.
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."
