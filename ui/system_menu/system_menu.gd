@@ -10,12 +10,12 @@ func _ready():
 	quit_to_desktop_button.pressed.connect(_on_quit_to_desktop_pressed)
 
 func _on_save_game_pressed():
-	if PlayerData.current_save_slot_id.is_empty():
-		PlayerData.current_save_slot_id = SaveManager.create_new_slot_id()
-	SaveManager.save_game(PlayerData.current_save_slot_id)
+	if PlayerData.current_slot.is_empty():
+		PlayerData.current_slot = SaveManager.create_new_slot_id()
+	SaveManager.save_game(PlayerData.current_slot)
 	# Optionally, give feedback to the player
 	# e.g., show a "Game Saved!" label for a second.
-	print("Game saved to slot: %s" % PlayerData.current_save_slot_id)
+	print("Game saved to slot: %s" % PlayerData.current_slot)
 	close_menu()
 
 func _on_quit_to_menu_pressed():

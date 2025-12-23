@@ -113,7 +113,8 @@ func _on_new_game_pressed():
 func _on_new_game_confirmed(settings):
 	# Called when NewGameSettings emits game_started
 	OnEnteringGame(true)
-	GameProperties.StartNewGame(settings)
+	# Load the main game scene
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_continue_pressed():
 	var latest_slot = SaveManager.get_latest_slot_id()
@@ -121,7 +122,7 @@ func _on_continue_pressed():
 		PlayerData.current_slot = latest_slot
 		if SaveManager.load_game(latest_slot):
 			OnEnteringGame(false)
-			get_tree().change_scene_to_file("res://main.tscn")
+			get_tree().change_scene_to_file("res://scenes/main.tscn")
 		else:
 			print("Error loading latest save file.")
 	else:

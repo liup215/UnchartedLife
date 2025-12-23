@@ -14,7 +14,7 @@ name="UnchartedLife"
 
 config/name="UnchartedLife"
 config/version="0.0.1"
-run/main_scene="uid://d07vmasrms20q"
+run/main_scene="uid://bkyay8w7v6u5t"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]

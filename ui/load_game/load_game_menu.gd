@@ -29,9 +29,9 @@ func populate_save_slots():
         slots_container.add_child(button)
 
 func _on_slot_pressed(slot_id: String):
-    GameProperties.current_slot = slot_id
+    PlayerData.current_slot = slot_id
     if SaveManager.load_game(slot_id):
-        get_tree().change_scene_to_file("res://main.tscn")
+        get_tree().change_scene_to_file("res://scenes/main.tscn")
     else:
         # This should ideally not happen
         print("Error loading game from slot: %s" % slot_id)
