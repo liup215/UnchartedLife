@@ -32,6 +32,9 @@ func save_game(slot_id: String):
 	if GameProperties:
 		save_data["global_game_properties"] = GameProperties.save_data()
 	
+	if MapManager:
+		save_data["global_map_manager"] = MapManager.save_data()
+	
 	# Get all nodes in the "saveable" group
 	var saveable_nodes = get_tree().get_nodes_in_group("saveable")
 	
@@ -69,6 +72,10 @@ func load_game(slot_id: String):
 			if GameProperties and _pending_load_data.has("global_game_properties"):
 				GameProperties.load_data(_pending_load_data["global_game_properties"])
 				_pending_load_data.erase("global_game_properties")
+			
+			if MapManager and _pending_load_data.has("global_map_manager"):
+				MapManager.load_data(_pending_load_data["global_map_manager"])
+				_pending_load_data.erase("global_map_manager")
 			
 			print("Save file loaded successfully. Scene data is pending.")
 			return true
