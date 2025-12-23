@@ -239,7 +239,7 @@ func _handle_combat_input():
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:
 	return {
-		"position": global_position,
+		"position": {"x": global_position.x, "y": global_position.y},
 		"rotation": rotation,
 		"occupied": occupied,
 		# Vehicle stats are stored in the vehicle_data resource (not saved per-instance)
@@ -247,7 +247,11 @@ func save_data() -> Dictionary:
 
 func load_data(data: Dictionary) -> void:
 	if data.has("position"):
-		global_position = data["position"]
+		var pos_data = data["position"]
+		if typeof(pos_data) == TYPE_DICTIONARY:
+			global_position = Vector2(pos_data.get("x", 0), pos_data.get("y", 0))
+		else:
+			global_position = pos_data
 	if data.has("rotation"):
 		rotation = data["rotation"]
 	if data.has("occupied"):

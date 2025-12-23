@@ -209,13 +209,17 @@ func _handle_combat_input():
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:
 	return {
-		"position": global_position,
+		"position": {"x": global_position.x, "y": global_position.y},
 		"current_state": current_state,
 		# Actor stats are saved in PlayerData.actor_data singleton
 	}
 
 func load_data(data: Dictionary) -> void:
 	if data.has("position"):
-		global_position = data["position"]
+		var pos_data = data["position"]
+		if typeof(pos_data) == TYPE_DICTIONARY:
+			global_position = Vector2(pos_data.get("x", 0), pos_data.get("y", 0))
+		else:
+			global_position = pos_data
 	if data.has("current_state"):
 		current_state = data["current_state"]
