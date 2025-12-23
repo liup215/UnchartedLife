@@ -40,7 +40,7 @@ func StartGame():
 	PlayerData.current_slot = SaveManager.create_new_slot_id()
 	
 	# Initialize game properties
-	var game_props = GameProperties.StartNewGame(settings)
+	GameProperties.start_new_game(settings)
 	
 	# Emit the game_started signal with settings
 	game_started.emit(settings)

@@ -28,6 +28,9 @@ func save_game(slot_id: String):
 	if PlayerData:
 		save_data["global_player_data"] = PlayerData.save_data()
 	
+	if GameProperties:
+		save_data["global_game_properties"] = GameProperties.save_data()
+	
 	# Get all nodes in the "saveable" group
 	var saveable_nodes = get_tree().get_nodes_in_group("saveable")
 	
@@ -61,6 +64,11 @@ func load_game(slot_id: String):
 			if PlayerData and _pending_load_data.has("global_player_data"):
 				PlayerData.load_data(_pending_load_data["global_player_data"])
 				_pending_load_data.erase("global_player_data")
+			
+			if GameProperties and _pending_load_data.has("global_game_properties"):
+				GameProperties.load_data(_pending_load_data["global_game_properties"])
+				_pending_load_data.erase("global_game_properties")
+			
 			print("Save file loaded successfully. Scene data is pending.")
 			return true
 		else:
