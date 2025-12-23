@@ -205,3 +205,42 @@ func _handle_combat_input():
 	if Input.is_action_just_pressed("light_attack"):
 		print("Firing actor weapon...")
 		actor_combat_component.fire_actor_weapons()
+
+# Save/Load support for SaveManager
+func save_data() -> Dictionary:
+	var vehicle_path = ""
+	if current_vehicle:
+		vehicle_path = str(current_vehicle.get_path())
+	
+	return {
+		"position": {"x": global_position.x, "y": global_position.y},
+		"current_state": current_state,
+		"current_vehicle_path": vehicle_path,
+		# Actor stats are saved in PlayerData.actor_data singleton
+	}
+
+func load_data(data: Dictionary) -> void:
+	if data.has("position"):
+		var pos_data = data["position"]
+		if typeof(pos_data) == TYPE_DICTIONARY:
+			global_position = Vector2(pos_data.get("x", 0), pos_data.get("y", 0))
+		else:
+			global_position = pos_data
+	if data.has("current_state"):
+		current_state = data["current_state"]
+	
+	# Restore vehicle reference if player was in a vehicle
+	if data.has("current_vehicle_path") and data["current_vehicle_path"] != "":
+		var vehicle_path = data["current_vehicle_path"]
+		# Wait a frame to ensure the vehicle node is loaded
+		await get_tree().process_frame
+		var vehicle_node = get_node_or_null(vehicle_path)
+		if vehicle_node and vehicle_node.has_method("enter_vehicle"):
+			current_vehicle = vehicle_node
+			# Re-enter the vehicle to restore the full state
+			if current_state == PlayerState.IN_VEHICLE:
+				# Temporarily reset occupied flag to allow re-entry
+				var was_occupied = vehicle_node.occupied
+				vehicle_node.occupied = false
+				vehicle_node.enter_vehicle(self)
+				# Don't restore occupied flag - enter_vehicle sets it correctly

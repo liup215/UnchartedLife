@@ -1,11 +1,17 @@
 extends Node
 class_name WorldGeneratingSettings
 
+var Difficulty: String = "Normal"
+var Seed: String = ""
+
 func to_dict() -> Dictionary:
 	return {
-		# Add properties to serialize here
+		"Difficulty": Difficulty,
+		"Seed": Seed,
 	}
 
-func from_dict(_data: Dictionary) -> void:
-	# Add properties to deserialize here
-	pass
+func from_dict(data: Dictionary) -> void:
+	if data.has("Difficulty"):
+		Difficulty = data["Difficulty"]
+	if data.has("Seed"):
+		Seed = data["Seed"]

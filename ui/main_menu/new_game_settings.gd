@@ -36,14 +36,14 @@ func OnConfirmPressed():
 func StartGame():
 	var settings = GetGameSettings()
 	
-	var world_scene = load("res://world/game_world.tscn")
-	var world_instance = world_scene.instance()
-
-	var game_properties = load("res://systems/game_properties.gd")
-
-	world_instance.current_game = game_properties.StartNewGame(settings)
-
-	SceneManager.SwitchToSceneInstance(world_instance)
+	# Create a new save slot for this game
+	PlayerData.current_slot = SaveManager.create_new_slot_id()
+	
+	# Initialize game properties
+	GameProperties.start_new_game(settings)
+	
+	# Emit the game_started signal with settings
+	game_started.emit(settings)
 
 func GetGameSettings() -> WorldGeneratingSettings:
 	var settings = WorldGeneratingSettings.new()

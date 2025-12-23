@@ -21,6 +21,10 @@ var player_camera: Camera2D = null
 
 func _ready():
 	add_to_group("vehicle")
+	add_to_group("saveable")
+	# Claim any pending save data
+	SaveManager.claim_data_for_node(self)
+	
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_body_entered)
 		interaction_area.body_exited.connect(_on_body_exited)
@@ -231,3 +235,24 @@ func _handle_combat_input():
 	# Light attack combos
 	if Input.is_action_just_pressed("light_attack"):
 		vehicle_combat_component.perform_light_attack()
+
+# Save/Load support for SaveManager
+func save_data() -> Dictionary:
+	return {
+		"position": {"x": global_position.x, "y": global_position.y},
+		"rotation": rotation,
+		"occupied": occupied,
+		# Vehicle stats are stored in the vehicle_data resource (not saved per-instance)
+	}
+
+func load_data(data: Dictionary) -> void:
+	if data.has("position"):
+		var pos_data = data["position"]
+		if typeof(pos_data) == TYPE_DICTIONARY:
+			global_position = Vector2(pos_data.get("x", 0), pos_data.get("y", 0))
+		else:
+			global_position = pos_data
+	if data.has("rotation"):
+		rotation = data["rotation"]
+	if data.has("occupied"):
+		occupied = data["occupied"]
