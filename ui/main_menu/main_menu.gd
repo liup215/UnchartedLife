@@ -105,7 +105,9 @@ func _on_new_game_pressed():
 	# Hide main menu and open new game settings
 	if new_game_settings:
 		new_game_settings.OpenFromMainMenu(self)
-		new_game_settings.game_started.connect(_on_new_game_confirmed)
+		# Connect signal if not already connected
+		if not new_game_settings.game_started.is_connected(_on_new_game_confirmed):
+			new_game_settings.game_started.connect(_on_new_game_confirmed)
 	else:
 		print("NewGameSettings node not found.")
 

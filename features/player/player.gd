@@ -205,3 +205,17 @@ func _handle_combat_input():
 	if Input.is_action_just_pressed("light_attack"):
 		print("Firing actor weapon...")
 		actor_combat_component.fire_actor_weapons()
+
+# Save/Load support for SaveManager
+func save_data() -> Dictionary:
+	return {
+		"position": global_position,
+		"current_state": current_state,
+		# The actor_data is saved in PlayerData singleton
+	}
+
+func load_data(data: Dictionary) -> void:
+	if data.has("position"):
+		global_position = data["position"]
+	if data.has("current_state"):
+		current_state = data["current_state"]
