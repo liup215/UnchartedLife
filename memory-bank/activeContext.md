@@ -1,73 +1,28 @@
-# Active Context: 《执笔问道录》 - 核心设计转向与新架构规划
+# Active Context: Godot ARPG - Data-Driven Architecture & Directory Update
 
-## 当前焦点 (Current Focus)
-项目已完成核心设计理念的重大转向，从原有的生物学科ARPG（"Legends of Uncharted Life"）转型为以K-12教育为核心、首发小学数学的《执笔问道录》。当前的首要任务是**使项目的文档和架构规划与新设计完全对齐**。
+## Current Focus
+- 目录结构已完成梳理与规范化，所有资源、组件、功能模块分层清晰，便于扩展和维护。
+- WorldData资源类型已引入，地图区块场景引用已实现数据驱动，消除硬编码路径。
+- 组件、数据、功能、原始资源分离，强化高内聚、低耦合。
+- 继续推动所有场景、数据、资源引用走数据驱动和Inspector导出变量方式。
 
-- **文档更新:** 所有核心设计文档 (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`) 已经更新，以反映新的世界观、游戏机制和技术方案。
-- **架构调整:** 保留并扩展了原有的数据驱动和组件化架构，使其能够支持新的核心系统，如“书魂印”、“离线评估引擎”和“PBL项目”。
-- **对话系统实现:** 完成了基于数据驱动的 NPC 对话系统，支持分支选择、条件判断、任务/事件触发和打字机效果，为剧情叙事和教学引导提供了基础。
-- **Bio Blitz 原型开发:** 正在完善 "Bio Blitz" 模式作为战斗-答题循环的原型。实现了基于章节（Chapter）加载特定 Boss 数据的功能，并优化了战斗界面视觉效果。
-- **武器与组件系统升级:** 新增玩家机关枪武器资源，开发了 ActorCombatComponent、AttributeComponent、VehicleCombatComponent、VehicleStatsComponent、WeaponComponent 等，支持武器发射、蓄力、连击、弹药管理等机制，并已集成到现有系统。
+## Key Decisions Made
+1.  **Embrace "Resource-as-Soul"**: The core design philosophy is now to treat `Resource` files (`.tres`) as the "soul" of an entity, defining what it *is* and how it *behaves*. Scenes (`.tscn`) are now just generic "containers".
+2.  **AI as Composable Data**: Instead of hard-coding AI behaviors in scripts, AI behaviors are now `Resource` files (`AIBehaviorData`). An enemy's AI is defined by an array of these resources, which the `Actor` script interprets.
+3.  **Centralized Resource Management**: All scene references (especially map chunks via `WorldData`) are managed through Inspector-exported variables or custom Resource types, avoiding hardcoded paths.
+4.  **Feature-First Directory Structure**: The project structure prioritizes features (e.g., `features/actor`, `features/vehicle`) over type-based organization, keeping related code together.
 
-## 关键决策 (Key Decisions Made)
-1.  **确立新核心:** 游戏的核心不再是生物学模拟，而是“学-练-考-悟”的闭环学习体验。战斗、技能和成长系统都将围绕“解题”这一核心互动展开。
-2. **保留数据驱动哲学:** “万物皆数据”的理念被继承和强化。无论是敌人（乱墨妖）、技能（书魂印）、题目，还是**对话内容**，都将被定义为可组合的 `Resource` 文件。
-3.  **采用离线优先评估:** 决定采用客户端-本地服务的架构来实现题目的离线评估。优先方案是捆绑一个轻量级的 Python + SymPy 服务，以实现强大的符号计算能力，确保核心玩法不依赖网络。
-4.  **技能系统内化:** “书魂印”被确立为玩家能力的直接体现，取代了传统的武器系统，并与“顿悟”和技能树深度绑定。
-5.  **移除过时系统:** 明确废弃原有的“载具/玩家”双系统和“葡萄糖”统一资源系统，相关的代码和设计将被移除或重构。
+## Recent Achievements
+- **Map System Refactor**: `MapManager` now loads chunks dynamically using `WorldData` resource. No more hardcoded `res://world/chunk_*.tscn` paths.
+- **Inventory System**: Implemented comprehensive inventory management with `InventoryComponent`, `InventoryData` resources, and tabbed UI with item details panel.
+- **Equipment System**: Added equipment slots (Weapon/Armor/Gloves/Helmet/Boots) with visual display of equipped items and stats.
+- **Dialogue System**: Complete NPC dialogue system with branching choices, conditions, quest integration, and typewriter effect.
+- **Quest System**: Hierarchical quest/objective system with runtime state management and event-based tracking.
+- **Combat Enhancement**: Unified weapon system supporting both actors and vehicles, with charge mechanics and combo systems.
 
-## 长期规划与开发优先级 (Long-Term Planning & Priorities)
-- **开发优先级:** 游戏体验 > 做题功能 > AI增强 > 后台云服务
-    - 1. **游戏体验:** 首先实现可玩的战斗-答题循环原型，优先保证核心玩法的流畅性和乐趣。
-    - 2. **做题功能:** 在游戏循环跑通后，逐步完善题目评估系统，先用简单的字符串匹配，后续再集成离线评估引擎（Python+SymPy）。
-    - 3. **AI增强:** 基础AI（敌人移动/攻击）属于游戏范畴，题目生成/智能评估等高级AI为远期目标。
-    - 4. **后台云服务:** 所有云端功能（如数据同步、在线PBL分享等）在单机体验完善后再考虑。
-
-- **实施策略:** 先用“假判断”快速实现“真循环”，即先用简单判断实现战斗-答题流程，待核心体验稳定后再完善评估引擎。
-
-## 近期成就 (Recent Achievements)
-1.  **对话系统上线:** 实现了完整的 NPC 对话功能，包括：
-    - 数据驱动的 `DialogueData` 资源结构（行、选项、条件、效果）。
-    - 全局 `DialogueManager` 管理对话流和状态。
-    - `DialogueComponent` 支持 NPC 交互触发。
-    - `DialoguePanel` UI 支持打字机效果、头像显示和选项交互。
-    - 与任务系统 (`QuestManager`) 和事件总线 (`EventBus`) 的深度集成。
-2.  **完成设计文档转型:** `projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md` 四个核心文档已根据新的产品设计全面重写。
-2.  **明确技术路径:** 为新的核心功能（特别是离线评估引擎）确定了清晰、可行且风险可控的技术实现方案（Python + SymPy 本地服务）。
-3.  **统一团队认知:** 通过更新文档，为项目接下来的开发工作建立了统一、明确的蓝图和目标。
-4.  **视觉效果增强:** 实现了基于 Shader 和 FastNoiseLite 的动态细胞质背景，提升了游戏的生物学氛围。
-5.  **武器与组件系统重构与功能扩展:** 
-    - 新增 VehicleCombatComponent，支持主副武器管理、充能、发射、连击、ATP 消耗等机制。
-    - 实现 ActorCombatComponent，支持角色武器发射、蓄力、连击等机制。
-    - WeaponComponent 负责武器逻辑（发射、蓄力、弹药管理）。
-    - 开发 AttributeComponent，统一管理角色属性（生命、代谢等）。
-    - 新增 VehicleStatsComponent，管理载具性能。
-    - 新增 InteractableComponent，支持玩家与拾取物交互。
-    - 新增 InventoryComponent，支持物品存取与背包管理。
-    - 新增 Pickup 类，实现物品收集与视觉反馈。
-    - 新建玩家机关枪武器资源，包含伤害、射速、弹药等属性，并集成新武器场景。
-    - 现有组件已与新武器和战斗系统集成。
-6.  **背包与装备 UI/流程打通:**
-    - System Menu 的 Inventory 页支持多容器 Tab、格子展示、物品详情与 Use 按钮。
-    - Equipment 页采用固定槽位（Weapon/Armor/Gloves/Helmet/Boots），武器槽显示伤害/射速/弹匣/当前弹药。
-    - ItemUseService 统一武器装备/卸载：装备时从背包容器移除到战斗组件；卸载时把武器放回指定背包容器（默认 "weapons"），并通过 EventBus.equipment_changed 推动 UI 刷新。
-6.  **BioBlitz 系统与 UI:** 
-    - 建立 BioBlitzManager，负责基于答题的战斗循环。
-    - 创建 BioBlitzSelection 场景，支持章节/知识点选择。
-    - 新增角色菜单 UI，支持玩家选项操作。
-7.  **架构与文档同步:** 
-    - 所有上述系统的实现已同步更新至 memory bank，确保文档与代码进展一致，便于团队协作与后续维护。
-
-## 下一步计划 (Next Steps)
-1.  **搭建原型 - 离线评估引擎:**
-    - **任务:** 创建一个最小化的 Godot 场景和一个简单的 Python 脚本（使用 Flask 或类似框架）。
-    - **目标:** 验证 Godot 通过本地 HTTP 请求将一道简单的数学题（如 `2*x = 4`）发送给 Python 脚本，脚本使用 SymPy 判断答案 `x=2` 是否正确，并将结果返回给 Godot。这是整个项目的最高技术风险点，需要最先验证。
-2.  **定义核心数据结构:**
-    - **任务:** 在 Godot 中创建 `QuestionData.gd` 和 `BookSoulSealData.gd` 的 `Resource` 脚本。
-    - **目标:** 定义这些核心数据结构的具体字段，为后续的系统开发提供数据基础。
-3.  **实现战斗-答题循环原型:**
-    - **任务:** 创建一个基础的“乱墨妖”敌人，当其生命值降低到阈值时，触发答题界面。
-    - **目标:** 验证“战斗”与“答题”两个状态之间的切换流程。
-4.  **重构/清理旧代码:**
-    - **任务:** 识别并逐步移除与旧载具系统和葡萄糖资源相关的代码和资源文件。
-    - **目标:** 保持代码库的整洁，移除不再需要的历史包袱。
+## Next Steps
+- Continue to data-drive all remaining hardcoded references.
+- Expand AI behavior library with more composable behaviors.
+- Add more weapon types and enemy varieties using the Resource-driven system.
+- Implement save/load for all new systems (inventory, quests, dialogue state).
+- Performance profiling and optimization for chunk loading system.
