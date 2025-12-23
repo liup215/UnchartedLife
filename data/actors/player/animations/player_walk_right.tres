@@ -9,5 +9,5 @@ animation_name = "walk_right"
 spritesheet = ExtResource("2_spritesheet")
 h_frames = 4
 v_frames = 4
-frame_indices = Array[int]([8, 9, 10, 11])
+frame_indices = Array[int]([9, 10, 11, 8])
 speed = 5.0

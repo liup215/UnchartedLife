@@ -9,5 +9,5 @@ animation_name = "walk_up"
 spritesheet = ExtResource("2_spritesheet")
 h_frames = 4
 v_frames = 4
-frame_indices = Array[int]([12, 13, 14, 15])
+frame_indices = Array[int]([13, 14, 15, 12])
 speed = 5.0
