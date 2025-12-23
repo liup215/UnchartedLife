@@ -210,7 +210,7 @@ func _handle_combat_input():
 func save_data() -> Dictionary:
 	var vehicle_path = ""
 	if current_vehicle:
-		vehicle_path = current_vehicle.get_path()
+		vehicle_path = str(current_vehicle.get_path())
 	
 	return {
 		"position": {"x": global_position.x, "y": global_position.y},
