@@ -9,4 +9,4 @@ animation_name = "walk_down"
 spritesheet = ExtResource("2_spritesheet")
 h_frames = 4
 v_frames = 4
-frame_indices = Array[int]([0, 1, 2, 3])
+frame_indices = Array[int]([1, 2, 3, 0])
