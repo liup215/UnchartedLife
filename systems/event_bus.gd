@@ -84,6 +84,11 @@ signal dialogue_ended(npc_id: String, reason: String)
 # Generic hook for dialogue-driven events.
 signal dialogue_event(event_name: String, payload: Dictionary)
 
+# --- Map System Signals ---
+# Emitted when the current map changes.
+# Carries the new map_id and spawn position.
+signal map_changed(map_id: String, spawn_position: Vector2)
+
 # Add other global signals here as the game grows.
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."
