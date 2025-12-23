@@ -1,5 +1,6 @@
 # save_manager.gd
 # A global singleton for managing game saving and loading with multiple slots.
+# Uses binary serialization (var_to_bytes/bytes_to_var) to support custom data types.
 extends Node
 
 const SAVE_DIR = "user://saves/"
@@ -38,11 +39,11 @@ func save_game(slot_id: String):
 		if node.has_method("save_data"):
 			save_data[node.get_path()] = node.call("save_data")
 			
-	# Save the dictionary to a file
+	# Save the dictionary to a file using binary serialization
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
 	if file:
-		var json_string = JSON.stringify(save_data, "\t")
-		file.store_string(json_string)
+		var binary_data = var_to_bytes(save_data)
+		file.store_buffer(binary_data)
 		print("Game saved successfully to %s" % file_path)
 	else:
 		push_error("Failed to open save file for writing: %s" % file_path)
@@ -56,9 +57,9 @@ func load_game(slot_id: String):
 		
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if file:
-		var json_string = file.get_as_text()
-		var parse_result = JSON.parse_string(json_string)
-		if parse_result != null:
+		var binary_data = file.get_buffer(file.get_length())
+		var parse_result = bytes_to_var(binary_data)
+		if parse_result != null and typeof(parse_result) == TYPE_DICTIONARY:
 			_pending_load_data = parse_result
 			# Load global data immediately
 			if PlayerData and _pending_load_data.has("global_player_data"):
@@ -72,7 +73,7 @@ func load_game(slot_id: String):
 			print("Save file loaded successfully. Scene data is pending.")
 			return true
 		else:
-			push_error("Failed to parse save file JSON for slot: %s" % slot_id)
+			push_error("Failed to deserialize save file for slot: %s" % slot_id)
 			_pending_load_data = {}
 			return false
 	else:
@@ -105,9 +106,9 @@ func get_save_slots_metadata() -> Array:
 				var file_path = SAVE_DIR.path_join(file_name)
 				var file = FileAccess.open(file_path, FileAccess.READ)
 				if file:
-					var json_string = file.get_as_text()
-					var data = JSON.parse_string(json_string)
-					if data and data.has("metadata"):
+					var binary_data = file.get_buffer(file.get_length())
+					var data = bytes_to_var(binary_data)
+					if data and typeof(data) == TYPE_DICTIONARY and data.has("metadata"):
 						var metadata = data["metadata"]
 						metadata["slot_id"] = file_name.get_basename()
 						metadata_list.append(metadata)
