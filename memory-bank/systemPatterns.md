@@ -144,18 +144,81 @@ Enemy AI = array of behavior resources, executed in priority order.
 
 ## 6. Save/Load Pattern
 
+### Binary Serialization System (Updated December 2025)
+The save system uses **binary serialization** (var_to_bytes/bytes_to_var) to support all custom data types including Resources, Arrays, and complex objects.
+
+#### Core Save/Load Implementation
 Nodes in "saveable" group implement:
 ```gdscript
 func save_data() -> Dictionary:
     return {
-        "position": global_position,
+        "position": {"x": global_position.x, "y": global_position.y},
         "health": current_health,
+        "vehicle_path": str(current_vehicle.get_path()) if current_vehicle else "",
         # ... other state
     }
 
 func load_data(data: Dictionary) -> void:
-    global_position = data.get("position", global_position)
+    if data.has("position"):
+        var pos = data["position"]
+        global_position = Vector2(pos.get("x", 0), pos.get("y", 0))
     current_health = data.get("health", current_health)
+    # ... restore other state
+```
+
+#### Resource Path Serialization Pattern
+Resources cannot be directly serialized with binary format, so use resource paths:
+
+```gdscript
+# Saving - Convert Resource to path
+func to_dict() -> Dictionary:
+    var weapons_paths = []
+    for weapon in weapons:
+        if weapon and weapon.resource_path != "":
+            weapons_paths.append(weapon.resource_path)
+    return {"weapons_paths": weapons_paths}
+
+# Loading - Load Resource from path
+func from_dict(data: Dictionary) -> void:
+    if data.has("weapons_paths"):
+        weapons.clear()
+        for path in data["weapons_paths"]:
+            var weapon = load(path)
+            if weapon:
+                weapons.append(weapon)
+```
+
+#### Global Singleton Persistence
+Global autoloads (PlayerData, GameProperties, MapManager) are saved/loaded separately from scene nodes:
+- `PlayerData`: Stores player name, current slot, complete ActorData
+- `GameProperties`: Stores difficulty, seed, tutorial state
+- `MapManager`: Stores loaded chunk coordinates for restoration
+
+#### Deferred Loading Pattern
+For scene-dependent data (vehicles, map chunks):
+```gdscript
+func load_data(data: Dictionary) -> void:
+    # Store data for deferred restoration
+    chunks_to_restore = data["chunk_coords"]
+    
+func set_map_parent(parent: Node):
+    # Restore when scene is ready
+    for coords in chunks_to_restore:
+        _load_chunk(coords)
+    chunks_to_restore.clear()
+```
+
+#### Vector2 Serialization
+Always serialize Vector2 as dictionary for binary compatibility:
+```gdscript
+# Save
+"position": {"x": global_position.x, "y": global_position.y}
+
+# Load
+if typeof(pos_data) == TYPE_DICTIONARY:
+    global_position = Vector2(pos_data.get("x", 0), pos_data.get("y", 0))
+else:
+    global_position = pos_data  # Backward compatibility
 ```
 
 ## 7. Event Bus Communication
@@ -184,6 +247,84 @@ signal ecosystem_restored(region: String)
 - Gene modifications require understanding
 - Ecosystem restoration validates learning
 
+## 9. Animation Data Pattern
+
+### Animation Frame Configuration (Updated December 2025)
+Animation sequences must start with **motion frames**, not idle frames, to prevent visual glitches.
+
+#### Correct Frame Order
+```gdscript
+# ✅ CORRECT - Motion frames first, idle frame at end
+walk_down: [1, 2, 3, 0]  # Frames 1-3 are motion, frame 0 is idle
+walk_up:   [13, 14, 15, 12]
+walk_left: [5, 6, 7, 4]
+walk_right: [9, 10, 11, 8]
+
+# ❌ INCORRECT - Idle frame first causes visual issues
+walk_down: [0, 1, 2, 3]  # Frame 0 (idle) displays on first movement
+```
+
+#### Animation Update Logic with Safety Check
+Actor animation updates include defensive checks for stopped animations:
+```gdscript
+# Check both name change AND playing state
+if visuals.animation != final_anim_name or not visuals.is_playing():
+    visuals.play(final_anim_name)
+```
+
+This prevents edge cases where animations stop unexpectedly during gameplay.
+
+#### Animation Architecture
+- `AnimationData` resources define frame sequences
+- `AnimatedSprite2D` controlled by animation system
+- State-based animation (walking, idle, combat)
+- Generic animation logic in `actor.gd` reads from data
+
+## 10. Error Handling Patterns
+
+### Corrupted Save File Handling
+```gdscript
+# Check for null/invalid deserialization
+if data == null or typeof(data) != TYPE_DICTIONARY:
+    push_warning("Skipping corrupted save file: %s" % file_name)
+    continue
+elif data.has("metadata"):
+    # Process valid save
+else:
+    push_warning("Save file missing metadata: %s" % file_name)
+```
+
+### Node Path Conversion
+Always convert NodePath to String for save data to avoid type mismatches:
+```gdscript
+# Save
+var vehicle_path = str(current_vehicle.get_path())  # NodePath → String
+
+# Load  
+var vehicle_node = get_node_or_null(vehicle_path)  # String works with get_node
+```
+
+## 11. State Restoration Patterns
+
+### Vehicle Re-entry Pattern
+When loading a save where player is in vehicle:
+```gdscript
+# Temporarily reset occupied flag to allow re-entry
+var was_occupied = vehicle_node.occupied
+vehicle_node.occupied = false
+vehicle_node.enter_vehicle(self)
+# enter_vehicle() sets all state correctly (visibility, camera, controls)
+```
+
+### MapManager Reset for New Game
+Clear singleton state when starting new game:
+```gdscript
+func reset_for_new_game() -> void:
+    loaded_chunks.clear()
+    chunks_to_restore.clear()
+    map_parent = null
+```
+
 ## Best Practices
 
 1. **Always use Resource files** for data
@@ -193,3 +334,11 @@ signal ecosystem_restored(region: String)
 5. **Add to "saveable" group** for persistence
 6. **Export variables** via Inspector, not hardcoded paths
 7. **Educational first** - biology concepts drive mechanics
+8. **Binary serialization** for save files (var_to_bytes/bytes_to_var)
+9. **Resource path serialization** for complex Resources
+10. **Vector2 as dictionaries** in save data
+11. **Animation motion frames first** to avoid visual glitches
+12. **Defensive animation checks** (name change + is_playing)
+13. **NodePath to String conversion** for save data
+14. **Deferred loading** for scene-dependent data
+15. **Error handling** for corrupted save files

@@ -66,20 +66,85 @@ Clear separation of collision types:
 - Layer 5: Projectiles
 - Layer 6: Pickups
 
-## 6. Save/Load Architecture
+## 6. Save/Load Architecture (Updated December 2025)
 
-### 6.1. Local Storage
-- **Primary:** JSON files for save data
-- **Structure:** Metadata + per-node dictionaries
-- **Saveable Group:** Nodes implement `save_data()` and `load_data()`
+### 6.1. Binary Serialization System
+- **Primary:** Binary serialization using `var_to_bytes` / `bytes_to_var`
+- **Format:** `.dat` files for save data (not JSON)
+- **Advantages:** 
+  - Supports all Godot data types (Resources, Arrays, Dictionaries)
+  - Faster than JSON parsing
+  - Smaller file sizes
+  - No manual type conversion needed
 
-### 6.2. Data Persistence
-- Player state (position, health, glucose, ATP)
-- Inventory contents
-- Quest progress
-- Dialogue history
-- Unlocked genes/modifications
-- Ecosystem restoration status
+### 6.2. Data Persistence Strategy
+
+#### Multi-Slot System
+- **Slot Management:** Create, save, load, continue from multiple save files
+- **Metadata Tracking:** Player name, timestamp, difficulty, seed, play time
+- **Latest Slot:** Continue game loads most recent save automatically
+
+#### Complete Game State Persistence
+- **Player State:** Position, health, glucose, ATP, current vehicle state
+- **Vehicle State:** Position, rotation, occupied flag, fuel level
+- **Map State:** Loaded chunk coordinates for restoration
+- **Global Singletons:** PlayerData, GameProperties, MapManager
+- **Scene Nodes:** All nodes in "saveable" group
+
+#### Resource Path Serialization
+Resources cannot be binary-serialized directly, so they're converted to paths:
+```gdscript
+# Save: Convert Resource → Path (String)
+var weapons_paths = []
+for weapon in weapons:
+    if weapon and weapon.resource_path != "":
+        weapons_paths.append(weapon.resource_path)
+
+# Load: Load Resource from Path
+for path in data["weapons_paths"]:
+    var weapon = load(path)
+    if weapon:
+        weapons.append(weapon)
+```
+
+#### Vector2 Serialization
+Always serialize Vector2 as dictionary for binary compatibility:
+```gdscript
+# Save
+"position": {"x": global_position.x, "y": global_position.y}
+
+# Load with backward compatibility
+if typeof(pos_data) == TYPE_DICTIONARY:
+    global_position = Vector2(pos_data["x"], pos_data["y"])
+else:
+    global_position = pos_data
+```
+
+### 6.3. Error Handling
+- **Corrupted Files:** Skip with warning, don't crash game
+- **Missing Metadata:** Log warning and continue
+- **Invalid Data Types:** Type checking before deserialization
+- **Null Safety:** Check for null after `bytes_to_var()`
+
+### 6.4. Deferred Loading Pattern
+For scene-dependent data (vehicles, map chunks):
+```gdscript
+# Store data when global singleton loads
+func load_data(data: Dictionary):
+    chunks_to_restore = data["chunk_coords"]
+
+# Restore when scene is ready
+func set_map_parent(parent: Node):
+    for coords in chunks_to_restore:
+        _load_chunk(coords)
+    chunks_to_restore.clear()
+```
+
+### 6.5. State Management
+- **New Game:** Reset MapManager, initialize PlayerData, create new slot
+- **Continue:** Load latest save, restore all state including map chunks
+- **Load Specific:** Select slot, restore that save's complete state
+- **Save Game:** Collect all state, serialize to binary, write to file
 
 ## 7. Educational Content Management
 
@@ -116,9 +181,24 @@ Clear separation of collision types:
 
 ### 9.2. Key UI Systems
 - **HUD:** Health, glucose, ATP bars with biological context
-- **System Menu:** Inventory, equipment, character stats
+- **System Menu:** Inventory, equipment, character stats, save game
 - **Dialogue Panel:** NPC conversations with choices
 - **BioBlitz UI:** Question display with educational feedback
+- **Main Menu:** New game, continue, load game, options
+- **New Game Settings:** Difficulty and seed configuration
+
+### 9.3. Menu System Patterns (Updated December 2025)
+- **Visibility Management:** Hide specific containers, not entire parent nodes
+- **Signal-Based Flow:** Connect signals in _ready(), emit on actions
+- **State Preservation:** Background and labels remain visible during transitions
+- **Error Handling:** Graceful degradation for corrupted save files
+
+Example: NewGameSettings shows while hiding only menu buttons:
+```gdscript
+# Hide menu_container (buttons), not entire MainMenu
+if main_menu_ref and "menu_container" in main_menu_ref:
+    main_menu_ref.menu_container.visible = false
+```
 
 ## 10. Future Technical Enhancements
 
@@ -149,3 +229,10 @@ Clear separation of collision types:
 5. **Educational Integration:** Biology concepts drive mechanics
 6. **Performance:** Profile before optimizing
 7. **Testing:** Validate educational effectiveness with target audience
+8. **Binary Serialization:** Use var_to_bytes/bytes_to_var for save files
+9. **Resource Path Storage:** Convert Resources to paths for persistence
+10. **Vector2 as Dictionaries:** Serialize as {x, y} for binary compatibility
+11. **Null Safety:** Always check deserialization results
+12. **Deferred Loading:** Wait for scene initialization before restoring state
+13. **Animation Motion First:** Place motion frames at start of sequences
+14. **NodePath to String:** Convert for save data to avoid type issues
