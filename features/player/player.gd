@@ -211,7 +211,7 @@ func save_data() -> Dictionary:
 	return {
 		"position": global_position,
 		"current_state": current_state,
-		# The actor_data is saved in PlayerData singleton
+		# Actor stats are saved in PlayerData.actor_data singleton
 	}
 
 func load_data(data: Dictionary) -> void:

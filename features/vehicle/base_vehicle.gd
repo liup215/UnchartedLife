@@ -242,7 +242,7 @@ func save_data() -> Dictionary:
 		"position": global_position,
 		"rotation": rotation,
 		"occupied": occupied,
-		# Vehicle data is saved in the vehicle_data resource
+		# Vehicle stats are stored in the vehicle_data resource (not saved per-instance)
 	}
 
 func load_data(data: Dictionary) -> void:

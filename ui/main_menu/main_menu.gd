@@ -39,6 +39,10 @@ func RunMenuSetup():
 	options_button.pressed.connect(_on_options_pressed)
 	credits_button.pressed.connect(_on_credits_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
+	
+	# Connect new game settings signal
+	if new_game_settings:
+		new_game_settings.game_started.connect(_on_new_game_confirmed)
 
 	# Disable buttons if no save files exist
 	var has_saves = SaveManager.has_any_save_file()
@@ -105,9 +109,6 @@ func _on_new_game_pressed():
 	# Hide main menu and open new game settings
 	if new_game_settings:
 		new_game_settings.OpenFromMainMenu(self)
-		# Connect signal if not already connected
-		if not new_game_settings.game_started.is_connected(_on_new_game_confirmed):
-			new_game_settings.game_started.connect(_on_new_game_confirmed)
 	else:
 		print("NewGameSettings node not found.")
 
