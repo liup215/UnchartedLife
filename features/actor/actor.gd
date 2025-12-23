@@ -140,10 +140,12 @@ func _update_animation():
 
 	var final_anim_name = anim_name + "_" + dir_suffix
 
-	if visuals.sprite_frames and visuals.sprite_frames.has_animation(final_anim_name) and visuals.animation != final_anim_name:
-		visuals.play(final_anim_name)
-	elif visuals.sprite_frames and visuals.sprite_frames.has_animation(anim_name) and visuals.animation != anim_name: # Fallback to non-directional
-		visuals.play(anim_name)
+	if visuals.sprite_frames and visuals.sprite_frames.has_animation(final_anim_name):
+		if visuals.animation != final_anim_name or not visuals.is_playing():
+			visuals.play(final_anim_name)
+	elif visuals.sprite_frames and visuals.sprite_frames.has_animation(anim_name):
+		if visuals.animation != anim_name or not visuals.is_playing():
+			visuals.play(anim_name)
 
 # --- Public API ---
 
