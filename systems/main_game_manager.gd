@@ -24,11 +24,12 @@ func _initialize_player_position():
 	# If loading from save, player position is already set by load_data
 	# Otherwise, use the default spawn position from current map
 	if is_instance_valid(player) and MapManager.current_map_data:
-		# Check if this is a new game (no save data was loaded)
-		# Use a safer check instead of accessing private member
-		if player.global_position == Vector2(631, 356): # Default position in scene
+		# Check if this is a new game using SaveManager flag
+		if not SaveManager.is_loading_from_save():
 			player.global_position = MapManager.current_map_data.default_spawn_position
 			print("MainGameManager: Set player position to map default: ", player.global_position)
+		else:
+			print("MainGameManager: Player position loaded from save file")
 
 func _physics_process(_delta):
 	# Continuously update the map based on player position
