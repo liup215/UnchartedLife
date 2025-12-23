@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7gm8qlmspc6k"]
 
-[ext_resource type="Script" uid="uid://d2lqe8bh2xybc" path="res://ui/main_menu/new_game_settings.gd" id="1_newgamesettings"]
+[ext_resource type="Script" path="res://ui/main_menu/new_game_settings.gd" id="1_newgamesettings"]
 
 [node name="NewGameSettings" type="Control"]
 visible = false

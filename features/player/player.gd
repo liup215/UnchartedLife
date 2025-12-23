@@ -235,8 +235,12 @@ func load_data(data: Dictionary) -> void:
 		# Wait a frame to ensure the vehicle node is loaded
 		await get_tree().process_frame
 		var vehicle_node = get_node_or_null(vehicle_path)
-		if vehicle_node:
+		if vehicle_node and vehicle_node.has_method("enter_vehicle"):
 			current_vehicle = vehicle_node
 			# Re-enter the vehicle to restore the full state
-			if current_state == PlayerState.IN_VEHICLE and current_vehicle.has_method("enter_vehicle"):
-				current_vehicle.enter_vehicle(self)
+			if current_state == PlayerState.IN_VEHICLE:
+				# Temporarily reset occupied flag to allow re-entry
+				var was_occupied = vehicle_node.occupied
+				vehicle_node.occupied = false
+				vehicle_node.enter_vehicle(self)
+				# Don't restore occupied flag - enter_vehicle sets it correctly
