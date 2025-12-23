@@ -20,7 +20,8 @@ var driver: Node2D = null
 var player_camera: Camera2D = null
 
 # Map binding - vehicles are tied to specific maps
-var assigned_map_id: String = ""
+# If empty, vehicle is available on all maps
+@export var assigned_map_id: String = ""
 
 func _ready():
 	add_to_group("vehicle")
