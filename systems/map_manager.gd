@@ -99,7 +99,7 @@ func switch_to_map(map_id: String, spawn_position: Vector2 = Vector2.ZERO) -> bo
 		update_chunks(target_spawn)
 	
 	# Emit signal for other systems to react (e.g., spawn vehicles, update UI)
-	EventBus.emit_signal("map_changed", map_id, target_spawn)
+	EventBus.map_changed.emit(map_id, target_spawn)
 	
 	return true
 
