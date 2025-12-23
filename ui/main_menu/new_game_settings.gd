@@ -12,13 +12,23 @@ var main_menu_ref = null
 func OpenFromMainMenu(main_menu=null):
 	main_menu_ref = main_menu
 	visible = true
-	if main_menu_ref:
-		main_menu_ref.visible = false
+	if main_menu_ref and "menu_container" in main_menu_ref:
+		main_menu_ref.menu_container.visible = false
+	elif main_menu_ref:
+		# Fallback: hide CenterContainer by path if menu_container property doesn't exist
+		var center_container = main_menu_ref.get_node_or_null("CenterContainer")
+		if center_container:
+			center_container.visible = false
 
 func Exit():
 	visible = false
-	if main_menu_ref:
-		main_menu_ref.visible = true
+	if main_menu_ref and "menu_container" in main_menu_ref:
+		main_menu_ref.menu_container.visible = true
+	elif main_menu_ref:
+		# Fallback: show CenterContainer by path if menu_container property doesn't exist
+		var center_container = main_menu_ref.get_node_or_null("CenterContainer")
+		if center_container:
+			center_container.visible = true
 
 func _ready():
 	start_button.pressed.connect(OnConfirmPressed)

@@ -115,10 +115,15 @@ func get_save_slots_metadata() -> Array:
 				if file:
 					var binary_data = file.get_buffer(file.get_length())
 					var data = bytes_to_var(binary_data)
-					if data and typeof(data) == TYPE_DICTIONARY and data.has("metadata"):
+					# Check if deserialization was successful and data is valid
+					if data == null or typeof(data) != TYPE_DICTIONARY:
+						push_warning("Skipping corrupted or invalid save file: %s" % file_name)
+					elif data.has("metadata"):
 						var metadata = data["metadata"]
 						metadata["slot_id"] = file_name.get_basename()
 						metadata_list.append(metadata)
+					else:
+						push_warning("Save file missing metadata: %s" % file_name)
 			file_name = dir.get_next()
 	else:
 		push_error("Failed to open saves directory: %s" % SAVE_DIR)
