@@ -174,7 +174,9 @@ func load_data(data: Dictionary) -> void:
 		current_map_id = data["current_map_id"]
 		current_map_data = available_maps.get(current_map_id)
 		if not current_map_data:
-			push_warning("MapManager: Loaded map_id '%s' not found in available_maps" % current_map_id)
+			push_warning("MapManager: Loaded map_id '%s' not found in available_maps. Falling back to default map '%s'. Ensure custom maps are registered in _initialize_available_maps()." % [current_map_id, DEFAULT_MAP_ID])
+			current_map_id = DEFAULT_MAP_ID
+			current_map_data = available_maps.get(DEFAULT_MAP_ID)
 	
 	# Store the chunks that need to be restored
 	if data.has("loaded_chunk_coords") and not data["loaded_chunk_coords"].is_empty():

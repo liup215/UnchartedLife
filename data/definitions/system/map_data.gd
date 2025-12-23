@@ -52,17 +52,21 @@ func from_dict(data: Dictionary) -> void:
 	use_chunk_loading = data.get("use_chunk_loading", use_chunk_loading)
 	
 	# Convert chunk dictionary back to Vector2i keys
+	# Use a more robust format: store as {x, y} pairs
 	if data.has("chunk_scenes"):
 		chunk_scenes.clear()
 		var chunk_dict = data["chunk_scenes"]
 		for key_str in chunk_dict.keys():
-			# Parse "Vector2i(x, y)" or "(x, y)" format
+			# Try to parse the key as a string representation
+			# Expected formats: "Vector2i(x, y)" or "(x, y)" or "x,y"
 			var coords_str = key_str.replace("Vector2i", "").replace("(", "").replace(")", "").strip_edges()
 			var coords = coords_str.split(",")
-			if coords.size() == 2:
+			if coords.size() >= 2:
 				var x = int(coords[0].strip_edges())
 				var y = int(coords[1].strip_edges())
 				chunk_scenes[Vector2i(x, y)] = chunk_dict[key_str]
+			else:
+				push_warning("MapData: Could not parse chunk coordinate key: %s" % key_str)
 	
 	# Load spawn position
 	if data.has("default_spawn_position"):

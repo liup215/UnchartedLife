@@ -25,7 +25,8 @@ func _initialize_player_position():
 	# Otherwise, use the default spawn position from current map
 	if is_instance_valid(player) and MapManager.current_map_data:
 		# Check if this is a new game (no save data was loaded)
-		if not SaveManager._pending_load_data.has(player.get_path()):
+		# Use a safer check instead of accessing private member
+		if player.global_position == Vector2(631, 356): # Default position in scene
 			player.global_position = MapManager.current_map_data.default_spawn_position
 			print("MainGameManager: Set player position to map default: ", player.global_position)
 

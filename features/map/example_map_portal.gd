@@ -13,8 +13,9 @@ extends Area2D
 @onready var label: Label = $Label
 
 func _ready():
-	# Connect to body entered signal
+	# Connect to body entered and exited signals
 	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
 	
 	# Update label text
 	if label and not target_map_id.is_empty():
