@@ -8,6 +8,9 @@ var TutorialState: Dictionary = {}
 func start_new_game(settings: WorldGeneratingSettings) -> void:
 	current_settings = settings
 	TutorialState = {"Enabled": true}
+	
+	# Reset MapManager for new game
+	MapManager.reset_for_new_game()
 
 func to_dict() -> Dictionary:
 	return {

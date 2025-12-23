@@ -208,9 +208,14 @@ func _handle_combat_input():
 
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:
+	var vehicle_path = ""
+	if current_vehicle:
+		vehicle_path = current_vehicle.get_path()
+	
 	return {
 		"position": {"x": global_position.x, "y": global_position.y},
 		"current_state": current_state,
+		"current_vehicle_path": vehicle_path,
 		# Actor stats are saved in PlayerData.actor_data singleton
 	}
 
@@ -223,3 +228,15 @@ func load_data(data: Dictionary) -> void:
 			global_position = pos_data
 	if data.has("current_state"):
 		current_state = data["current_state"]
+	
+	# Restore vehicle reference if player was in a vehicle
+	if data.has("current_vehicle_path") and data["current_vehicle_path"] != "":
+		var vehicle_path = data["current_vehicle_path"]
+		# Wait a frame to ensure the vehicle node is loaded
+		await get_tree().process_frame
+		var vehicle_node = get_node_or_null(vehicle_path)
+		if vehicle_node:
+			current_vehicle = vehicle_node
+			# Re-enter the vehicle to restore the full state
+			if current_state == PlayerState.IN_VEHICLE and current_vehicle.has_method("enter_vehicle"):
+				current_vehicle.enter_vehicle(self)

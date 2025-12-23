@@ -90,15 +90,22 @@ func save_data() -> Dictionary:
 	}
 
 func load_data(data: Dictionary) -> void:
-	# Clear any currently loaded chunks
-	loaded_chunks.clear()
-	
 	# Store the chunks that need to be restored
-	if data.has("loaded_chunk_coords"):
+	if data.has("loaded_chunk_coords") and not data["loaded_chunk_coords"].is_empty():
+		# Only clear if we have data to restore
+		loaded_chunks.clear()
 		chunks_to_restore.clear()
+		
 		for coord_dict in data["loaded_chunk_coords"]:
 			var coords = Vector2i(coord_dict.get("x", 0), coord_dict.get("y", 0))
 			if CHUNK_SCENES.has(coords):
 				chunks_to_restore.append(coords)
 		
 		print("MapManager: Will restore %d chunks when map_parent is set" % chunks_to_restore.size())
+
+# Reset MapManager state for a new game
+func reset_for_new_game() -> void:
+	loaded_chunks.clear()
+	chunks_to_restore.clear()
+	map_parent = null
+	print("MapManager: Reset for new game")
