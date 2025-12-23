@@ -1,5 +1,6 @@
 extends Control
 
+@onready var menu_container = $CenterContainer
 @onready var new_game_button = $CenterContainer/VBoxContainer/MenuButtons/NewGameButton
 @onready var continue_button = $CenterContainer/VBoxContainer/MenuButtons/ContinueButton
 @onready var load_game_button = $CenterContainer/VBoxContainer/MenuButtons/LoadGameButton
