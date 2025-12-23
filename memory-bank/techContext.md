@@ -1,57 +1,151 @@
-# Tech Context: 《执笔问道录》
+# Tech Context: Legends of Uncharted Life
 
-## 1. 游戏引擎 (Game Engine)
-- **引擎:** Godot 4.x
-- **语言:** GDScript (强制使用静态类型)
-- **理由:** Godot 4.x 提供了强大的功能和性能，而 GDScript 与引擎的紧密集成能够实现快速开发。静态类型能显著提升代码质量和可维护性。
+## 1. Game Engine
+- **Engine:** Godot 4.x
+- **Language:** GDScript (Static typing required)
+- **Rationale:** Godot 4.x provides powerful features and performance, while GDScript's tight engine integration enables rapid development. Static typing significantly improves code quality and maintainability.
 
-## 2. 核心架构模式 (Core Architectural Patterns)
+## 2. Core Architectural Patterns
 
-### 2.1. 数据驱动的实体架构
-这是项目的基石。
-- **哲学:** 数据与逻辑分离。游戏内实体的属性和行为在 `Resource` 文件 (`.tres`) 中定义，而场景 (`.tscn`) 和脚本 (`.gd`) 则是解释这些数据的通用“容器”。
-- **实现:**
-    - **`base_actor.tscn`**: 所有角色的通用模板。
-    - **`ActorData.gd`**: 定义角色属性和行为的 `Resource`。在新设计下，它将包含与“乱墨妖”绑定的 `QuestionData`。
-    - **`BookSoulSealData.gd`**: 定义“书魂印”（技能）的 `Resource`，包括其效果和类型。
-    - **`QuestionData.gd`**: 定义题目的 `Resource`，包含题干、答案、题型和评估逻辑。
-    - **`DialogueData.gd`**: 定义对话树的 `Resource`，包含行、选项、条件和效果。
+### 2.1. Data-Driven Entity Architecture
+This is the project's foundation.
+- **Philosophy:** Separate data from logic. Entity attributes and behaviors defined in `Resource` files (`.tres`), while scenes (`.tscn`) and scripts (`.gd`) are generic "containers" that interpret this data.
+- **Implementation:**
+    - **`base_actor.tscn`**: Universal template for all characters
+    - **`ActorData.gd`**: `Resource` defining character attributes and behaviors
+    - **`WeaponData.gd`**: `Resource` defining weapon properties
+    - **`AIBehaviorData.gd`**: `Resource` defining AI patterns
+    - **`DialogueData.gd`**: `Resource` defining conversation trees
+    - **`ItemData.gd`**: `Resource` defining items and their effects
 
-### 2.2. 组件化设计 (Component-Based Design)
-- **理念:** 优先使用组合而非继承。游戏对象由多个可复用的小型场景/脚本（组件）构成，例如 `HealthComponent`、`CombatComponent`、`InkEnergyComponent`、`VehicleCombatComponent`、`VehicleStatsComponent`、`InteractableComponent`、`InventoryComponent`、`DialogueComponent`、`Pickup` 等，支持主副武器管理、物品存取、拾取交互、NPC对话等功能。
+### 2.2. Component-Based Design
+- **Principle:** Favor composition over inheritance. Game objects composed of multiple reusable small scenes/scripts (components).
+- **Examples:** `HealthComponent`, `MetabolismComponent`, `CombatComponent`, `VehicleCombatComponent`, `InventoryComponent`, `DialogueComponent`
 
-### 2.3. 全局事件总线 (Global Event Bus)
-- **`EventBus` Autoload:** 继续作为解耦系统间通信的首选方案，用于广播 `skill_unlocked`、`pbl_project_completed`、`dialogue_started` 等全局事件。
+### 2.3. Global Event Bus
+- **`EventBus` Autoload:** Primary solution for decoupled system communication, broadcasting global events like `player_health_changed`, `glucose_collected`, `bioblitz_started`, etc.
 
-## 3. 版本控制 (Version Control)
-- **系统:** Git
-- **配置:** 必须正确配置 `.gitattributes` 以优化对 Godot 文本格式场景 (`.tscn`) 和资源 (`.tres`) 文件的处理。
+## 3. Biology Education Integration
 
-## 4. 离线优先的技术架构建议 (Offline-First Technical Architecture)
+### 3.1. Glucose-ATP Energy System
+- **MetabolismComponent:** Simulates cellular respiration
+- **Real Biology:** Glucose consumed, ATP generated
+- **Gameplay Integration:** 
+  - Sprint = higher ATP consumption (anaerobic)
+  - Rest = ATP regeneration (aerobic)
+  - Upgrades = mitochondria improvements
 
-### 4.1. 客户端 (Godot 4.x)
-- **职责:** 渲染、战斗逻辑、UI、PBL 编辑器交互、本地题库管理以及与本地评估服务的通信。集成车辆武器系统与 ATP 消耗机制，支持角色菜单、拾取反馈等 UI 组件与信号通信。
-- **存储:** 本地数据优先使用 SQLite 或结构化的 JSON 文件。
-- **PBL 沙盒模拟:** 利用 Godot 内置的物理引擎或编写专用的模拟模块，对 PBL 提交方案进行本地模拟，并返回关键性能指标（KPIs）。
+### 3.2. BioBlitz Question System
+- **QuestionData Resources:** Biology questions in `.tres` format
+- **Evaluation:** Client-side question validation
+- **Integration:** Combat pauses when enemy health low
+- **Educational Feedback:** Explanations for correct/incorrect answers
 
-### 4.2. 本地评估引擎 (Local Evaluation Engine)
-这是实现离线评估的关键。MVP（最小可行产品）阶段不依赖联网 LLM。
-- **架构:** 客户端-本地服务模式。Godot 客户端通过本地网络请求（HTTP）与一个在后台运行的 Python 服务进行通信。
-- **技术选型 (方案 A - 优先):**
-    - **打包一个独立的 Python 运行时:** 在游戏发行包中内嵌一个轻量级的 Python 环境。
-    - **集成 `SymPy` 库:** 将 SymPy 作为核心的符号计算库，用于处理数学题目的评估。
-    - **通信:** Godot 通过 `HTTPRequest` 节点向本地启动的轻量级 Web 服务（如使用 Flask 或 aiohttp）发送包含题目和答案的 JSON 数据。服务处理后返回评估结果。
-- **备选方案 (方案 B - 长期):**
-    - 为了更深度的集成和更小的打包体积，未来可以考虑用 C++ 或 Rust 重写一个轻量级的表达式解析和符号计算库，并通过 GDExtension 直接嵌入到 Godot 中。首个版本不采用此方案。
+### 3.3. Vehicle Bionic System
+- **Evolutionary Adaptations:** Each modification teaches evolution
+- **Real Biology:** Based on actual animal traits
+- **Visual Learning:** See biological principles in action
 
-### 4.3. 物理系统与交互 (Physics & Interaction)
-- **实体类型:** 所有动态实体（玩家、敌人）统一使用 `CharacterBody2D`，因为它提供了对移动和碰撞的精确控制，非常适合 ARPG 的操作手感。
-- **物理层:** 将继续使用物理层来区分不同类型的交互（如角色、世界、伤害判定区），以确保碰撞检测的准确性和效率。旧的“Vehicle”相关物理层将被重新评估或移除。
+## 4. Version Control
+- **System:** Git
+- **Configuration:** Properly configured `.gitattributes` to optimize handling of Godot text-format scenes (`.tscn`) and resources (`.tres`)
 
-### 4.4. 对话系统 (Dialogue System)
-- **架构:** 
-    - **`DialogueManager` (Autoload):** 负责对话状态机、流程控制、条件检查和效果执行。
-    - **`DialogueComponent`:** 挂载于 NPC，负责触发对话。
-    - **`DialoguePanel`:** 负责 UI 渲染、打字机效果和用户输入。
-- **数据流:** `DialogueComponent` -> `DialogueManager` -> `EventBus` -> `DialoguePanel`。
-- **特性:** 支持富文本、头像显示、语音音效 (`voice_sfx`)、分支选项、任务状态集成。
+## 5. Physics System
+
+### 5.1. Entity Types
+- **Characters:** `CharacterBody2D` for precise movement control (player, enemies)
+- **Vehicles:** `RigidBody2D` for realistic physics (momentum, collisions)
+- **Projectiles:** `Area2D` for hit detection
+
+### 5.2. Physics Layers
+Clear separation of collision types:
+- Layer 1: Player
+- Layer 2: Enemies
+- Layer 3: Vehicles
+- Layer 4: Environment
+- Layer 5: Projectiles
+- Layer 6: Pickups
+
+## 6. Save/Load Architecture
+
+### 6.1. Local Storage
+- **Primary:** JSON files for save data
+- **Structure:** Metadata + per-node dictionaries
+- **Saveable Group:** Nodes implement `save_data()` and `load_data()`
+
+### 6.2. Data Persistence
+- Player state (position, health, glucose, ATP)
+- Inventory contents
+- Quest progress
+- Dialogue history
+- Unlocked genes/modifications
+- Ecosystem restoration status
+
+## 7. Educational Content Management
+
+### 7.1. Question Bank
+- **Format:** JSON files with biology questions
+- **Categories:** Cell biology, genetics, ecology, evolution
+- **Difficulty:** Progressive from basic to advanced
+- **Metadata:** Topic tags, curriculum alignment
+
+### 7.2. Learning Analytics (Future)
+- Track question performance
+- Identify weak areas
+- Adaptive difficulty
+- Progress reports for educators
+
+## 8. Performance Considerations
+
+### 8.1. Map System
+- **Chunk Loading:** Dynamic loading/unloading based on player position
+- **WorldData:** Resource manages chunk references
+- **Optimization:** Only visible chunks active
+
+### 8.2. Object Pooling
+- **Projectiles:** Reuse bullet instances
+- **Effects:** Pool particle systems
+- **Optimization:** Reduce GC pressure
+
+## 9. UI Architecture
+
+### 9.1. Separation of Concerns
+- **UI Scenes:** Handle presentation only
+- **Game Logic:** Managed in features/ and systems/
+- **Communication:** EventBus signals, no direct references
+
+### 9.2. Key UI Systems
+- **HUD:** Health, glucose, ATP bars with biological context
+- **System Menu:** Inventory, equipment, character stats
+- **Dialogue Panel:** NPC conversations with choices
+- **BioBlitz UI:** Question display with educational feedback
+
+## 10. Future Technical Enhancements
+
+### 10.1. Advanced Biology Simulations
+- Gene expression visualization
+- Ecosystem simulation engine
+- Cellular process animations
+- Virtual microscope system
+
+### 10.2. Educational Features
+- Progress tracking dashboard
+- Teacher analytics portal
+- Custom content creation tools
+- Community question bank
+
+### 10.3. Performance & Polish
+- Shader effects for biological processes
+- Advanced particle systems
+- Audio feedback for learning moments
+- Accessibility features
+
+## Best Practices
+
+1. **Static Typing:** Always use type hints in GDScript
+2. **Data-Driven:** Never hardcode game data
+3. **EventBus First:** Use for cross-system communication
+4. **Component Composition:** Prefer over inheritance
+5. **Educational Integration:** Biology concepts drive mechanics
+6. **Performance:** Profile before optimizing
+7. **Testing:** Validate educational effectiveness with target audience

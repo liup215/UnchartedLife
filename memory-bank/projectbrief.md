@@ -1,23 +1,37 @@
-# Project Brief: 《执笔问道录》 (The Scribe's Odyssey)
+# Project Brief: Legends of Uncharted Life
 
-## 核心请求 (Core Request)
-用户希望开发一款教育性动作角色扮演游戏（ARPG），项目名为《执笔问道录》。游戏的核心是将“学习过程”与“游戏体验”深度融合，旨在创造一个既有趣又能有效提升学习效果的数字产品。
+## Core Request
+Develop a post-apocalyptic educational Action RPG called **Legends of Uncharted Life** that seamlessly integrates biology education with engaging gameplay.
 
-## 关键目标 (Key Goals)
-- **游戏类型:** 教育性动作角色扮演游戏（ARPG），结合了深度学习系统和基于项目的学习（PBL）。
-- **目标用户:** 以 K-12 学生（首发小学数学）及其家长、教师为主。长期目标是扩展到更广泛的学科和年龄段。
-- **核心愿景:** 帮助学生从“会做题”提升到“知其所以然”。通过游戏化的战斗和PBL项目，强化“学-练-考-悟”的闭环学习体验。
-- **引擎:** Godot 4.x
-- **架构要求:**
-    - **可扩展与数据驱动:** 架构必须支持通过创建数据资源（`.tres` 文件）轻松添加新内容（如新知识点、题目、技能），最大程度地减少硬编码。
-    - **结构清晰:** 项目结构遵循功能优先的原则，明确分离数据、组件和功能模块。
-    - **可复用与组合:** 核心功能被构建为可复用的组件。游戏中的实体（如技能、敌人）通过组合这些组件来定义，而非依赖复杂的继承关系。
+## Key Goals
+- **Game Type:** Post-Apocalyptic ARPG + Biology Educational Game
+- **Target Users:** High school biology students, science enthusiasts, and teachers
+- **Core Vision:** Help students understand biological principles through immersive gameplay, moving beyond memorization to true comprehension
+- **Engine:** Godot 4.x
+- **Architecture Requirements:**
+    - **Extensible & Data-Driven:** Support easy content addition through Resource files (`.tres`)
+    - **Clear Structure:** Feature-first organization with separated data, components, and functionality
+    - **Reusable & Composable:** Core functionality built as reusable components with minimal inheritance
 
-## 技术与实现初步构想 (Initial Scope & Technical Approach)
-项目将基于一个强大的**数据驱动、组件化架构**来构建。
-- **数据层 (Data Layer):** 使用 `Resource` 文件定义所有游戏实体，包括知识点、题目、技能（书魂印）和敌人。
-- **逻辑层 (Logic Layer):** 通用脚本和组件负责解释并执行数据层定义的内容。
-- **场景层 (Scene Layer):** 场景作为承载组件的通用容器。
-- **离线优先评估 (Offline-First Evaluation):** 游戏的核心评估机制将优先在本地实现，通过内置的符号计算或规则引擎来判断答案的正确性，以确保核心玩法不依赖网络连接。
+## Technical Approach
+The project is built on a robust **data-driven, component-based architecture**:
 
-此方法旨在从一开始就确保项目的可扩展性、组织性和可复用性，为实现宏大的教育愿景奠定坚实的基础。
+- **Data Layer:** Use `Resource` files to define all game entities (enemies, weapons, behaviors, items)
+- **Logic Layer:** Generic scripts and components interpret and execute data definitions
+- **Scene Layer:** Scenes serve as generic containers for components
+- **Educational Integration:** Biology knowledge woven into core mechanics (ATP management, gene editing, ecology restoration)
+
+This approach ensures scalability, organization, and reusability while laying a solid foundation for educational content delivery.
+
+## Development Model
+Independent development with focus on:
+1. Strong technical architecture first
+2. Modular content creation
+3. Iterative educational content integration
+4. Community-friendly modding support (via Resource files)
+
+## Success Criteria
+- Students can explain biological concepts after gameplay
+- Engaging enough to compete with non-educational games
+- Easy for educators to add custom content
+- Modding community can extend with new biology topics
