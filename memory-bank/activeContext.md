@@ -13,6 +13,33 @@
 4.  **Feature-First Directory Structure**: The project structure prioritizes features (e.g., `features/actor`, `features/vehicle`) over type-based organization, keeping related code together.
 
 ## Recent Achievements
+
+### December 2025 Updates
+- **Complete Save/Load System (PR #2)**:
+  - Binary serialization (var_to_bytes/bytes_to_var) supporting all custom data types
+  - Full ActorData serialization with Resource path conversion
+  - Multi-slot save system with metadata tracking
+  - Complete game state persistence (player, vehicle, map chunks, global singletons)
+  - MapManager integration with chunk restoration
+  - Vehicle state restoration with proper re-entry
+  - Corrupted save file error handling
+  - Deferred loading pattern for scene-dependent data
+
+- **UI & Menu System Improvements (PR #3)**:
+  - Fixed NewGameSettings visibility issue (proper menu container hiding)
+  - Enhanced save file error handling with warning messages
+  - New game flow: Menu → Settings → Initialize State → Load Scene
+  - Continue/Load game flow with proper state restoration
+  - Save game from in-game system menu (ESC key)
+
+- **Animation System Fix (PR #4)**:
+  - Fixed player walk animation displaying idle frame on first step
+  - Root cause: Animation frame_indices started with idle frame (frame 0)
+  - Solution: Reordered frame indices to move idle frame to end
+  - Added defensive `is_playing()` check in actor animation logic
+  - Created animation testing documentation and debug guides
+
+### Previous Achievements
 - **Map System Refactor**: `MapManager` now loads chunks dynamically using `WorldData` resource. No more hardcoded `res://world/chunk_*.tscn` paths.
 - **Inventory System**: Implemented comprehensive inventory management with `InventoryComponent`, `InventoryData` resources, and tabbed UI with item details panel.
 - **Equipment System**: Added equipment slots (Weapon/Armor/Gloves/Helmet/Boots) with visual display of equipped items and stats.
@@ -21,8 +48,10 @@
 - **Combat Enhancement**: Unified weapon system supporting both actors and vehicles, with charge mechanics and combo systems.
 
 ## Next Steps
-- Continue to data-drive all remaining hardcoded references.
-- Expand AI behavior library with more composable behaviors.
-- Add more weapon types and enemy varieties using the Resource-driven system.
-- Implement save/load for all new systems (inventory, quests, dialogue state).
-- Performance profiling and optimization for chunk loading system.
+- Expand BioBlitz question bank with diverse biology topics
+- Implement biology-themed enemy varieties using Resource-driven system
+- Add vehicle bionic modifications based on animal adaptations
+- Create educational tooltips for biological systems
+- Continue expanding AI behavior library with more composable behaviors
+- Performance profiling and optimization for save/load system
+- Add hints system for BioBlitz questions tied to ATP cost
