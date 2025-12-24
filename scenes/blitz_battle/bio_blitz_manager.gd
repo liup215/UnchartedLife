@@ -7,12 +7,14 @@ const QuestionDataScript = preload("res://data/definitions/bio_blitz/question_da
 @export var question_pool: Array[Resource] = [] # Type hint: Array[QuestionData]
 @export var question_bank_path: String = ""
 @export var battle_music: AudioStream
+@export var auto_complete_when_no_questions: bool = false  # For testing only, set to false in production
 
 var question_deck: Array[Resource] = [] # Type hint: Array[QuestionData]
 
 # State
 var current_question: Resource # Type hint: QuestionData
 var input_locked: bool = false
+var requesting_weapon: Resource = null  # Track which weapon requested the reload
 
 # UI References
 @onready var quiz_panel: PanelContainer = $QuizHUD/QuizPanel
@@ -77,6 +79,7 @@ func _ready() -> void:
 func _on_request_quiz_reload(_weapon_data: Resource) -> void:
 	if quiz_panel.visible:
 		return
+	requesting_weapon = _weapon_data  # Store which weapon requested the quiz
 	start_quiz()
 
 func start_quiz() -> void:
@@ -95,8 +98,10 @@ func display_random_question() -> void:
 	else:
 		print("No questions in pool!")
 		question_label.text = "No questions loaded!"
-		# Auto-complete if no questions (for testing)
-		EventBus.quiz_completed.emit(true)
+		# Auto-complete if no questions (for testing only)
+		if auto_complete_when_no_questions:
+			print("[BioBlitz] Auto-completing quiz due to empty question pool (testing mode)")
+			EventBus.quiz_completed.emit(true)
 		quiz_panel.visible = false
 
 func display_question(q: Resource) -> void:

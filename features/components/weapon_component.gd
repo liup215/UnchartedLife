@@ -11,6 +11,7 @@ var is_charging: bool = false
 var charge_start_time: float = 0.0
 @export_group("Debug")
 @export var current_ammo: int = 0
+var is_waiting_for_quiz: bool = false  # Track if this weapon is waiting for quiz completion
 
 # Signals
 signal weapon_fired(weapon_data: ItemData, charge_level: int)
@@ -23,8 +24,6 @@ func _ready():
 
 func setup_weapon():
 	if weapon_data:
-		print("Setting up weapon: %s" % weapon_data.item_name)
-		print("Weapon ammo capacity: %d" % weapon_data.weapon_data.ammo_capacity)
 		current_ammo = weapon_data.weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
@@ -133,11 +132,17 @@ func reload():
 		return
 	
 	if weapon_data.weapon_data.requires_quiz_reload:
+		is_waiting_for_quiz = true  # Mark this weapon as waiting
 		EventBus.request_quiz_reload.emit(weapon_data)
 	else:
 		current_ammo = weapon_data.weapon_data.ammo_capacity
 		emit_signal("ammo_updated", current_ammo)
 
 func _on_quiz_completed(success: bool):
-	if success and weapon_data and weapon_data.weapon_data.requires_quiz_reload:
+	# Only reload if this weapon was waiting for the quiz AND the weapon requires quiz reload
+	if success and is_waiting_for_quiz and weapon_data and weapon_data.weapon_data.requires_quiz_reload:
 		current_ammo = weapon_data.weapon_data.ammo_capacity
+		emit_signal("ammo_updated", current_ammo)
+		is_waiting_for_quiz = false  # Reset the flag
+	elif not success and is_waiting_for_quiz:
+		is_waiting_for_quiz = false  # Reset the flag even on failure
