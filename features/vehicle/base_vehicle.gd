@@ -212,7 +212,7 @@ func exit_vehicle() -> bool:
 			ejected_player.set_in_vehicle_state(false)
 		
 		# Show player's weapon components
-		var combat = ejected_player.combat_component
+		var combat = ejected_player.actor_combat_component
 		if combat:
 			for weapon in combat.actor_weapons:
 				weapon.visible = true
