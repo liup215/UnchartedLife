@@ -19,11 +19,21 @@ var occupied: bool = false
 var driver: Node2D = null
 var player_camera: Camera2D = null
 
+# Map binding - vehicles are tied to specific maps
+# If empty, vehicle is available on all maps
+@export var assigned_map_id: String = ""
+
 func _ready():
 	add_to_group("vehicle")
 	add_to_group("saveable")
 	# Claim any pending save data
 	SaveManager.claim_data_for_node(self)
+	
+	# Listen for map changes to show/hide based on current map
+	EventBus.map_changed.connect(_on_map_changed)
+	
+	# Check if vehicle should be visible on current map
+	_update_visibility_for_current_map()
 	
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_body_entered)
@@ -236,12 +246,35 @@ func _handle_combat_input():
 	if Input.is_action_just_pressed("light_attack"):
 		vehicle_combat_component.perform_light_attack()
 
+# Map-related functions
+func _on_map_changed(map_id: String, _spawn_position: Vector2):
+	_update_visibility_for_current_map()
+
+func _update_visibility_for_current_map():
+	# If no map is assigned, vehicle is available on all maps
+	if assigned_map_id.is_empty():
+		visible = true
+		set_physics_process(true)
+		return
+	
+	# Check if current map matches assigned map
+	var current_map = MapManager.current_map_id
+	var should_be_visible = (assigned_map_id == current_map)
+	
+	visible = should_be_visible
+	set_physics_process(should_be_visible)
+	
+	# Disable collision when not visible
+	if collision:
+		collision.disabled = not should_be_visible
+
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:
 	return {
 		"position": {"x": global_position.x, "y": global_position.y},
 		"rotation": rotation,
 		"occupied": occupied,
+		"assigned_map_id": assigned_map_id,
 		# Vehicle stats are stored in the vehicle_data resource (not saved per-instance)
 	}
 
@@ -256,3 +289,7 @@ func load_data(data: Dictionary) -> void:
 		rotation = data["rotation"]
 	if data.has("occupied"):
 		occupied = data["occupied"]
+	if data.has("assigned_map_id"):
+		assigned_map_id = data["assigned_map_id"]
+		# Update visibility based on loaded map assignment
+		_update_visibility_for_current_map()

@@ -13,9 +13,23 @@ func _ready():
 	# Set the parent for the map manager to add chunks to.
 	MapManager.set_map_parent(map_container)
 	
+	# Initialize player position based on current map
+	_initialize_player_position()
+	
 	# Initial map load
 	if is_instance_valid(player):
 		MapManager.update_chunks(player.global_position)
+
+func _initialize_player_position():
+	# If loading from save, player position is already set by load_data
+	# Otherwise, use the default spawn position from current map
+	if is_instance_valid(player) and MapManager.current_map_data:
+		# Check if this is a new game using SaveManager flag
+		if not SaveManager.is_loading_from_save():
+			player.global_position = MapManager.current_map_data.default_spawn_position
+			print("MainGameManager: Set player position to map default: ", player.global_position)
+		else:
+			print("MainGameManager: Player position loaded from save file")
 
 func _physics_process(_delta):
 	# Continuously update the map based on player position

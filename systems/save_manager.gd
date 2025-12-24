@@ -7,6 +7,7 @@ const SAVE_DIR = "user://saves/"
 const SAVE_FILE_EXTENSION = ".dat"
 
 var _pending_load_data: Dictionary = {}
+var _is_loading_save: bool = false  # Flag to track if we're loading from save
 
 # Ensure the save directory exists
 func _ready():
@@ -56,6 +57,7 @@ func load_game(slot_id: String):
 	print("Attempting to load game from slot: %s" % slot_id)
 	if not FileAccess.file_exists(file_path):
 		print("No save file found for slot: %s" % slot_id)
+		_is_loading_save = false
 		return false
 		
 	var file = FileAccess.open(file_path, FileAccess.READ)
@@ -64,6 +66,8 @@ func load_game(slot_id: String):
 		var parse_result = bytes_to_var(binary_data)
 		if parse_result != null and typeof(parse_result) == TYPE_DICTIONARY:
 			_pending_load_data = parse_result
+			_is_loading_save = true  # Set flag when loading
+			
 			# Load global data immediately
 			if PlayerData and _pending_load_data.has("global_player_data"):
 				PlayerData.load_data(_pending_load_data["global_player_data"])
@@ -82,9 +86,11 @@ func load_game(slot_id: String):
 		else:
 			push_error("Failed to deserialize save file for slot: %s" % slot_id)
 			_pending_load_data = {}
+			_is_loading_save = false
 			return false
 	else:
 		push_error("Failed to open save file for reading: %s" % file_path)
+		_is_loading_save = false
 		return false
 
 func claim_data_for_node(node: Node):
@@ -99,6 +105,15 @@ func claim_data_for_node(node: Node):
 			_pending_load_data.erase(node_path)
 		else:
 			push_warning("Node '%s' tried to claim data but has no load_data(data) method." % node.name)
+
+# Check if currently loading from a save file
+func is_loading_from_save() -> bool:
+	return _is_loading_save
+
+# Reset the loading flag (called after scene is fully loaded)
+func reset_loading_flag():
+	_is_loading_save = false
+	_pending_load_data.clear()
 
 # --- Slot Management ---
 
