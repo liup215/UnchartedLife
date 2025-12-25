@@ -144,10 +144,11 @@ func perform_light_attack():
 		_perform_simple_light_attack()
 		return
 	
-	# Progress combo stage
+	# Calculate combo stage BEFORE incrementing counter
 	combo_stage = combo_counter % weapon_data.combo_attacks.size()
 	var combo_data: ComboAttackData = weapon_data.combo_attacks[combo_stage]
 	
+	# Now increment counter
 	combo_counter += 1
 	last_combo_time = current_time
 	
@@ -184,8 +185,15 @@ func perform_light_attack():
 	if combo_counter >= weapon_data.combo_attacks.size():
 		# Use the final stage's combo window for reset
 		var final_stage_window = combo_data.combo_window if combo_data else combo_reset_time
-		await get_tree().create_timer(final_stage_window).timeout
-		reset_combo()
+		# Cancel any existing reset timer
+		if has_meta("combo_reset_timer"):
+			var old_timer = get_meta("combo_reset_timer") as SceneTreeTimer
+			if old_timer and old_timer.timeout.is_connected(reset_combo):
+				old_timer.timeout.disconnect(reset_combo)
+		# Create new timer and store reference
+		var timer = get_tree().create_timer(final_stage_window)
+		set_meta("combo_reset_timer", timer)
+		timer.timeout.connect(reset_combo)
 	
 	# Emit signal
 	emit_signal("weapons_fired", "light_attack", 1, combo_stage + 1)
@@ -289,6 +297,8 @@ func release_heavy_attack():
 	# Check if we have enough ATP
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
 		print("[COMBAT] Not enough ATP for heavy attack - charge preserved")
+		# Reset charging state but preserve charge
+		is_charging_heavy = false
 		return
 	
 	if attribute_component:

@@ -50,7 +50,7 @@ func stop_heavy_charge() -> int:
 ## Update charge level based on time held
 func _update_heavy_charge():
 	var elapsed_time = (Time.get_ticks_msec() / 1000.0) - charge_start_time
-	var new_charge = int(elapsed_time / charge_time_per_level)
+	var new_charge = int(floor(elapsed_time / charge_time_per_level))
 	new_charge = clamp(new_charge, 0, max_charge)
 	
 	if new_charge != current_charge:

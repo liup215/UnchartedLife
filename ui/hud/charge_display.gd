@@ -20,6 +20,10 @@ func _ready():
 	offset_bottom = -20
 	
 	# Try to find player immediately
+	call_deferred("_find_player_deferred")
+
+func _find_player_deferred():
+	# Deferred call to ensure scene is ready
 	_find_player()
 
 func _find_player():
@@ -28,15 +32,28 @@ func _find_player():
 	if not player_nodes.is_empty():
 		_connect_to_player(player_nodes[0])
 	else:
-		# Wait for player to be added if not found yet
-		get_tree().node_added.connect(_on_node_added)
+		# Use a timer to check periodically instead of node_added signal
+		var timer = Timer.new()
+		timer.wait_time = 0.5
+		timer.one_shot = false
+		timer.timeout.connect(_check_for_player)
+		add_child(timer)
+		timer.start()
+
+func _check_for_player():
+	var player_nodes = get_tree().get_nodes_in_group("player")
+	if not player_nodes.is_empty():
+		_connect_to_player(player_nodes[0])
+		# Stop checking once player is found
+		for child in get_children():
+			if child is Timer:
+				child.stop()
+				child.queue_free()
+				break
 
 func _on_node_added(node):
-	# If the player is added to the scene later, connect to them
-	if node.is_in_group("player"):
-		_connect_to_player(node)
-		# Disconnect signal to prevent memory leak
-		get_tree().node_added.disconnect(_on_node_added)
+	# No longer used - kept for backwards compatibility
+	pass
 
 func _connect_to_player(player: Node):
 	# Find charge component in player or their combat component
