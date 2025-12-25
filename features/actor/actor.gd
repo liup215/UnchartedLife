@@ -147,6 +147,17 @@ func _update_animation():
 		if visuals.animation != anim_name or not visuals.is_playing():
 			visuals.play(anim_name)
 
+func play_combat_animation(anim_name: String):
+	"""Play a combat animation (combo or heavy attack)"""
+	if not visuals or not visuals.sprite_frames:
+		return
+	
+	if visuals.sprite_frames.has_animation(anim_name):
+		visuals.play(anim_name)
+		print("[ACTOR] Playing combat animation: ", anim_name)
+	else:
+		print("[ACTOR] Combat animation not found: ", anim_name)
+
 # --- Public API ---
 
 func take_damage(amount: int):

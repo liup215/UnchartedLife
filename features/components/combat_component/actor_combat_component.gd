@@ -11,11 +11,15 @@ class_name ActorCombatComponent
 # Weapon arrays
 var actor_weapons: Array[WeaponComponent] = []
 
-# Combat state
-var is_main_charging: bool = false
+# Combat state - Combo System
 var combo_counter: int = 0
+var combo_stage: int = 0  # Current stage in combo sequence
 var last_combo_time: float = 0.0
 var combo_reset_time: float = 0.5  # Time window to continue combo
+
+# Combat state - Heavy Attack
+var is_charging_heavy: bool = false
+var heavy_charge_level: int = 0
 
 # # ATP component reference
 # var atp_component: Node = null
@@ -24,16 +28,34 @@ var combo_reset_time: float = 0.5  # Time window to continue combo
 @onready var weapon_effect: BaseWeaponEffect = $BaseWeaponEffect
 var attribute_component: AttributeComponent = get_parent().get_node("AttributeComponent") if get_parent() && get_parent().has_node("AttributeComponent") else null
 
+# Charge component reference
+var charge_component: ChargeComponent = null
+
 # Signals
 signal combat_action_performed(action_type: String, energy_cost: float)
-signal combo_updated(combo_count: int)
+signal combo_updated(combo_count: int, combo_stage: int)
+signal combo_stage_changed(stage: int, combo_data: ComboAttackData)
+signal heavy_attack_performed(charge_level: int, heavy_data: HeavyAttackData)
 signal weapons_fired(weapon_type: String, count: int, charge_level: int)
+signal enemy_hit(target: Node, damage: float, armor_break: float, stagger: float)
 
 func _ready():
 	# Find ATP component in owner
 	# if owner_node:
 	# 	atp_component = owner_node.get_node("ATPComponent") if owner_node.has_node("ATPComponent") else null
-	pass
+	
+	# Find or create charge component
+	if get_parent() and get_parent().has_node("ChargeComponent"):
+		charge_component = get_parent().get_node("ChargeComponent")
+	else:
+		# Create charge component if it doesn't exist
+		var charge_comp = load("res://features/components/charge_component.tscn")
+		if charge_comp:
+			charge_component = charge_comp.instantiate()
+			if get_parent():
+				get_parent().add_child(charge_component)
+				charge_component.charge_changed.connect(_on_charge_changed)
+				charge_component.charge_level_up.connect(_on_charge_level_up)
 
 func set_actor_data(data: ActorData):
 	data_source = data
@@ -100,32 +122,94 @@ func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
 # 		actor_weapons[index].fire()
 
 func perform_light_attack():
-	# Update combo counter
+	# Check combo timing
 	var current_time = Time.get_ticks_msec() / 1000.0
 	if current_time - last_combo_time > combo_reset_time:
 		combo_counter = 0
-
+		combo_stage = 0
+	
+	# Get first weapon to determine combo configuration
+	if actor_weapons.is_empty():
+		return
+	
+	var weapon = actor_weapons[0]
+	if not weapon or not weapon.weapon_data:
+		return
+	
+	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	if not weapon_data or weapon_data.combo_attacks.is_empty():
+		# Fallback to simple attack if no combo data
+		_perform_simple_light_attack()
+		return
+	
+	# Progress combo stage
+	combo_stage = combo_counter % weapon_data.combo_attacks.size()
+	var combo_data: ComboAttackData = weapon_data.combo_attacks[combo_stage]
+	
 	combo_counter += 1
 	last_combo_time = current_time
-	emit_signal("combo_updated", combo_counter)
+	
+	# Emit combo signals
+	emit_signal("combo_updated", combo_counter, combo_stage)
+	emit_signal("combo_stage_changed", combo_stage, combo_data)
+	
+	print("[COMBAT] Light attack - Combo stage: ", combo_stage, " Count: ", combo_counter)
+	
+	# Calculate ATP cost for this combo stage
+	var base_atp_cost = weapon.get_atp_cost()
+	var total_atp_cost = base_atp_cost
+	
+	# Check if we have enough ATP
+	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
+		print("[COMBAT] Not enough ATP for light attack")
+		return
+	
+	if attribute_component:
+		attribute_component.consume_atp(total_atp_cost)
+	
+	# Fire weapon with combo multiplier
+	var target_pos = get_global_mouse_position()
+	weapon.fire(weapon_effect, target_pos)
+	
+	# Play combo animation if actor has animation support
+	if get_parent() and get_parent().has_method("play_combat_animation"):
+		get_parent().play_combat_animation(combo_data.animation_name)
+	
+	# Accumulate charge from light attack hit (when it hits an enemy)
+	# This will be triggered by projectile hit detection
+	
+	# Reset combo if reached max
+	if combo_counter >= weapon_data.combo_attacks.size():
+		await get_tree().create_timer(combo_data.combo_window).timeout
+		reset_combo()
+	
+	# Emit signal
+	emit_signal("weapons_fired", "light_attack", 1, combo_stage + 1)
+	emit_signal("combat_action_performed", "light_attack", total_atp_cost)
 
+func _perform_simple_light_attack():
+	"""Fallback for weapons without combo data"""
+	combo_counter += 1
+	last_combo_time = Time.get_ticks_msec() / 1000.0
+	emit_signal("combo_updated", combo_counter, 0)
+	
 	# Determine how many secondary weapons to fire based on combo
 	var weapons_to_fire = min(combo_counter, actor_weapons.size())
-
+	
 	# Calculate ATP cost
 	var total_atp_cost = 0.0
-
+	
 	for i in range(weapons_to_fire):
 		if i < actor_weapons.size() and actor_weapons[i]:
 			total_atp_cost += actor_weapons[i].get_atp_cost()
-
+	
 	# Check if we have enough ATP
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
 		return  # Not enough energy
-
+	
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
-
+	
 	# Fire the weapons
 	for i in range(weapons_to_fire):
 		if i < actor_weapons.size() and actor_weapons[i]:
@@ -136,14 +220,138 @@ func perform_light_attack():
 	# 如果连击数达到最大值，则重置
 	if combo_counter >= actor_weapons.size():
 		reset_combo()
-
+	
 	# Emit signal
 	emit_signal("weapons_fired", "secondary", weapons_to_fire, 1)
 	emit_signal("combat_action_performed", "light_attack", total_atp_cost)
 
 func reset_combo():
 	combo_counter = 0
-	emit_signal("combo_updated", combo_counter)
+	combo_stage = 0
+	emit_signal("combo_updated", combo_counter, combo_stage)
+
+## Start charging heavy attack
+func start_heavy_attack_charge():
+	if not charge_component:
+		return
+	
+	is_charging_heavy = true
+	charge_component.start_heavy_charge()
+	print("[COMBAT] Started charging heavy attack")
+
+## Release heavy attack with accumulated charge
+func release_heavy_attack():
+	if not charge_component or not is_charging_heavy:
+		return
+	
+	is_charging_heavy = false
+	var charge_level = charge_component.stop_heavy_charge()
+	
+	if charge_level <= 0:
+		print("[COMBAT] No charge to release")
+		return
+	
+	# Get first weapon to determine heavy attack configuration
+	if actor_weapons.is_empty():
+		return
+	
+	var weapon = actor_weapons[0]
+	if not weapon or not weapon.weapon_data:
+		return
+	
+	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	if not weapon_data or weapon_data.heavy_attacks.is_empty():
+		print("[COMBAT] No heavy attack data configured")
+		return
+	
+	# Find appropriate heavy attack data for charge level
+	var heavy_data: HeavyAttackData = null
+	for ha in weapon_data.heavy_attacks:
+		if ha.charge_level <= charge_level:
+			heavy_data = ha
+		else:
+			break
+	
+	if not heavy_data:
+		print("[COMBAT] No heavy attack data found for charge level: ", charge_level)
+		return
+	
+	print("[COMBAT] Heavy attack - Charge level: ", charge_level)
+	
+	# Calculate ATP cost
+	var base_atp_cost = weapon.get_atp_cost()
+	var total_atp_cost = base_atp_cost * charge_level * heavy_data.atp_cost_multiplier
+	
+	# Check if we have enough ATP
+	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
+		print("[COMBAT] Not enough ATP for heavy attack")
+		charge_component.reset_charge()
+		return
+	
+	if attribute_component:
+		attribute_component.consume_atp(total_atp_cost)
+	
+	# Fire weapon with heavy attack multiplier
+	var target_pos = get_global_mouse_position()
+	weapon.fire(weapon_effect, target_pos)
+	
+	# Play heavy attack animation if actor has animation support
+	if get_parent() and get_parent().has_method("play_combat_animation"):
+		get_parent().play_combat_animation(heavy_data.animation_name)
+	
+	# Emit signals
+	emit_signal("heavy_attack_performed", charge_level, heavy_data)
+	emit_signal("weapons_fired", "heavy_attack", 1, charge_level)
+	emit_signal("combat_action_performed", "heavy_attack", total_atp_cost)
+	
+	# Reset charge after release
+	charge_component.reset_charge()
+	
+	# Apply recovery time
+	await get_tree().create_timer(heavy_data.recovery_time).timeout
+
+## Called when projectile hits an enemy to accumulate charge
+func on_enemy_hit(target: Node, damage: float):
+	if not charge_component:
+		return
+	
+	# Get combo data to determine charge gain
+	if actor_weapons.is_empty():
+		return
+	
+	var weapon = actor_weapons[0]
+	if not weapon or not weapon.weapon_data:
+		return
+	
+	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	if not weapon_data:
+		return
+	
+	# Add charge based on combo stage
+	var charge_gain = 1
+	if not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
+		var combo_data = weapon_data.combo_attacks[combo_stage]
+		charge_gain = combo_data.charge_gain
+	
+	if weapon_data.light_attacks_build_charge:
+		charge_component.add_light_attack_charge(charge_gain)
+	
+	# Emit hit signal with combat stats
+	var armor_break = 0.0
+	var stagger = 0.0
+	if not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
+		var combo_data = weapon_data.combo_attacks[combo_stage]
+		armor_break = combo_data.armor_break_power
+		stagger = combo_data.stagger_power
+	
+	emit_signal("enemy_hit", target, damage, armor_break, stagger)
+
+## Charge component callbacks
+func _on_charge_changed(current: int, max: int):
+	print("[COMBAT] Charge changed: ", current, "/", max)
+
+func _on_charge_level_up(level: int):
+	print("[COMBAT] Charge level up: ", level)
 
 func get_total_actor_weapon_damage() -> float:
 	var total_damage = 0.0

@@ -201,10 +201,18 @@ func _handle_combat_input():
 	if not actor_combat_component:
 		return
 	
-	# Actor武器发射（如手枪/步枪等）
+	# Heavy attack - charge on hold, release on button up
+	if Input.is_action_just_pressed("heavy_attack"):
+		print("Starting heavy attack charge...")
+		actor_combat_component.start_heavy_attack_charge()
+	elif Input.is_action_just_released("heavy_attack"):
+		print("Releasing heavy attack...")
+		actor_combat_component.release_heavy_attack()
+	
+	# Light attack - Actor武器发射（如手枪/步枪等）
 	if Input.is_action_just_pressed("light_attack"):
-		print("Firing actor weapon...")
-		actor_combat_component.fire_actor_weapons()
+		print("Firing light attack...")
+		actor_combat_component.perform_light_attack()
 
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:
