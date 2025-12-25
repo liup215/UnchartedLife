@@ -38,7 +38,11 @@ func start_heavy_charge():
 	if not is_charging_heavy:
 		is_charging_heavy = true
 		charge_start_time = Time.get_ticks_msec() / 1000.0
-		print("[CHARGE] Started heavy attack charging")
+		# Start with charge level 1 immediately for better UX
+		current_charge = 1
+		charge_changed.emit(current_charge, max_charge)
+		charge_level_up.emit(current_charge)
+		print("[CHARGE] Started heavy attack charging at level 1")
 
 ## Stop charging and return the current charge level
 func stop_heavy_charge() -> int:
@@ -50,8 +54,9 @@ func stop_heavy_charge() -> int:
 ## Update charge level based on time held
 func _update_heavy_charge():
 	var elapsed_time = (Time.get_ticks_msec() / 1000.0) - charge_start_time
-	var new_charge = int(floor(elapsed_time / charge_time_per_level))
-	new_charge = clamp(new_charge, 0, max_charge)
+	# Start at level 1, then add 1 level per charge_time_per_level seconds
+	var new_charge = 1 + int(floor(elapsed_time / charge_time_per_level))
+	new_charge = clamp(new_charge, 1, max_charge)
 	
 	if new_charge != current_charge:
 		var old_charge = current_charge

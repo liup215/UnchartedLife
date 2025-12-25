@@ -245,22 +245,24 @@ func reset_combo():
 ## Start charging heavy attack
 func start_heavy_attack_charge():
 	if not charge_component:
+		print("[COMBAT] ERROR: No charge component found!")
 		return
 	
 	is_charging_heavy = true
 	charge_component.start_heavy_charge()
-	print("[COMBAT] Started charging heavy attack")
+	print("[COMBAT] Started charging heavy attack, charge component exists:", charge_component != null)
 
 ## Release heavy attack with accumulated charge
 func release_heavy_attack():
 	if not charge_component or not is_charging_heavy:
+		print("[COMBAT] Cannot release - not charging or no charge component")
 		return
 	
 	is_charging_heavy = false
 	var charge_level = charge_component.stop_heavy_charge()
 	
-	if charge_level <= 0:
-		print("[COMBAT] No charge to release")
+	if charge_level < 1:
+		print("[COMBAT] No charge to release (charge level: ", charge_level, ")")
 		return
 	
 	# Get first weapon to determine heavy attack configuration
