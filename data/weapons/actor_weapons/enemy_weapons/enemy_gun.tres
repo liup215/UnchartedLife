@@ -8,11 +8,15 @@
 [resource]
 script = ExtResource("4_xiddr")
 weapon_offset = Vector2(0, -50)
-weapon_name = "自动步枪"
 weapon_type = 2
+weight = 80.0
 energy_cost = 2
 damage = 10.0
+damage_type = 0
+rate_of_fire = 1.0
 ammo_capacity = 10000000
+requires_quiz_reload = false
+max_charge_level = 1
 charge_time = 0.1
 atp_cost_per_level = 1.0
 bullet_scene = ExtResource("1_tcyhy")
@@ -25,3 +29,7 @@ hit_effect_scale = Vector2(3, 3)
 hit_effect_h_frames = 4
 hit_effect_v_frames = 4
 hit_effect_frame_count = 16
+hit_effect_duration = 0.5
+max_combo_count = 1
+charge_time_per_level = 1.0
+light_attacks_build_charge = false

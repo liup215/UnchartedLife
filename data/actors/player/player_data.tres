@@ -22,10 +22,29 @@
 script = ExtResource("11_5tary")
 actor_name = "Player"
 animations = Array[ExtResource("1_l843g")]([ExtResource("2_4g83l"), ExtResource("3_ypxst"), ExtResource("4_vii1t"), ExtResource("5_mpckl"), ExtResource("6_yneg8"), ExtResource("7_o20qb"), ExtResource("8_le1ne"), ExtResource("9_lx2hi")])
+sprite_scale = Vector2(1, 1)
+max_health = 100
+current_health = 100
 collision_radius = 20.0
+neural_response_speed = 1.0
+muscle_coordination = 1.0
+base_speed = 250.0
 current_speed = null
+weapon_number_limit = 2
+base_attack = 15.0
+base_defense = 8.0
+max_toughness = 120.0
+current_toughness = 120.0
+toughness_recovery_rate = 12.0
+max_atp = 100
 current_atp = null
+max_glucose = 100
 current_glucose = null
+base_metabolic_rate = 0.1
+atp_consume_rate = 1.0
+glucose_consume_rate = 0.1
+atp_production_rate = 5.0
+atp_conversion_rate = 5.0
 inventory_config = Dictionary[String, ExtResource("11_d07ih")]({
 "armor": ExtResource("14_661mb"),
 "comsumable": ExtResource("15_uep00"),
