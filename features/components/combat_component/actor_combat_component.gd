@@ -62,13 +62,13 @@ func _ready():
 func set_actor_data(data: ActorData):
 	data_source = data
 	# 加载武器
-	for weapon_data in data.equipped_weapons:
+	for weapon_item in data.equipped_weapons:
 		if actor_weapons.size() >= data.weapon_number_limit:
 			break
 		var weapon_scene = preload("res://features/components/weapon_component.tscn")
 		if weapon_scene:
 			var weapon_instance = weapon_scene.instantiate()
-			weapon_instance.weapon_data = weapon_data
+			weapon_instance.item_data = weapon_item
 			weapon_instance.setup_weapon()
 			add_child(weapon_instance)
 			add_actor_weapon(weapon_instance)
@@ -111,7 +111,7 @@ func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
 	print("Firing all actor weapons, total:", actor_weapons.size())
 
 	for weapon in actor_weapons:
-		print("[COMBAT] Firing actor weapon:", weapon.weapon_data.item_name if weapon.weapon_data else "Unknown Weapon")
+		print("[COMBAT] Firing actor weapon:", weapon.item_data.item_name if weapon.item_data else "Unknown Weapon")
 		weapon.fire(weapon_effect, target_pos)
 		await get_tree().create_timer(0.2).timeout
 	# Emit signal
@@ -135,10 +135,10 @@ func perform_light_attack():
 		return
 	
 	var weapon = actor_weapons[0]
-	if not weapon or not weapon.weapon_data:
+	if not weapon or not weapon.item_data:
 		return
 	
-	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	var weapon_data = weapon.item_data.weapon_data as WeaponData
 	if not weapon_data or weapon_data.combo_attacks.is_empty():
 		# Fallback to simple attack if no combo data
 		_perform_simple_light_attack()
@@ -268,10 +268,10 @@ func release_heavy_attack():
 		return
 	
 	var weapon = actor_weapons[0]
-	if not weapon or not weapon.weapon_data:
+	if not weapon or not weapon.item_data:
 		return
 	
-	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	var weapon_data = weapon.item_data.weapon_data as WeaponData
 	if not weapon_data or weapon_data.heavy_attacks.is_empty():
 		print("[COMBAT] No heavy attack data configured")
 		return
@@ -337,10 +337,10 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 		return
 	
 	var weapon = actor_weapons[0]
-	if not weapon or not weapon.weapon_data:
+	if not weapon or not weapon.item_data:
 		return
 	
-	var weapon_data = weapon.weapon_data.weapon_data as WeaponData
+	var weapon_data = weapon.item_data.weapon_data as WeaponData
 	if not weapon_data:
 		return
 	

@@ -3,7 +3,7 @@
 extends Node2D
 class_name WeaponComponent
 
-@export var weapon_data: ItemData
+@export var item_data: ItemData
 
 # Weapon state
 var current_charge: int = 0
@@ -13,7 +13,7 @@ var charge_start_time: float = 0.0
 @export var current_ammo: int = 0
 
 # Signals
-signal weapon_fired(weapon_data: ItemData, charge_level: int)
+signal weapon_fired(item_data: ItemData, charge_level: int)
 signal charge_updated(charge_level: int)
 signal ammo_updated(current_ammo: int)
 
@@ -22,18 +22,18 @@ func _ready():
 	setup_weapon()
 
 func setup_weapon():
-	if weapon_data:
-		print("Setting up weapon: %s" % weapon_data.item_name)
-		print("Weapon ammo capacity: %d" % weapon_data.weapon_data.ammo_capacity)
-		current_ammo = weapon_data.weapon_data.ammo_capacity
+	if item_data:
+		print("Setting up weapon: %s" % item_data.item_name)
+		print("Weapon ammo capacity: %d" % item_data.weapon_data.ammo_capacity)
+		current_ammo = item_data.weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
-			if weapon_data.icon:
-				sprite.texture = weapon_data.icon
-				sprite.offset = weapon_data.weapon_data.weapon_offset
+			if item_data.icon:
+				sprite.texture = item_data.icon
+				sprite.offset = item_data.weapon_data.weapon_offset
 
 func start_charging():
-	if not weapon_data or is_charging:
+	if not item_data or is_charging:
 		return
 	
 	is_charging = true
@@ -45,7 +45,7 @@ func stop_charging():
 	is_charging = false
 
 func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
-	if not weapon_data:
+	if not item_data:
 		return
 	
 	var target_pos = p_target_pos
@@ -57,7 +57,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	# Get shooter reference (parent actor)
 	var shooter = get_parent().get_parent() if get_parent() and get_parent().get_parent() else null
 	
-	if weapon_data.weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
+	if item_data.weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
 		if current_charge <= 0:
 			return
 		if current_ammo <= 0:
@@ -68,11 +68,11 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		print("Firing main cannon, ammo left: %d" % current_ammo)
 		emit_signal("ammo_updated", current_ammo)
 		# Emit fire signal
-		emit_signal("weapon_fired", weapon_data, current_charge)
+		emit_signal("weapon_fired", item_data, current_charge)
 		# Reset charge
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
-	elif weapon_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
+	elif item_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
 		if current_ammo <= 0:
 			reload()
 			return
@@ -81,36 +81,36 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		current_ammo -= 1
 		emit_signal("ammo_updated", current_ammo)
 		# Emit fire signal
-		emit_signal("weapon_fired", weapon_data, 1)
+		emit_signal("weapon_fired", item_data, 1)
 	else: # SUB_WEAPON
 		# 副炮发射子弹
-		emit_signal("weapon_fired", weapon_data, 1)
+		emit_signal("weapon_fired", item_data, 1)
 	
 	# Call the weapon_data's fire method, passing shooter reference
 	if effect_node:
-		weapon_data.weapon_data.fire(origin_pos, target_pos, effect_node, shooter)
+		item_data.weapon_data.fire(origin_pos, target_pos, effect_node, shooter)
 	else:
 		# Fallback if no effect node is provided (though it should be)
 		# This might happen for non-vehicle actors, so we create a temporary effect node
 		var temp_effect_node = Node2D.new()
 		get_tree().current_scene.add_child(temp_effect_node)
-		weapon_data.weapon_data.fire(origin_pos, target_pos, temp_effect_node, shooter)
+		item_data.weapon_data.fire(origin_pos, target_pos, temp_effect_node, shooter)
 		temp_effect_node.queue_free() # Clean up after use
 
 func _process(_delta):
-	if is_charging and weapon_data:
+	if is_charging and item_data:
 		_update_charge()
 
 func _update_charge():
-	if not weapon_data:
+	if not item_data:
 		return
 	
 	var elapsed_time = (Time.get_ticks_msec() - charge_start_time) / 1000.0
-	var charge_progress = elapsed_time / weapon_data.charge_time
+	var charge_progress = elapsed_time / item_data.weapon_data.charge_time
 	
 	# Calculate charge level (1-5)
 	var new_charge = int(charge_progress * 5) + 1
-	new_charge = clamp(new_charge, 1, weapon_data.max_charge_level)
+	new_charge = clamp(new_charge, 1, item_data.weapon_data.max_charge_level)
 	
 	if new_charge != current_charge:
 		current_charge = new_charge
@@ -127,20 +127,20 @@ func get_damage_multiplier() -> float:
 		_: return 1.0
 
 func get_atp_cost() -> float:
-	if not weapon_data:
+	if not item_data:
 		return 0.0
-	return weapon_data.atp_cost_per_level * current_charge
+	return item_data.weapon_data.atp_cost_per_level * current_charge
 
 func reload():
-	if not weapon_data:
+	if not item_data:
 		return
 	
-	if weapon_data.weapon_data.requires_quiz_reload:
-		EventBus.request_quiz_reload.emit(weapon_data)
+	if item_data.weapon_data.requires_quiz_reload:
+		EventBus.request_quiz_reload.emit(item_data)
 	else:
-		current_ammo = weapon_data.weapon_data.ammo_capacity
+		current_ammo = item_data.weapon_data.ammo_capacity
 		emit_signal("ammo_updated", current_ammo)
 
 func _on_quiz_completed(success: bool):
-	if success and weapon_data and weapon_data.weapon_data.requires_quiz_reload:
-		current_ammo = weapon_data.weapon_data.ammo_capacity
+	if success and item_data and item_data.weapon_data.requires_quiz_reload:
+		current_ammo = item_data.weapon_data.ammo_capacity

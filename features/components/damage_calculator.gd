@@ -85,7 +85,7 @@ static func _get_attack_value(attacker: Node) -> float:
 		var attr_comp = attacker.get_node("AttributeComponent")
 		# In future, AttributeComponent could have attack stat
 		# For now, check if actor_data is available
-		if attacker.has("actor_data") and attacker.actor_data:
+		if "actor_data" in attacker and attacker.actor_data:
 			return attacker.actor_data.base_attack
 	
 	return 0.0
@@ -97,7 +97,7 @@ static func _get_defense_value(defender: Node) -> float:
 	
 	# Try to get from ActorData
 	if defender.has_node("AttributeComponent"):
-		if defender.has("actor_data") and defender.actor_data:
+		if "actor_data" in defender and defender.actor_data:
 			var base_defense = defender.actor_data.base_defense
 			
 			# TODO: Add equipment defense bonuses
