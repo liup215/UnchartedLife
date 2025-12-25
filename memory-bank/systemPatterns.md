@@ -304,7 +304,112 @@ var vehicle_path = str(current_vehicle.get_path())  # NodePath → String
 var vehicle_node = get_node_or_null(vehicle_path)  # String works with get_node
 ```
 
-## 11. State Restoration Patterns
+## 11. Combat System Architecture
+
+### Combo & Heavy Attack System
+The combat system uses a data-driven approach with configurable combo stages and heavy charge attacks.
+
+#### Core Components
+- **ChargeComponent**: Universal charge management supporting light hit accumulation and heavy hold-to-charge
+- **ComboAttackData**: Resource defining combo stage properties (damage multiplier, armor break, stagger power, charge gain)
+- **HeavyAttackData**: Resource defining charge level configurations (multipliers, effects, recovery time)
+- **DamageCalculator**: Static class for comprehensive damage calculation
+- **ToughnessComponent**: Manages toughness/poise system for stagger mechanics
+
+#### Combo System Pattern
+```gdscript
+# Weapon configuration (data-driven)
+weapon_data.combo_attacks = [
+    combo_stage_1,  # 1.0× damage, 10 armor break, 15 stagger
+    combo_stage_2,  # 1.3× damage, 20 armor break, 25 stagger
+    combo_stage_3   # 1.8× damage, 40 armor break, 50 stagger (finisher)
+]
+
+# Combat component handles progression
+func perform_light_attack():
+    combo_stage = combo_counter % weapon_data.combo_attacks.size()
+    var combo_data = weapon_data.combo_attacks[combo_stage]
+    # Apply multipliers, play animation, fire weapon
+    combo_counter += 1
+```
+
+#### Heavy Attack Charge System
+```gdscript
+# Charge builds from two sources:
+# 1. Light attack hits accumulate charge
+# 2. Holding heavy attack button charges over time
+
+# Heavy attack configuration
+weapon_data.heavy_attacks = [
+    heavy_level_1,  # 2.0× damage, 50 armor break
+    heavy_level_3,  # 3.5× damage, 75 armor break
+    heavy_level_5   # 5.0× damage, 100 armor break (max)
+]
+
+# Release all accumulated charge
+func release_heavy_attack():
+    var charge_level = charge_component.stop_heavy_charge()
+    # Find appropriate heavy data for charge level
+    # Fire weapon with heavy multiplier
+    charge_component.reset_charge()
+```
+
+#### Comprehensive Damage Calculation
+```gdscript
+# Formula considers all combat factors:
+Base = (Weapon Damage + Attacker Attack) × Stage Multiplier
+With Bonuses = Base × Attacker Bonus Multiplier
+Effective Defense = Defender Defense × (1 - Armor Break / 100)
+After Defense = With Bonuses × (100 / (100 + Effective Defense))
+Final Damage = After Defense × Defender Reduction × Type Effectiveness
+Toughness Damage = Final Damage × 0.5 × (1 + Stagger Power / 100)
+
+# Usage in combat component
+var damage_result = DamageCalculator.calculate_damage(
+    attacker, defender,
+    base_weapon_damage,
+    damage_type,
+    damage_multiplier,
+    armor_break_power
+)
+# Returns: {final_damage, toughness_damage, damage_breakdown}
+```
+
+#### Toughness/Stagger System
+```gdscript
+# Toughness tracking
+actor_data.max_toughness = 100.0
+actor_data.current_toughness = 100.0
+actor_data.toughness_recovery_rate = 10.0  # per second
+
+# Stagger state management
+func apply_toughness_damage(damage: float, stagger_power: float):
+    current_toughness -= damage × (1.0 + stagger_power / 100)
+    if current_toughness <= 0:
+        trigger_stagger()  # 2-second duration, input disabled
+
+# Integration with Actor
+func _physics_process(delta):
+    if toughness_component.is_in_stagger():
+        velocity = Vector2.ZERO  # Lock movement
+        return  # Skip AI/input processing
+```
+
+#### Weapon-Specific Configuration
+Each weapon can have unique combo sequences and heavy attack properties:
+```gdscript
+# Weapon switches automatically update combat behavior
+# System reads from current weapon's combo_attacks and heavy_attacks arrays
+# No code changes needed for new weapon types
+```
+
+### Combat UI Pattern
+- **ChargeDisplay**: Bottom-right UI showing real-time charge (0-5 levels)
+- Color-coded feedback: White → Yellow → Orange → Red
+- Timer-based player discovery for performance
+- Signal-based updates from ChargeComponent
+
+## 12. State Restoration Patterns
 
 ### Vehicle Re-entry Pattern
 When loading a save where player is in vehicle:
@@ -342,3 +447,6 @@ func reset_for_new_game() -> void:
 13. **NodePath to String conversion** for save data
 14. **Deferred loading** for scene-dependent data
 15. **Error handling** for corrupted save files
+16. **Combat data-driven** - combo/heavy attacks configured per weapon
+17. **Comprehensive damage** - use DamageCalculator for all combat
+18. **Toughness management** - integrate ToughnessComponent for stagger mechanics
