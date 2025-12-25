@@ -3,7 +3,7 @@ class_name BaseWeaponEffect
 
 @export var effect_name = "BaseEffect"
 
-func fire(origin: Vector2, target: Vector2, weapon_data: WeaponData):
+func fire(origin: Vector2, target: Vector2, weapon_data: WeaponData, shooter: Node = null):
 	# 创建枪口闪光效果
 	if weapon_data.muzzle_flash_effect:
 		var flash = weapon_data.muzzle_flash_effect.instantiate()
@@ -29,6 +29,10 @@ func fire(origin: Vector2, target: Vector2, weapon_data: WeaponData):
 		bullet.hit_effect_v_frames = weapon_data.hit_effect_v_frames
 		bullet.hit_effect_frame_count = weapon_data.hit_effect_frame_count
 		bullet.hit_effect_duration = weapon_data.hit_effect_duration
+		
+		# Set shooter reference for charge accumulation
+		if shooter:
+			bullet.shooter = shooter
 		
 		get_tree().current_scene.add_child(bullet)
 

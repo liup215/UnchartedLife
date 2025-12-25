@@ -14,6 +14,9 @@ var hit_effect_v_frames: int = 1
 var hit_effect_frame_count: int = 1
 var hit_effect_duration: float = 0.5
 
+# Reference to shooter for charge accumulation
+var shooter: Node = null
+
 func _ready():
 	# 旋转子弹朝向移动方向
 	rotation = direction.angle() + PI/2
@@ -47,6 +50,12 @@ func _on_body_entered(body):
 	# 处理命中逻辑
 	if body.has_method("take_damage"):
 		body.take_damage(damage)
+	
+	# Notify shooter's combat component about the hit (for charge accumulation)
+	if shooter and shooter.has_node("ActorCombatComponent"):
+		var combat_comp = shooter.get_node("ActorCombatComponent")
+		if combat_comp.has_method("on_enemy_hit"):
+			combat_comp.on_enemy_hit(body, damage)
 
 	# 创建命中效果
 	_create_hit_effect()

@@ -57,8 +57,11 @@ func _update_heavy_charge():
 		var old_charge = current_charge
 		current_charge = new_charge
 		charge_changed.emit(current_charge, max_charge)
-		charge_level_up.emit(current_charge)
-		print("[CHARGE] Heavy charge increased: ", old_charge, " -> ", current_charge)
+		
+		# Only emit level_up if charge actually increased
+		if new_charge > old_charge:
+			charge_level_up.emit(current_charge)
+			print("[CHARGE] Heavy charge increased: ", old_charge, " -> ", current_charge)
 		
 		if current_charge >= max_charge:
 			charge_max_reached.emit()

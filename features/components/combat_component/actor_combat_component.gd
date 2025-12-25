@@ -47,15 +47,17 @@ func _ready():
 	# Find or create charge component
 	if get_parent() and get_parent().has_node("ChargeComponent"):
 		charge_component = get_parent().get_node("ChargeComponent")
+		charge_component.charge_changed.connect(_on_charge_changed)
+		charge_component.charge_level_up.connect(_on_charge_level_up)
 	else:
 		# Create charge component if it doesn't exist
 		var charge_comp = load("res://features/components/charge_component.tscn")
-		if charge_comp:
+		if charge_comp and get_parent():
 			charge_component = charge_comp.instantiate()
-			if get_parent():
-				get_parent().add_child(charge_component)
-				charge_component.charge_changed.connect(_on_charge_changed)
-				charge_component.charge_level_up.connect(_on_charge_level_up)
+			get_parent().add_child(charge_component)
+			# Connect signals after adding to tree
+			charge_component.charge_changed.connect(_on_charge_changed)
+			charge_component.charge_level_up.connect(_on_charge_level_up)
 
 func set_actor_data(data: ActorData):
 	data_source = data
@@ -180,7 +182,9 @@ func perform_light_attack():
 	
 	# Reset combo if reached max
 	if combo_counter >= weapon_data.combo_attacks.size():
-		await get_tree().create_timer(combo_data.combo_window).timeout
+		# Use the final stage's combo window for reset
+		var final_stage_window = combo_data.combo_window if combo_data else combo_reset_time
+		await get_tree().create_timer(final_stage_window).timeout
 		reset_combo()
 	
 	# Emit signal
@@ -284,8 +288,7 @@ func release_heavy_attack():
 	
 	# Check if we have enough ATP
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
-		print("[COMBAT] Not enough ATP for heavy attack")
-		charge_component.reset_charge()
+		print("[COMBAT] Not enough ATP for heavy attack - charge preserved")
 		return
 	
 	if attribute_component:
@@ -311,6 +314,10 @@ func release_heavy_attack():
 	await get_tree().create_timer(heavy_data.recovery_time).timeout
 
 ## Called when projectile hits an enemy to accumulate charge
+## NOTE: This should be called from the projectile's hit detection logic
+## For example, in the bullet/projectile script's _on_body_entered or similar:
+##   if body.is_in_group("enemy") and shooter.has_node("ActorCombatComponent"):
+##       shooter.get_node("ActorCombatComponent").on_enemy_hit(body, damage)
 func on_enemy_hit(target: Node, damage: float):
 	if not charge_component:
 		return

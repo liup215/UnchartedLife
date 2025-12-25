@@ -86,11 +86,11 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 ## Whether light attack hits accumulate charge
 @export var light_attacks_build_charge: bool = true
 
-func fire(origin: Vector2, target: Vector2, effect_node: Node = null):
+func fire(origin: Vector2, target: Vector2, effect_node: Node = null, shooter: Node = null):
 	if not effect_node:
 		return
 
 	# Directly use the passed-in effect_node
 	if effect_node and effect_node.has_method("fire"):
-		# Pass all necessary parameters to the effect
-		effect_node.fire(origin, target, self)
+		# Pass all necessary parameters including shooter to the effect
+		effect_node.fire(origin, target, self, shooter)

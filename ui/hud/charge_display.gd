@@ -19,8 +19,7 @@ func _ready():
 	offset_right = -20
 	offset_bottom = -20
 	
-	# Wait for player to be added
-	get_tree().node_added.connect(_on_node_added)
+	# Try to find player immediately
 	_find_player()
 
 func _find_player():
@@ -28,11 +27,16 @@ func _find_player():
 	var player_nodes = get_tree().get_nodes_in_group("player")
 	if not player_nodes.is_empty():
 		_connect_to_player(player_nodes[0])
+	else:
+		# Wait for player to be added if not found yet
+		get_tree().node_added.connect(_on_node_added)
 
 func _on_node_added(node):
 	# If the player is added to the scene later, connect to them
 	if node.is_in_group("player"):
 		_connect_to_player(node)
+		# Disconnect signal to prevent memory leak
+		get_tree().node_added.disconnect(_on_node_added)
 
 func _connect_to_player(player: Node):
 	# Find charge component in player or their combat component

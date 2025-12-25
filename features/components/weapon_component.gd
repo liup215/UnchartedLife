@@ -54,6 +54,9 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		target_pos = get_global_mouse_position()
 	var origin_pos = global_position
 	
+	# Get shooter reference (parent actor)
+	var shooter = get_parent().get_parent() if get_parent() and get_parent().get_parent() else null
+	
 	if weapon_data.weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
 		if current_charge <= 0:
 			return
@@ -83,15 +86,15 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# 副炮发射子弹
 		emit_signal("weapon_fired", weapon_data, 1)
 	
-	# Call the weapon_data's fire method, which now just needs the effect_node
+	# Call the weapon_data's fire method, passing shooter reference
 	if effect_node:
-		weapon_data.weapon_data.fire(origin_pos, target_pos, effect_node)
+		weapon_data.weapon_data.fire(origin_pos, target_pos, effect_node, shooter)
 	else:
 		# Fallback if no effect node is provided (though it should be)
 		# This might happen for non-vehicle actors, so we create a temporary effect node
 		var temp_effect_node = Node2D.new()
 		get_tree().current_scene.add_child(temp_effect_node)
-		weapon_data.weapon_data.fire(origin_pos, target_pos, temp_effect_node)
+		weapon_data.weapon_data.fire(origin_pos, target_pos, temp_effect_node, shooter)
 		temp_effect_node.queue_free() # Clean up after use
 
 func _process(_delta):
