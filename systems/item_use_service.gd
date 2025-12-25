@@ -295,7 +295,7 @@ func _equip_weapon(actor: Actor, item: ItemData) -> bool:
 		return false
 
 	var weapon_instance: WeaponComponent = weapon_scene.instantiate()
-	weapon_instance.weapon_data = item
+	weapon_instance.item_data = item
 	weapon_instance.setup_weapon()
 	actor.actor_combat_component.add_child(weapon_instance)
 	actor.actor_combat_component.add_actor_weapon(weapon_instance)
