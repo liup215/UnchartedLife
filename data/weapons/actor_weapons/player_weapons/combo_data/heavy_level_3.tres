@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="HeavyAttackData" load_steps=2 format=3 uid="uid://heavy_level_3"]
+
+[ext_resource type="Script" path="res://data/definitions/inventory/item/equipment/heavy_attack_data.gd" id="1_heavy"]
+
+[resource]
+script = ExtResource("1_heavy")
+charge_level = 3
+damage_multiplier = 3.5
+armor_break_power = 75.0
+stagger_power = 90.0
+animation_name = "attack_heavy_3"
+atp_cost_multiplier = 1.5
+recovery_time = 0.9
