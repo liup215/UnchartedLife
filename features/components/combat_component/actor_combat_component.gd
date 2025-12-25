@@ -327,12 +327,12 @@ func release_heavy_attack():
 ## NOTE: This should be called from the projectile's hit detection logic
 ## For example, in the bullet/projectile script's _on_body_entered or similar:
 ##   if body.is_in_group("enemy") and shooter.has_node("ActorCombatComponent"):
-##       shooter.get_node("ActorCombatComponent").on_enemy_hit(body, damage)
-func on_enemy_hit(target: Node, damage: float):
+##       shooter.get_node("ActorCombatComponent").on_enemy_hit(body, base_weapon_damage)
+func on_enemy_hit(target: Node, base_weapon_damage: float):
 	if not charge_component:
 		return
 	
-	# Get combo data to determine charge gain
+	# Get combo data to determine charge gain and combat stats
 	if actor_weapons.is_empty():
 		return
 	
@@ -344,24 +344,53 @@ func on_enemy_hit(target: Node, damage: float):
 	if not weapon_data:
 		return
 	
-	# Add charge based on combo stage
+	# Get combo/heavy attack data for multipliers
+	var damage_multiplier = 1.0
+	var armor_break = 0.0
+	var stagger_power = 0.0
 	var charge_gain = 1
+	
+	# Check if this was a combo attack
 	if not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
 		var combo_data = weapon_data.combo_attacks[combo_stage]
+		damage_multiplier = combo_data.damage_multiplier
+		armor_break = combo_data.armor_break_power
+		stagger_power = combo_data.stagger_power
 		charge_gain = combo_data.charge_gain
 	
+	# Calculate comprehensive damage using DamageCalculator
+	var attacker = get_parent()  # The actor who owns this combat component
+	var damage_result = DamageCalculator.calculate_damage(
+		attacker,
+		target,
+		base_weapon_damage,
+		weapon_data.damage_type,
+		damage_multiplier,
+		armor_break
+	)
+	
+	var final_damage = damage_result["final_damage"]
+	var toughness_damage = damage_result["toughness_damage"]
+	
+	print("[COMBAT] Hit ", target.name, " - Damage: ", final_damage, " Toughness: ", toughness_damage)
+	print("[COMBAT] Damage breakdown: ", damage_result["damage_breakdown"])
+	
+	# Apply damage to target
+	if target.has_method("take_damage"):
+		target.take_damage(int(final_damage))
+	
+	# Apply toughness damage to target
+	if target.has_node("AttributeComponent"):
+		var target_attr = target.get_node("AttributeComponent")
+		if target_attr.toughness_component:
+			target_attr.toughness_component.apply_toughness_damage(toughness_damage, stagger_power)
+	
+	# Add charge based on combo stage
 	if weapon_data.light_attacks_build_charge:
 		charge_component.add_light_attack_charge(charge_gain)
 	
 	# Emit hit signal with combat stats
-	var armor_break = 0.0
-	var stagger = 0.0
-	if not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
-		var combo_data = weapon_data.combo_attacks[combo_stage]
-		armor_break = combo_data.armor_break_power
-		stagger = combo_data.stagger_power
-	
-	emit_signal("enemy_hit", target, damage, armor_break, stagger)
+	emit_signal("enemy_hit", target, final_damage, armor_break, stagger_power)
 
 ## Charge component callbacks
 func _on_charge_changed(current: int, max: int):

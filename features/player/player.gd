@@ -47,6 +47,12 @@ func _physics_process(delta: float) -> void:
 			_handle_in_vehicle_logic(delta)
 
 func _handle_on_foot_logic(delta: float):
+	# Check if staggered - if so, no input allowed
+	if attribute_component and attribute_component.toughness_component:
+		if attribute_component.toughness_component.is_in_stagger():
+			# Staggered! Input disabled
+			return
+	
 	# --- Input and Movement ---
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
