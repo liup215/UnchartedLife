@@ -11,6 +11,8 @@ enum PlayerState {
 
 # Constants
 const MOVEMENT_INPUT_THRESHOLD: float = 0.1  # Minimum input magnitude to consider as movement
+const ATP_DEPLETION_DAMAGE_RATE: float = 1.0  # HP damage per second when ATP is 0
+const ATP_DEPLETION_DAMAGE_INTERVAL: float = 1.0  # Damage applied every 1 second
 
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
@@ -20,6 +22,9 @@ var interaction_ui_visible: bool = false
 
 # Dodge component (initialized in _ready)
 var dodge_component: DodgeComponent = null
+
+# ATP depletion tracking
+var atp_depletion_timer: float = 0.0  # Time ATP has been at 0
 
 func get_current_state() -> int:
 	return current_state
@@ -252,6 +257,34 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.3  # Reduced to 30% of original rate
 	if attribute_component.metabolism_component.get_current_glucose() > 0:
 		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
+	
+	# 4. ATP Depletion Damage (permanent HP loss when ATP stays at 0)
+	if attribute_component.metabolism_component.get_current_atp() <= 0.0:
+		atp_depletion_timer += delta
+		
+		# Apply permanent HP damage at intervals
+		if atp_depletion_timer >= ATP_DEPLETION_DAMAGE_INTERVAL:
+			var damage_amount = int(ATP_DEPLETION_DAMAGE_RATE * ATP_DEPLETION_DAMAGE_INTERVAL)
+			if damage_amount > 0:
+				# Reduce max_health permanently (this damage cannot be healed)
+				var new_max_health = attribute_component.health_component.get_max_health() - damage_amount
+				new_max_health = max(new_max_health, 1)  # Keep at least 1 HP
+				
+				# Also reduce current health
+				var new_current_health = attribute_component.health_component.get_current_health() - damage_amount
+				new_current_health = max(new_current_health, 0)
+				
+				# Apply the permanent damage
+				attribute_component.health_component.set_max_health(new_max_health, false)
+				attribute_component.health_component.set_current_health(new_current_health)
+				
+				print("[METABOLISM] ATP depletion! Permanent HP damage: -", damage_amount, " (Max HP now: ", new_max_health, ")")
+			
+			# Reset timer for next damage tick
+			atp_depletion_timer -= ATP_DEPLETION_DAMAGE_INTERVAL
+	else:
+		# ATP is available, reset the depletion timer
+		atp_depletion_timer = 0.0
 
 func _handle_combat_input():
 	if not actor_combat_component:
@@ -310,6 +343,7 @@ func save_data() -> Dictionary:
 		"position": {"x": global_position.x, "y": global_position.y},
 		"current_state": current_state,
 		"current_vehicle_path": vehicle_path,
+		"atp_depletion_timer": atp_depletion_timer,
 		# Actor stats are saved in PlayerData.actor_data singleton
 	}
 
@@ -322,6 +356,8 @@ func load_data(data: Dictionary) -> void:
 			global_position = pos_data
 	if data.has("current_state"):
 		current_state = data["current_state"]
+	if data.has("atp_depletion_timer"):
+		atp_depletion_timer = data["atp_depletion_timer"]
 	
 	# Restore vehicle reference if player was in a vehicle
 	if data.has("current_vehicle_path") and data["current_vehicle_path"] != "":
