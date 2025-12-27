@@ -115,7 +115,7 @@ func _on_player_health_changed(current_health: int, max_health: int):
 	health_bar.value = current_health
 	health_value.text = "%d/%d" % [current_health, max_health]
 
-func _on_player_atp_changed(current_atp: int, max_atp: int):
+func _on_player_atp_changed(current_atp: float, max_atp: float):
 	atp_bar.max_value = max_atp
 	atp_bar.value = current_atp
 	atp_value.text = "%d/%d" % [current_atp, max_atp]

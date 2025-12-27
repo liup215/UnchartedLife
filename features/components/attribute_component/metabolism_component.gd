@@ -2,8 +2,8 @@
 extends Node
 class_name MetabolismComponent
 
-signal atp_changed(current_atp: float, max_atp: int)
-signal glucose_changed(current_glucose: float, max_glucose: int)
+signal atp_changed(current_atp: float, max_atp: float)
+signal glucose_changed(current_glucose: float, max_glucose: float)
 signal atp_depleted()
 signal glucose_depleted()
 
