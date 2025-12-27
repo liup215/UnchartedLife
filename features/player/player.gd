@@ -15,8 +15,15 @@ var current_vehicle: Node2D = null  # Will be Vehicle when available
 var nearby_vehicle: Node2D = null   # Vehicle player can interact with
 var interaction_ui_visible: bool = false
 
+# Dodge component (initialized in _ready)
+var dodge_component: DodgeComponent = null
+
 func get_current_state() -> int:
 	return current_state
+
+func get_last_direction() -> Vector2:
+	"""Get the last movement direction"""
+	return last_direction
 
 func _ready():
 	# Assign the specific data resource for the player.
@@ -27,11 +34,24 @@ func _ready():
 	if inventory_component.containers.is_empty():
 		inventory_component.set_data(actor_data)
 	
+	# Get dodge component reference
+	dodge_component = get_node_or_null("DodgeComponent") as DodgeComponent
+	
+	# Setup dodge component if present
+	if dodge_component:
+		dodge_component.dodge_started.connect(_on_dodge_started)
+		dodge_component.dodge_ended.connect(_on_dodge_ended)
+		dodge_component.dodge_failed.connect(_on_dodge_failed)
+		dodge_component.invincibility_ended.connect(_on_invincibility_ended)
+	else:
+		push_warning("Player: DodgeComponent not found - dodge functionality disabled")
+	
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
 	add_to_group("saveable")
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
+
 
 
 func _physics_process(delta: float) -> void:
@@ -47,15 +67,38 @@ func _physics_process(delta: float) -> void:
 			_handle_in_vehicle_logic(delta)
 
 func _handle_on_foot_logic(delta: float):
-	# Check if staggered - if so, no input allowed
-	if attribute_component and attribute_component.toughness_component:
-		if attribute_component.toughness_component.is_in_stagger():
-			# Staggered! Input disabled
-			return
+	# --- Biological Processes (Always run, even during stagger/dodge) ---
+	# Determine if sprinting for metabolism calculation
+	var is_sprinting = Input.is_action_pressed("shift")
+	_process_metabolism(delta, is_sprinting)
+	
+	# Check if staggered - if so, no input allowed but metabolism continues
+	var is_staggered = attribute_component and attribute_component.toughness_component and attribute_component.toughness_component.is_in_stagger()
+	
+	# Check if dodging - if so, no input allowed but metabolism continues
+	var is_dodging = dodge_component and dodge_component.is_in_dodge()
+	
+	# If staggered or dodging, skip input/movement/combat but continue metabolism
+	if is_staggered or is_dodging:
+		return
+	
+	# Handle dodge input
+	if Input.is_action_just_pressed("dodge") and dodge_component:
+		var dodge_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		# If no input, use last direction or velocity direction
+		if dodge_direction.length() == 0:
+			if velocity.length() > 0:
+				dodge_direction = velocity.normalized()
+			else:
+				dodge_direction = last_direction
+		dodge_component.attempt_dodge(dodge_direction)
 	
 	# --- Input and Movement ---
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
+
+	# Update last direction if moving
+	if direction.length() > 0:
+		last_direction = direction.normalized()
 
 	# Calculate movement speed based on sprinting state
 	var base_speed = attribute_component.speed_component.get_current_speed()
@@ -71,9 +114,6 @@ func _handle_on_foot_logic(delta: float):
 
 	# Handle combat input
 	_handle_combat_input()
-
-	# --- Biological Processes ---
-	_process_metabolism(delta, is_sprinting)
 
 	var weapons = actor_combat_component.actor_weapons
 	for wc in weapons:
@@ -219,6 +259,36 @@ func _handle_combat_input():
 	if Input.is_action_just_pressed("light_attack"):
 		print("Firing light attack...")
 		actor_combat_component.perform_light_attack()
+
+# --- Dodge Callbacks ---
+func _on_dodge_started():
+	"""Called when dodge starts"""
+	# Set invincibility on health component
+	if attribute_component and attribute_component.health_component:
+		attribute_component.health_component.set_invincible(true)
+	
+	# Emit global event
+	EventBus.player_dodge_started.emit(self)
+	print("Dodge started! Invincible!")
+
+func _on_dodge_ended():
+	"""Called when dodge ends"""
+	print("Dodge ended")
+
+func _on_invincibility_ended():
+	"""Called when invincibility ends (called by DodgeComponent)"""
+	# Remove invincibility from health component
+	if attribute_component and attribute_component.health_component:
+		attribute_component.health_component.set_invincible(false)
+	print("Invincibility ended")
+	# Emit global event
+	EventBus.player_dodge_ended.emit(self)
+
+func _on_dodge_failed(reason: String):
+	"""Called when dodge fails"""
+	print("Dodge failed: ", reason)
+	# Emit global event
+	EventBus.player_dodge_failed.emit(self, reason)
 
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:

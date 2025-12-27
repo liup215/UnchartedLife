@@ -89,6 +89,19 @@ signal dialogue_event(event_name: String, payload: Dictionary)
 # Carries the new map_id and spawn position.
 signal map_changed(map_id: String, spawn_position: Vector2)
 
+# --- Dodge System Signals ---
+# Emitted when player starts a dodge.
+# Carries the player actor node.
+signal player_dodge_started(player: Node)
+
+# Emitted when player's dodge ends.
+# Carries the player actor node.
+signal player_dodge_ended(player: Node)
+
+# Emitted when player's dodge fails.
+# Carries the player actor node and the reason for failure.
+signal player_dodge_failed(player: Node, reason: String)
+
 # Add other global signals here as the game grows.
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."
