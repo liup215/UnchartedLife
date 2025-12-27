@@ -3,6 +3,10 @@
 extends Node2D
 class_name ActorCombatComponent
 
+# Heavy attack scaling constants
+const DAMAGE_CHARGE_SCALING_FACTOR: float = 0.4  # Damage scales 1.0x to 3.0x at charge 5
+const ATP_CHARGE_SCALING_FACTOR: float = 0.5  # ATP cost scaling with charge
+
 # var owner_node = null  # Reference to the owning actor/vehicle, dynamic assignment only
 # @export var max_main_weapons: int = 5
 # @export var max_secondary_weapons: int = 5
@@ -292,8 +296,8 @@ func release_heavy_attack():
 		return
 	
 	# Find appropriate heavy attack data for charge level
-	# Use ceiling to determine which heavy attack tier to use
-	var charge_level_tier = int(ceil(effective_charge))
+	# Use ceiling to determine which heavy attack tier to use, with minimum of 1
+	var charge_level_tier = max(1, int(ceil(effective_charge)))
 	var heavy_data: HeavyAttackData = null
 	for ha in weapon_data.heavy_attacks:
 		if ha.charge_level <= charge_level_tier:
@@ -301,7 +305,7 @@ func release_heavy_attack():
 		else:
 			break
 	
-	# Use first tier if no charge at all (allows firing even at 0 charge)
+	# Use first tier if no appropriate data found
 	if not heavy_data and not weapon_data.heavy_attacks.is_empty():
 		heavy_data = weapon_data.heavy_attacks[0]
 	
@@ -314,7 +318,7 @@ func release_heavy_attack():
 	# Calculate ATP cost based on effective charge (scales with partial charge)
 	var base_atp_cost = weapon.get_atp_cost()
 	# Base cost for uncharged attack + scaling based on effective charge
-	var charge_multiplier = 1.0 + (effective_charge * 0.5)  # Scales ATP cost with charge
+	var charge_multiplier = 1.0 + (effective_charge * ATP_CHARGE_SCALING_FACTOR)
 	var total_atp_cost = base_atp_cost * charge_multiplier * heavy_data.atp_cost_multiplier
 	
 	# Check if we have enough ATP
@@ -380,10 +384,11 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 	if last_heavy_charge > 0.0:
 		# Calculate damage multiplier based on effective charge level
 		# Base multiplier of 1.0 + scaling based on charge (e.g., at full charge level 5 = 3.0x)
-		damage_multiplier = 1.0 + (last_heavy_charge * 0.4)  # Scales from 1.0x to 3.0x at charge 5
+		damage_multiplier = 1.0 + (last_heavy_charge * DAMAGE_CHARGE_SCALING_FACTOR)
 		
 		# Find appropriate heavy attack data for additional stats
-		var charge_level_tier = int(ceil(last_heavy_charge))
+		# Use max(1, ...) to ensure we always get at least tier 1 stats
+		var charge_level_tier = max(1, int(ceil(last_heavy_charge)))
 		for ha in weapon_data.heavy_attacks:
 			if ha.charge_level <= charge_level_tier:
 				armor_break = ha.armor_break_power
