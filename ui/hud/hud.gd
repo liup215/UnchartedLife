@@ -120,7 +120,7 @@ func _on_player_atp_changed(current_atp: int, max_atp: int):
 	atp_bar.value = current_atp
 	atp_value.text = "%d/%d" % [current_atp, max_atp]
 
-func _on_player_glucose_changed(current_glucose: float, max_glucose: int):
+func _on_player_glucose_changed(current_glucose: float, max_glucose: float):
 	glucose_label.text = "Glucose: %.1f/%.1f" % [current_glucose, max_glucose]
 
 func _physics_process(_delta):

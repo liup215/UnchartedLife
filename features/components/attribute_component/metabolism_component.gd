@@ -177,22 +177,14 @@ func to_dict() -> Dictionary:
 	}
 
 func from_dict(data: Dictionary) -> void:
-	if data.has("current_atp"):
-		current_atp = data["current_atp"]
-	if data.has("current_glucose"):
-		current_glucose = data["current_glucose"]
-	if data.has("max_atp"):
-		max_atp = data["max_atp"]
-	if data.has("max_glucose"):
-		max_glucose = data["max_glucose"]
-	if data.has("atp_consume_rate"):
-		atp_consume_rate = data["atp_consume_rate"]
-	if data.has("glucose_consume_rate"):
-		glucose_consume_rate = data["glucose_consume_rate"]
-	if data.has("atp_production_rate"):
-		atp_production_rate = data["atp_production_rate"]
-	if data.has("atp_conversion_rate"):
-		atp_conversion_rate = data["atp_conversion_rate"]
+	current_atp = data.get("current_atp", current_atp)
+	current_glucose = data.get("current_glucose", current_glucose)
+	max_atp = data.get("max_atp", max_atp)
+	max_glucose = data.get("max_glucose", max_glucose)
+	atp_consume_rate = data.get("atp_consume_rate", atp_consume_rate)
+	glucose_consume_rate = data.get("glucose_consume_rate", glucose_consume_rate)
+	atp_production_rate = data.get("atp_production_rate", atp_production_rate)
+	atp_conversion_rate = data.get("atp_conversion_rate", atp_conversion_rate)
 	
 	# Emit signals to update UI after loading
 	atp_changed.emit(current_atp, max_atp)
