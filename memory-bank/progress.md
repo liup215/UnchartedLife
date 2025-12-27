@@ -123,6 +123,30 @@ The project has completed several major development phases, establishing a robus
    - Toughness damage applied based on final damage + stagger power
    - Save/load support for all new attributes
 
+#### Map/Level Switching System (Complete) ✅
+1. **MapData Resource System:**
+   - Define maps with chunk scenes, spawn positions, and metadata
+   - Support for both chunk-based and full map loading
+   - Unique map IDs for identification
+
+2. **Multi-Map Support:**
+   - Switch between different maps via MapManager API
+   - Automatic chunk loading/unloading on map transition
+   - Default initial map configuration ("main_world")
+   - EventBus signal for map change notifications
+
+3. **Map-Specific Save/Load:**
+   - Current map ID persisted in save files
+   - Player position and state saved per map
+   - Correct map restoration on game load
+   - Vehicle states saved with map associations
+
+4. **Vehicle-Map Binding:**
+   - Vehicles assigned to specific maps via `assigned_map_id`
+   - Automatic visibility toggling based on current map
+   - Empty assignment = available on all maps
+   - Map-specific vehicle positioning
+
 #### Documentation & Organization (Complete) ✅
 1. **Save/Load System** - Full implementation with binary serialization
 2. **Animation Fixes** - Player walk animations display correctly
@@ -130,6 +154,12 @@ The project has completed several major development phases, establishing a robus
 4. **Combat Documentation:**
    - `docs/COMBAT_SYSTEM.md` - Original combat guide
    - `docs/COMBAT_DAMAGE_AND_TOUGHNESS.md` - Damage & toughness mechanics
+   - `docs/COMBAT_SYSTEM_ARCHITECTURE.md` - System architecture details
+   - `docs/COMBAT_UI_MOCKUP.md` - UI design specifications
+5. **Map System Documentation:**
+   - `docs/MAP_SYSTEM.md` - English map system guide
+   - `docs/MAP_SYSTEM_CN.md` - Chinese map system guide
+6. **Summaries:**
    - `docs/summaries/` - All summary files organized in dedicated folder
 
 ### Priorities:
