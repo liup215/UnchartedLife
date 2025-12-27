@@ -12,6 +12,13 @@ class_name DialogueLineData
 @export var auto_advance: bool = false
 @export var typing_speed: float = 0.03
 
+# Text-to-Speech configuration
+@export var enable_tts: bool = false
+@export var tts_voice_id: String = ""  # Empty string uses default voice
+@export_range(0.1, 10.0) var tts_rate: float = 1.0  # Speech speed
+@export_range(0.0, 2.0) var tts_pitch: float = 1.0  # Voice pitch
+@export_range(0.0, 1.0) var tts_volume: float = 1.0  # Volume (0-100 will be converted internally)
+
 func resolve_text() -> String:
 	if not text_key.is_empty():
 		var translated := tr(text_key)

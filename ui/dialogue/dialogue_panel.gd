@@ -3,6 +3,7 @@ extends CanvasLayer
 @export var default_typing_interval: float = 0.03
 @export var auto_hide_on_end: bool = true
 @export var pause_on_dialogue: bool = true
+@export var enable_tts: bool = true  # Global TTS toggle for dialogue panel
 
 @onready var panel: PanelContainer = $Panel
 @onready var portrait: TextureRect = $Panel/MarginContainer/VBoxContainer/HBoxContainer/Portrait
@@ -51,10 +52,14 @@ func _on_dialogue_line(line: DialogueLineData, _index: int, _total: int, _npc_id
 	var interval := line.typing_speed if line.typing_speed > 0.0 else default_typing_interval
 	typing_timer.wait_time = interval
 	typing_timer.start()
+	
+	# Play TTS if enabled
+	_play_tts_for_line(line)
 
 func _on_dialogue_choices(choices: Array[DialogueChoiceData], _npc_id: String) -> void:
 	_typing = false
 	typing_timer.stop()
+	_stop_tts()  # Stop TTS when choices are presented
 	_current_choices = choices
 	choices_container.show()
 	for i in choices.size():
@@ -67,6 +72,7 @@ func _on_dialogue_ended(_npc_id: String, _reason: String) -> void:
 	typing_timer.stop()
 	_typing = false
 	_clear_choices()
+	_stop_tts()  # Stop TTS when dialogue ends
 	if auto_hide_on_end:
 		hide()
 		panel.hide()
@@ -92,6 +98,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		if _typing:
 			_finish_typing()
+			_stop_tts()  # Stop TTS when player skips typing
 		elif _current_choices.is_empty():
 			DialogueManager.request_advance()
 	elif event.is_action_pressed("ui_cancel"):
@@ -107,3 +114,33 @@ func _clear_choices() -> void:
 		child.queue_free()
 	choices_container.hide()
 	_current_choices.clear()
+
+func _play_tts_for_line(line: DialogueLineData) -> void:
+	"""Play TTS for the given dialogue line if enabled."""
+	if not enable_tts:
+		return
+	
+	if not line.enable_tts:
+		return
+	
+	var text_to_speak := line.resolve_text()
+	if text_to_speak.is_empty():
+		return
+	
+	# Convert volume from 0-1 range to 0-100 range
+	var volume := line.tts_volume * 100.0
+	
+	TTSManager.speak(
+		text_to_speak,
+		line.tts_voice_id,
+		line.tts_rate,
+		line.tts_pitch,
+		volume,
+		true  # Interrupt any previous speech
+	)
+
+func _stop_tts() -> void:
+	"""Stop any currently playing TTS."""
+	if TTSManager:
+		TTSManager.stop()
+
