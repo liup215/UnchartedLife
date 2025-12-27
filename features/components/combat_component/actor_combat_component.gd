@@ -306,7 +306,7 @@ func release_heavy_attack():
 			break
 	
 	# Use first tier if no appropriate data found
-	if not heavy_data and not weapon_data.heavy_attacks.is_empty():
+	if not heavy_data and weapon_data.heavy_attacks.size() > 0:
 		heavy_data = weapon_data.heavy_attacks[0]
 	
 	if not heavy_data:
@@ -342,9 +342,10 @@ func release_heavy_attack():
 	if get_parent() and get_parent().has_method("play_combat_animation"):
 		get_parent().play_combat_animation(heavy_data.animation_name)
 	
-	# Emit signals with effective charge
-	emit_signal("heavy_attack_performed", int(effective_charge), heavy_data)
-	emit_signal("weapons_fired", "heavy_attack", 1, int(ceil(effective_charge)))
+	# Emit signals with effective charge (use consistent rounding)
+	var charge_for_signals = int(ceil(effective_charge))
+	emit_signal("heavy_attack_performed", charge_for_signals, heavy_data)
+	emit_signal("weapons_fired", "heavy_attack", 1, charge_for_signals)
 	emit_signal("combat_action_performed", "heavy_attack", total_atp_cost)
 	
 	# Reset charge after release
