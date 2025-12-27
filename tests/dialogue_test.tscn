@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://clgxr212rvkvu"]
+[gd_scene load_steps=6 format=3 uid="uid://clgxr212rvkvu"]
 
 [ext_resource type="Script" uid="uid://d3iocdy746qbv" path="res://tests/dialogue_test.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="2"]
 [ext_resource type="Resource" uid="uid://b7c5tewfd3nca" path="res://data/dialogue/sample_intro.tres" id="2_ph0lc"]
 [ext_resource type="Resource" uid="uid://d37swrqg2a0aw" path="res://data/dialogue/sample_more.tres" id="3_ic4nq"]
+[ext_resource type="Resource" uid="uid://bxyw7v5h3m1pq" path="res://data/dialogue/tts_demo.tres" id="4_tts"]
 
 [node name="DialogueTest" type="Control"]
 layout_mode = 3
@@ -15,6 +16,7 @@ grow_vertical = 2
 script = ExtResource("1")
 intro_data = ExtResource("2_ph0lc")
 more_data = ExtResource("3_ic4nq")
+tts_demo_data = ExtResource("4_tts")
 
 [node name="DialoguePanel" parent="." instance=ExtResource("2")]
 
@@ -37,6 +39,10 @@ text = "Start Intro Dialogue"
 [node name="MoreButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Start More Dialogue"
+
+[node name="TTSButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start TTS Demo"
 
 [node name="ResetButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
