@@ -92,16 +92,18 @@ func _on_typing_tick() -> void:
 		_typing = false
 		typing_timer.stop()
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not visible:
 		return
 	if event.is_action_pressed("ui_accept"):
+		get_viewport().set_input_as_handled()
 		if _typing:
 			_finish_typing()
 			_stop_tts()  # Stop TTS when player skips typing
 		elif _current_choices.is_empty():
 			DialogueManager.request_advance()
 	elif event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
 		DialogueManager.interrupt("player_cancel")
 
 func _finish_typing() -> void:
