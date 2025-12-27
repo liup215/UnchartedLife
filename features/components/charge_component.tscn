@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxqr8yx3vl5jw"]
+
+[ext_resource type="Script" path="res://features/components/charge_component.gd" id="1_charge"]
+
+[node name="ChargeComponent" type="Node"]
+script = ExtResource("1_charge")
+max_charge = 5
+charge_time_per_level = 0.5
+light_attacks_build_charge = true

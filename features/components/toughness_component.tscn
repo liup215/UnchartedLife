@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtoughness_comp"]
+
+[ext_resource type="Script" path="res://features/components/toughness_component.gd" id="1_toughness"]
+
+[node name="ToughnessComponent" type="Node"]
+script = ExtResource("1_toughness")
+stagger_duration = 2.0
+stagger_threshold = 0.0

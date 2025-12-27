@@ -72,11 +72,27 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 ## The duration of the hit effect animation in seconds.
 @export var hit_effect_duration: float = 0.5
 
-func fire(origin: Vector2, target: Vector2, effect_node: Node = null):
+@export_group("Combo System")
+## Array of combo stages for light attacks
+@export var combo_attacks: Array[ComboAttackData] = []
+## Maximum combo count (derived from combo_attacks size if not set)
+@export var max_combo_count: int = 3
+
+@export_group("Heavy Attack System")
+## Array of heavy attack configurations for different charge levels
+@export var heavy_attacks: Array[HeavyAttackData] = []
+## Charge rate per second when holding heavy attack button (progress units/second)
+@export var charge_rate_per_second: float = 50.0
+## Progress units required to complete one charge level
+@export var progress_per_level: float = 100.0
+## Whether light attack hits accumulate charge
+@export var light_attacks_build_charge: bool = true
+
+func fire(origin: Vector2, target: Vector2, effect_node: Node = null, shooter: Node = null):
 	if not effect_node:
 		return
 
 	# Directly use the passed-in effect_node
 	if effect_node and effect_node.has_method("fire"):
-		# Pass all necessary parameters to the effect
-		effect_node.fire(origin, target, self)
+		# Pass all necessary parameters including shooter to the effect
+		effect_node.fire(origin, target, self, shooter)

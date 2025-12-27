@@ -44,9 +44,9 @@ func _refresh() -> void:
 
 	if _combat and _combat.actor_weapons.size() > 0:
 		var wc: WeaponComponent = _combat.actor_weapons[0]
-		if wc and wc.weapon_data:
+		if wc and wc.item_data:
 			_equipped_weapon_component = wc
-			_equipped_items["weapon"] = wc.weapon_data
+			_equipped_items["weapon"] = wc.item_data
 
 	_update_slot_button(weapon_button, "Weapon", _equipped_items.get("weapon", null))
 	_update_slot_button(armor_button, "Armor", _equipped_items.get("armor", null))

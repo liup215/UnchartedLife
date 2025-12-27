@@ -47,6 +47,12 @@ func _physics_process(delta: float) -> void:
 			_handle_in_vehicle_logic(delta)
 
 func _handle_on_foot_logic(delta: float):
+	# Check if staggered - if so, no input allowed
+	if attribute_component and attribute_component.toughness_component:
+		if attribute_component.toughness_component.is_in_stagger():
+			# Staggered! Input disabled
+			return
+	
 	# --- Input and Movement ---
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
@@ -201,10 +207,18 @@ func _handle_combat_input():
 	if not actor_combat_component:
 		return
 	
-	# Actor武器发射（如手枪/步枪等）
+	# Heavy attack - charge on hold, release on button up
+	if Input.is_action_just_pressed("heavy_attack"):
+		print("Starting heavy attack charge...")
+		actor_combat_component.start_heavy_attack_charge()
+	elif Input.is_action_just_released("heavy_attack"):
+		print("Releasing heavy attack...")
+		actor_combat_component.release_heavy_attack()
+	
+	# Light attack - Actor武器发射（如手枪/步枪等）
 	if Input.is_action_just_pressed("light_attack"):
-		print("Firing actor weapon...")
-		actor_combat_component.fire_actor_weapons()
+		print("Firing light attack...")
+		actor_combat_component.perform_light_attack()
 
 # Save/Load support for SaveManager
 func save_data() -> Dictionary:

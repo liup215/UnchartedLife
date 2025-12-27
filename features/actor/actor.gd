@@ -50,10 +50,23 @@ func _ready():
 			func(current, max_hp): actor_health_changed.emit(current, max_hp)
 		)
 		attribute_component.health_component.died.connect(_on_death)
+		
+		# Connect toughness/stagger signals
+		if attribute_component.toughness_component:
+			attribute_component.toughness_component.stagger_started.connect(_on_stagger_started)
+			attribute_component.toughness_component.stagger_ended.connect(_on_stagger_ended)
 	else:
 		printerr("Actor _ready() called, but no ActorData was assigned.")
 
 func _physics_process(delta: float):
+	# Check if staggered - if so, disable all movement and AI
+	if attribute_component and attribute_component.toughness_component:
+		if attribute_component.toughness_component.is_in_stagger():
+			# Staggered! No movement allowed
+			velocity = Vector2.ZERO
+			move_and_slide()
+			return
+	
 	# Reset velocity before executing behaviors for AI-controlled actors
 	if actor_data and not actor_data.behaviors.is_empty():
 		velocity = Vector2.ZERO
@@ -147,6 +160,17 @@ func _update_animation():
 		if visuals.animation != anim_name or not visuals.is_playing():
 			visuals.play(anim_name)
 
+func play_combat_animation(anim_name: String):
+	"""Play a combat animation (combo or heavy attack)"""
+	if not visuals or not visuals.sprite_frames:
+		return
+	
+	if visuals.sprite_frames.has_animation(anim_name):
+		visuals.play(anim_name)
+		print("[ACTOR] Playing combat animation: ", anim_name)
+	else:
+		print("[ACTOR] Combat animation not found: ", anim_name)
+
 # --- Public API ---
 
 func take_damage(amount: int):
@@ -183,3 +207,40 @@ func _on_death():
 	
 	await tween.finished
 	queue_free()
+
+## Called when actor enters stagger state
+func _on_stagger_started():
+	print("[ACTOR] ", actor_data.actor_name if actor_data else "Actor", " entered stagger state!")
+	
+	# Play stagger animation if available
+	if visuals and visuals.sprite_frames:
+		if visuals.sprite_frames.has_animation("stagger"):
+			visuals.play("stagger")
+		else:
+			# No stagger animation, flash the sprite
+			_play_stagger_flash_effect()
+	
+	# Visual indicator - tint red
+	if visuals:
+		visuals.modulate = Color(1.0, 0.5, 0.5)  # Reddish tint
+
+## Called when actor exits stagger state
+func _on_stagger_ended():
+	print("[ACTOR] ", actor_data.actor_name if actor_data else "Actor", " recovered from stagger!")
+	
+	# Restore normal color
+	if visuals:
+		visuals.modulate = Color.WHITE
+	
+	# Resume normal animation
+	_update_animation()
+
+## Flash effect during stagger
+func _play_stagger_flash_effect():
+	if not visuals:
+		return
+	
+	var tween = create_tween()
+	tween.set_loops(3)
+	tween.tween_property(visuals, "modulate:a", 0.3, 0.2)
+	tween.tween_property(visuals, "modulate:a", 1.0, 0.2)

@@ -38,7 +38,7 @@ position = Vector2(300, 540)
 actor_data = ExtResource("4_ryk8j")
 
 [node name="Boss" parent="GameWorld" instance=ExtResource("5_boss")]
-position = Vector2(1600, 540)
+position = Vector2(1424, 527)
 actor_data = ExtResource("7_6pb0o")
 
 [node name="Vehicle" parent="GameWorld" instance=ExtResource("8_6pb0o")]
@@ -50,6 +50,34 @@ vehicle_data = ExtResource("9_fh0v0")
 z_index = 1
 position = Vector2(301, 431)
 item_data = ExtResource("11_lar5l")
+
+[node name="Boss2" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(919, 293)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss3" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(959, 622)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss4" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(95, 440)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss5" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(712, 217)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss6" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(1303, 212)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss7" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(333, 793)
+actor_data = ExtResource("7_6pb0o")
+
+[node name="Boss8" parent="GameWorld" instance=ExtResource("5_boss")]
+position = Vector2(227, 81)
+actor_data = ExtResource("7_6pb0o")
 
 [node name="GameHUD" parent="." instance=ExtResource("6_hud")]
 

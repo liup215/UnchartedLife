@@ -46,6 +46,18 @@ class_name ActorData
 ## The list of behaviors that this actor will execute.
 @export var behaviors: Array[AIBehaviorData]
 
+@export_group("Combat Attributes")
+## Base attack power (affects all damage output)
+@export var base_attack: float = 10.0
+## Base defense value (reduces incoming damage)
+@export var base_defense: float = 5.0
+## Maximum toughness/poise (resistance to being staggered)
+@export var max_toughness: float = 100.0
+## Current toughness value
+@export var current_toughness: float = max_toughness
+## Toughness recovery rate per second
+@export var toughness_recovery_rate: float = 10.0
+
 @export_group("Bio-Energy Attributes")
 @export var max_atp: int = 100
 @export var current_atp: float = max_atp
@@ -120,7 +132,12 @@ func to_dict() -> Dictionary:
 		"atp_conversion_rate": atp_conversion_rate,
 		"neural_response_speed": neural_response_speed,
 		"muscle_coordination": muscle_coordination,
-		"weapon_number_limit": weapon_number_limit
+		"weapon_number_limit": weapon_number_limit,
+		"base_attack": base_attack,
+		"base_defense": base_defense,
+		"max_toughness": max_toughness,
+		"current_toughness": current_toughness,
+		"toughness_recovery_rate": toughness_recovery_rate
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -193,3 +210,8 @@ func from_dict(data: Dictionary) -> void:
 	neural_response_speed = data.get("neural_response_speed", neural_response_speed)
 	muscle_coordination = data.get("muscle_coordination", muscle_coordination)
 	weapon_number_limit = data.get("weapon_number_limit", weapon_number_limit)
+	base_attack = data.get("base_attack", base_attack)
+	base_defense = data.get("base_defense", base_defense)
+	max_toughness = data.get("max_toughness", max_toughness)
+	current_toughness = data.get("current_toughness", current_toughness)
+	toughness_recovery_rate = data.get("toughness_recovery_rate", toughness_recovery_rate)

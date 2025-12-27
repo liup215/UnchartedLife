@@ -210,7 +210,7 @@ func load_questions_from_json(file_path: String) -> void:
 
 				# Ensure options are strings
 				q_data.options.clear()
-				var opts = item.get("options", [])
+				var opts: Array = item.get("options", [])
 				for opt in opts:
 					q_data.options.append(str(opt))
 

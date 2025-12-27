@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxqr8yx3vl5jx"]
+
+[ext_resource type="Script" path="res://ui/hud/charge_display.gd" id="1_charge_display"]
+
+[node name="ChargeDisplay" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_charge_display")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ChargeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Charge"
+horizontal_alignment = 1
+
+[node name="ChargeBar" type="ProgressBar" parent="VBoxContainer"]
+custom_minimum_size = Vector2(200, 30)
+layout_mode = 2
+max_value = 5.0
+step = 1.0
+show_percentage = false
+
+[node name="ChargeLevelLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Level 0 / 5"
+horizontal_alignment = 1

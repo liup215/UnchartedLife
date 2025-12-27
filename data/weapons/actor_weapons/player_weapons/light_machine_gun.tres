@@ -1,29 +1,27 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=8 format=3 uid="uid://b31hmsxhowote"]
+[gd_resource type="Resource" script_class="WeaponData" load_steps=13 format=3 uid="uid://b31hmsxhowote"]
 
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="1_gve21"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_r151a"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="3_3pbod"]
-[ext_resource type="Script" uid="uid://cqqwgho1owjhk" path="res://data/definitions/item/item_effect_data.gd" id="3_k84sj"]
+[ext_resource type="Script" uid="uid://brb0nd8kyt52x" path="res://data/definitions/inventory/item/equipment/combo_attack_data.gd" id="3_l4aui"]
 [ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="4_ec6mm"]
-[ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="5_v70go"]
-
-[sub_resource type="Resource" id="Resource_ndujy"]
-script = ExtResource("3_k84sj")
-effect_type = 4
-metadata/_custom_type_script = "uid://cqqwgho1owjhk"
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_1.tres" id="6_combo1"]
+[ext_resource type="Script" uid="uid://b12sblhnvofw2" path="res://data/definitions/inventory/item/equipment/heavy_attack_data.gd" id="7_5nl4f"]
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_2.tres" id="7_combo2"]
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_3.tres" id="8_combo3"]
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/heavy_level_1.tres" id="9_heavy1"]
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/heavy_level_3.tres" id="10_heavy3"]
+[ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/heavy_level_5.tres" id="11_heavy5"]
 
 [resource]
 script = ExtResource("4_ec6mm")
 weapon_type = 2
 energy_cost = 2
-damage = 1.0
 rate_of_fire = 0.1
-ammo_capacity = 5
-requires_quiz_reload = true
-charge_time = 0.1
-atp_cost_per_level = 1.0
+ammo_capacity = 30
+max_charge_level = 5
+charge_time = 2.5
 bullet_scene = ExtResource("1_gve21")
-bullet_lifetime = 20.0
 bullet_texture = ExtResource("2_r151a")
 bullet_scale = Vector2(4, 4)
 hit_effect_texture = ExtResource("3_3pbod")
@@ -31,6 +29,5 @@ hit_effect_scale = Vector2(10, 10)
 hit_effect_h_frames = 4
 hit_effect_v_frames = 4
 hit_effect_frame_count = 16
-item_name = "Player Gun"
-icon = ExtResource("5_v70go")
-effects = Array[ExtResource("3_k84sj")]([SubResource("Resource_ndujy")])
+combo_attacks = Array[ExtResource("3_l4aui")]([ExtResource("6_combo1"), ExtResource("7_combo2"), ExtResource("8_combo3")])
+heavy_attacks = Array[ExtResource("7_5nl4f")]([ExtResource("9_heavy1"), ExtResource("10_heavy3"), ExtResource("11_heavy5")])

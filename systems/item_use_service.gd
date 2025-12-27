@@ -295,7 +295,7 @@ func _equip_weapon(actor: Actor, item: ItemData) -> bool:
 		return false
 
 	var weapon_instance: WeaponComponent = weapon_scene.instantiate()
-	weapon_instance.weapon_data = item
+	weapon_instance.item_data = item
 	weapon_instance.setup_weapon()
 	actor.actor_combat_component.add_child(weapon_instance)
 	actor.actor_combat_component.add_actor_weapon(weapon_instance)
@@ -310,11 +310,11 @@ func unequip_weapon(actor: Actor, target_container: String = "weapons") -> bool:
 		return false
 
 	var weapon_component: WeaponComponent = combat.actor_weapons[0]
-	if weapon_component == null or weapon_component.weapon_data == null:
+	if weapon_component == null or weapon_component.item_data == null:
 		combat.remove_actor_weapon(0)
 		return false
 
-	var weapon_item: ItemData = weapon_component.weapon_data
+	var weapon_item: ItemData = weapon_component.item_data
 
 	combat.remove_actor_weapon(0)
 	if is_instance_valid(weapon_component):

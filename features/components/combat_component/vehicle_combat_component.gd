@@ -241,14 +241,14 @@ func get_total_main_weapon_damage(charge_level: int) -> float:
 	var total_damage = 0.0
 	for weapon in main_weapons:
 		if weapon and weapon.current_charge == charge_level:
-			total_damage += weapon.weapon_data.damage * weapon.get_damage_multiplier()
+			total_damage += weapon.item_data.weapon_data.damage * weapon.get_damage_multiplier()
 	return total_damage
 
 func get_total_actor_weapon_damage() -> float:
 	var total_damage = 0.0
 	for weapon in actor_weapons:
 		if weapon:
-			total_damage += weapon.weapon_data.damage
+			total_damage += weapon.item_data.weapon_data.damage
 	return total_damage
 
 func get_total_secondary_weapon_damage() -> float:
@@ -258,7 +258,7 @@ func get_total_secondary_weapon_damage() -> float:
 
 	for i in range(weapons_to_count):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
-			total_damage += secondary_weapons[i].weapon_data.damage
+			total_damage += secondary_weapons[i].item_data.weapon_data.damage
 	return total_damage
 
 func reload_all_weapons():

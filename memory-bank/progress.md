@@ -91,12 +91,46 @@ The project has completed several major development phases, establishing a robus
   - Walk animations now start with motion frames instead of idle pose
   - Created comprehensive animation testing and debugging documentation
 
-## Current Phase: Phase 10 - Educational Content & Polish (In Progress) 🚧
+## Current Phase: Phase 10 - Combat System & Educational Content (In Progress) 🚧
 
 ### Recent Updates (December 2025):
-1. **Complete Save/Load System** - Full implementation with binary serialization supporting all game data
-2. **Animation Fixes** - Player walk animations now display correctly on first movement step
-3. **UI Improvements** - Menu visibility and error handling enhanced
+
+#### Combat System Enhancement (Complete) ✅
+1. **Combo & Heavy Attack System:**
+   - Light attack combo progression with 3 stages (damage, armor break, stagger scaling)
+   - Heavy attack charge system (hold-to-charge + hit accumulation)
+   - ChargeComponent for universal charge management
+   - ChargeDisplay UI in bottom-right corner with real-time feedback
+   - Configurable per weapon via ComboAttackData and HeavyAttackData resources
+
+2. **Comprehensive Damage Calculation:**
+   - DamageCalculator static class considering all combat factors
+   - Attacker: base_attack + weapon damage + stage multipliers + armor break
+   - Defender: base_defense + equipment bonuses + damage reduction
+   - Damage type effectiveness (Physical, Fire, Ice, Electric, Explosive)
+   - Returns detailed breakdown for debugging
+
+3. **Toughness/Stagger System (韧性/僵直):**
+   - ToughnessComponent tracks toughness with passive regeneration
+   - Stagger state triggers at 0 toughness (2-second duration)
+   - Complete input lockout (player) and AI suspension (enemies)
+   - Visual feedback: red tint, flash effects, stagger animations
+   - Auto-recovery restores 30% toughness
+
+4. **Integration:**
+   - Weapon-specific configs automatically switch with weapon changes
+   - Projectile hit detection triggers damage calculation
+   - Toughness damage applied based on final damage + stagger power
+   - Save/load support for all new attributes
+
+#### Documentation & Organization (Complete) ✅
+1. **Save/Load System** - Full implementation with binary serialization
+2. **Animation Fixes** - Player walk animations display correctly
+3. **UI Improvements** - Menu visibility and error handling
+4. **Combat Documentation:**
+   - `docs/COMBAT_SYSTEM.md` - Original combat guide
+   - `docs/COMBAT_DAMAGE_AND_TOUGHNESS.md` - Damage & toughness mechanics
+   - `docs/summaries/` - All summary files organized in dedicated folder
 
 ### Priorities:
 1. **BioBlitz Enhancement:**

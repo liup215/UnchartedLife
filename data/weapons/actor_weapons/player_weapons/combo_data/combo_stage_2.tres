@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ComboAttackData" load_steps=2 format=3 uid="uid://combo_stage_2"]
+
+[ext_resource type="Script" path="res://data/definitions/inventory/item/equipment/combo_attack_data.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+combo_stage = 2
+damage_multiplier = 1.3
+armor_break_power = 20.0
+stagger_power = 25.0
+charge_gain = 1
+animation_name = "attack_light_2"
+duration = 0.45
+combo_window = 0.5

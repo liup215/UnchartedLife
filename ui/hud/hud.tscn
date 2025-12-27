@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1c2d3e4f5g6h"]
+[gd_scene load_steps=3 format=3 uid="uid://b1c2d3e4f5g6h"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_xyz"]
+[ext_resource type="PackedScene" uid="uid://bxqr8yx3vl5jx" path="res://ui/hud/charge_display.tscn" id="2_charge_display"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_xyz")
@@ -157,3 +158,5 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "100/100"
 horizontal_alignment = 1
+
+[node name="ChargeDisplay" parent="." instance=ExtResource("2_charge_display")]

@@ -22,5 +22,6 @@ animations = Array[ExtResource("1_o21mq")]([SubResource("Resource_idle")])
 sprite_scale = Vector2(0.6, 0.6)
 current_speed = null
 behaviors = Array[ExtResource("3_mjbtu")]([ExtResource("4_o21mq")])
+current_toughness = null
 current_atp = null
 current_glucose = null
