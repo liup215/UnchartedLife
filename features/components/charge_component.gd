@@ -47,12 +47,13 @@ func start_heavy_charge():
 		charge_start_time = Time.get_ticks_msec() / 1000.0
 		print("[CHARGE] Started heavy attack charging from level %d (%.1f%%)" % [current_charge_level, current_charge_progress])
 
-## Stop charging and return the current charge level
-func stop_heavy_charge() -> int:
+## Stop charging and return the current charge level as a float (includes partial progress)
+## Returns: effective charge level (e.g., 2.5 means level 2 with 50% progress to level 3)
+func stop_heavy_charge() -> float:
 	is_charging_heavy = false
-	var charge_to_release = current_charge_level
-	print("[CHARGE] Released heavy attack with charge level: %d (%.1f%% progress)" % [charge_to_release, current_charge_progress])
-	return charge_to_release
+	var effective_charge = float(current_charge_level) + (current_charge_progress / progress_per_level)
+	print("[CHARGE] Released heavy attack with charge level: %.2f (level %d, %.1f%% progress)" % [effective_charge, current_charge_level, current_charge_progress])
+	return effective_charge
 
 ## Update charge based on delta time
 func _update_heavy_charge(delta: float):

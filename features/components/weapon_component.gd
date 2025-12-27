@@ -58,18 +58,18 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	var shooter = get_parent().get_parent() if get_parent() and get_parent().get_parent() else null
 	
 	if item_data.weapon_data.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
-		if current_charge <= 0:
-			return
+		# Allow firing at any charge level (including 0)
+		# Damage will scale with charge level
 		if current_ammo <= 0:
 			reload()
 			return
 		# Consume ammo
 		current_ammo -= 1
-		print("Firing main cannon, ammo left: %d" % current_ammo)
+		print("Firing main cannon at charge %d, ammo left: %d" % [current_charge, current_ammo])
 		emit_signal("ammo_updated", current_ammo)
 		# Emit fire signal
 		emit_signal("weapon_fired", item_data, current_charge)
-		# Reset charge
+		# Reset charge after firing
 		current_charge = 0
 		emit_signal("charge_updated", current_charge)
 	elif item_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
