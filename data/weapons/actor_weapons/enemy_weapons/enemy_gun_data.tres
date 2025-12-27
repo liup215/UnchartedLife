@@ -31,5 +31,6 @@ hit_effect_v_frames = 1
 hit_effect_frame_count = 1
 hit_effect_duration = 0.3
 max_combo_count = 1
-charge_time_per_level = 1.0
+charge_rate_per_second = 50.0
+progress_per_level = 100.0
 light_attacks_build_charge = false
