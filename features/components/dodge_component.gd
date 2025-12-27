@@ -6,6 +6,7 @@ class_name DodgeComponent
 signal dodge_started()
 signal dodge_ended()
 signal dodge_failed(reason: String)
+signal invincibility_ended()
 
 # Dodge parameters
 @export var dodge_distance: float = 150.0  # Distance to move during dodge
@@ -27,7 +28,6 @@ var actor: CharacterBody2D = null
 var metabolism_component: MetabolismComponent = null
 
 # Afterimage effect
-var afterimage_scene: PackedScene = null
 var afterimage_modulate: Color = Color(1.0, 1.0, 1.0, 0.3)  # Light color with transparency
 
 func _ready():
@@ -118,9 +118,8 @@ func _end_dodge():
 
 func _end_invincibility():
 	"""Internal method to end invincibility"""
-	# Notify parent actor that invincibility has ended
-	if actor and actor.has_method("_on_invincibility_ended"):
-		actor._on_invincibility_ended()
+	# Emit signal for parent actor to handle
+	invincibility_ended.emit()
 
 func _apply_dodge_movement(direction: Vector2):
 	"""Apply the dodge movement to the actor"""
@@ -176,7 +175,8 @@ func _create_afterimage():
 	actor.get_parent().add_child(afterimage)
 	
 	# Fade out and remove afterimage
-	var tween = create_tween()
+	# Use afterimage's own tween to ensure it completes even if component is freed
+	var tween = afterimage.create_tween()
 	tween.tween_property(afterimage, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(afterimage.queue_free)
 

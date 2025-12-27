@@ -39,6 +39,7 @@ func _ready():
 		dodge_component.dodge_started.connect(_on_dodge_started)
 		dodge_component.dodge_ended.connect(_on_dodge_ended)
 		dodge_component.dodge_failed.connect(_on_dodge_failed)
+		dodge_component.invincibility_ended.connect(_on_invincibility_ended)
 	
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
