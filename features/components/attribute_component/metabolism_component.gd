@@ -15,8 +15,8 @@ var current_atp: float = 0.0
 var current_glucose: float = 0.0
 
 # # 配置参数（初始化时从 data_source 读取）
-var max_atp: int = 100
-var max_glucose: int = 100
+var max_atp: float = 100.0
+var max_glucose: float = 100.0
 var atp_consume_rate: float = 1.0
 var glucose_consume_rate: float = 0.1
 var atp_production_rate: float = 5.0
@@ -143,7 +143,7 @@ func get_current_atp() -> float:
 	# return data_source.current_atp
 	return current_atp
 
-func get_max_atp() -> int:
+func get_max_atp() -> float:
 	# return data_source.max_atp
 	return max_atp
 
@@ -151,7 +151,7 @@ func get_current_glucose() -> float:
 	# return data_source.current_glucose
 	return current_glucose
 
-func get_max_glucose() -> int:
+func get_max_glucose() -> float:
 	# return data_source.max_glucose
 	return max_glucose
 
