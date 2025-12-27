@@ -54,8 +54,8 @@ func _ready():
 		var charge_comp = load("res://features/components/charge_component.tscn")
 		if charge_comp and get_parent():
 			charge_component = charge_comp.instantiate()
-			get_parent().add_child(charge_component)
-			# Connect signals after adding to tree
+			get_parent().add_child.call_deferred(charge_component)
+			# Connect signals after adding to tree (deferred to ensure component is in tree)
 			charge_component.charge_changed.connect(_on_charge_changed)
 			charge_component.charge_level_up.connect(_on_charge_level_up)
 
@@ -70,8 +70,9 @@ func set_actor_data(data: ActorData):
 			var weapon_instance = weapon_scene.instantiate()
 			weapon_instance.item_data = weapon_item
 			weapon_instance.setup_weapon()
-			add_child(weapon_instance)
-			add_actor_weapon(weapon_instance)
+			add_child.call_deferred(weapon_instance)
+			# Add weapon to array after it's been added to tree (deferred)
+			add_actor_weapon.call_deferred(weapon_instance)
 
 func add_actor_weapon(weapon_component) -> bool:
 	actor_weapons.append(weapon_component)
