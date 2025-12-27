@@ -67,15 +67,19 @@ func _physics_process(delta: float) -> void:
 			_handle_in_vehicle_logic(delta)
 
 func _handle_on_foot_logic(delta: float):
-	# Check if staggered - if so, no input allowed
-	if attribute_component and attribute_component.toughness_component:
-		if attribute_component.toughness_component.is_in_stagger():
-			# Staggered! Input disabled
-			return
+	# --- Biological Processes (Always run, even during stagger/dodge) ---
+	# Determine if sprinting for metabolism calculation
+	var is_sprinting = Input.is_action_pressed("shift")
+	_process_metabolism(delta, is_sprinting)
 	
-	# Check if dodging - if so, no input allowed
-	if dodge_component and dodge_component.is_in_dodge():
-		# Dodging! Input disabled
+	# Check if staggered - if so, no input allowed but metabolism continues
+	var is_staggered = attribute_component and attribute_component.toughness_component and attribute_component.toughness_component.is_in_stagger()
+	
+	# Check if dodging - if so, no input allowed but metabolism continues
+	var is_dodging = dodge_component and dodge_component.is_in_dodge()
+	
+	# If staggered or dodging, skip input/movement/combat but continue metabolism
+	if is_staggered or is_dodging:
 		return
 	
 	# Handle dodge input
@@ -91,7 +95,6 @@ func _handle_on_foot_logic(delta: float):
 	
 	# --- Input and Movement ---
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var is_sprinting = Input.is_action_pressed("shift") # Shift key for sprinting
 
 	# Update last direction if moving
 	if direction.length() > 0:
@@ -111,9 +114,6 @@ func _handle_on_foot_logic(delta: float):
 
 	# Handle combat input
 	_handle_combat_input()
-
-	# --- Biological Processes ---
-	_process_metabolism(delta, is_sprinting)
 
 	var weapons = actor_combat_component.actor_weapons
 	for wc in weapons:
