@@ -3,6 +3,10 @@
 extends Node2D
 class_name ActorCombatComponent
 
+# Heavy attack scaling constants
+const DAMAGE_CHARGE_SCALING_FACTOR: float = 0.4  # Damage scales 1.0x to 3.0x at charge 5
+const ATP_CHARGE_SCALING_FACTOR: float = 0.5  # ATP cost scaling with charge
+
 # var owner_node = null  # Reference to the owning actor/vehicle, dynamic assignment only
 # @export var max_main_weapons: int = 5
 # @export var max_secondary_weapons: int = 5
@@ -20,6 +24,7 @@ var combo_reset_time: float = 0.5  # Time window to continue combo
 # Combat state - Heavy Attack
 var is_charging_heavy: bool = false
 var heavy_charge_level: int = 0
+var last_heavy_charge: float = 0.0  # Stores the effective charge of the last heavy attack
 
 # # ATP component reference
 # var atp_component: Node = null
@@ -255,6 +260,23 @@ func reset_combo():
 	combo_stage = 0
 	emit_signal("combo_updated", combo_counter, combo_stage)
 
+## Helper method to find appropriate heavy attack data for a charge level
+func _get_heavy_attack_data(weapon_data: WeaponData, effective_charge: float) -> HeavyAttackData:
+	var charge_level_tier = max(1, int(ceil(effective_charge)))
+	var heavy_data: HeavyAttackData = null
+	
+	for ha in weapon_data.heavy_attacks:
+		if ha.charge_level <= charge_level_tier:
+			heavy_data = ha
+		else:
+			break
+	
+	# Use first tier if no appropriate data found
+	if not heavy_data and weapon_data.heavy_attacks.size() > 0:
+		heavy_data = weapon_data.heavy_attacks[0]
+	
+	return heavy_data
+
 ## Start charging heavy attack
 func start_heavy_attack_charge():
 	if not charge_component:
@@ -272,11 +294,10 @@ func release_heavy_attack():
 		return
 	
 	is_charging_heavy = false
-	var charge_level = charge_component.stop_heavy_charge()
+	var effective_charge: float = charge_component.stop_heavy_charge()
 	
-	if charge_level < 1:
-		print("[COMBAT] No charge to release (charge level: ", charge_level, ")")
-		return
+	# Allow firing at any charge level, even 0 (no minimum required)
+	# Damage will scale based on effective charge level
 	
 	# Get first weapon to determine heavy attack configuration
 	if actor_weapons.is_empty():
@@ -292,22 +313,19 @@ func release_heavy_attack():
 		return
 	
 	# Find appropriate heavy attack data for charge level
-	var heavy_data: HeavyAttackData = null
-	for ha in weapon_data.heavy_attacks:
-		if ha.charge_level <= charge_level:
-			heavy_data = ha
-		else:
-			break
+	var heavy_data = _get_heavy_attack_data(weapon_data, effective_charge)
 	
 	if not heavy_data:
-		print("[COMBAT] No heavy attack data found for charge level: ", charge_level)
+		print("[COMBAT] No heavy attack data found for charge level: ", effective_charge)
 		return
 	
-	print("[COMBAT] Heavy attack - Charge level: ", charge_level)
+	print("[COMBAT] Heavy attack - Effective charge: %.2f" % effective_charge)
 	
-	# Calculate ATP cost
+	# Calculate ATP cost based on effective charge (scales with partial charge)
 	var base_atp_cost = weapon.get_atp_cost()
-	var total_atp_cost = base_atp_cost * charge_level * heavy_data.atp_cost_multiplier
+	# Multiplier starts at 1.0x and scales up based on charge (1.0x at charge 0, 3.5x at charge 5)
+	var charge_multiplier = 1.0 + (effective_charge * ATP_CHARGE_SCALING_FACTOR)
+	var total_atp_cost = base_atp_cost * charge_multiplier * heavy_data.atp_cost_multiplier
 	
 	# Check if we have enough ATP
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
@@ -319,6 +337,9 @@ func release_heavy_attack():
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
 	
+	# Store the effective charge for damage calculation
+	last_heavy_charge = effective_charge
+	
 	# Fire weapon with heavy attack multiplier
 	var target_pos = get_global_mouse_position()
 	weapon.fire(weapon_effect, target_pos)
@@ -327,9 +348,10 @@ func release_heavy_attack():
 	if get_parent() and get_parent().has_method("play_combat_animation"):
 		get_parent().play_combat_animation(heavy_data.animation_name)
 	
-	# Emit signals
-	emit_signal("heavy_attack_performed", charge_level, heavy_data)
-	emit_signal("weapons_fired", "heavy_attack", 1, charge_level)
+	# Emit signals with effective charge (use consistent rounding)
+	var charge_for_signals = int(ceil(effective_charge))
+	emit_signal("heavy_attack_performed", charge_for_signals, heavy_data)
+	emit_signal("weapons_fired", "heavy_attack", 1, charge_for_signals)
 	emit_signal("combat_action_performed", "heavy_attack", total_atp_cost)
 	
 	# Reset charge after release
@@ -365,8 +387,24 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 	var stagger_power = 0.0
 	var charge_gain = 1
 	
+	# Check if this was a heavy attack (last_heavy_charge > 0 means we just fired a heavy attack)
+	if last_heavy_charge > 0.0:
+		# Calculate damage multiplier based on effective charge level
+		# Base multiplier of 1.0 + scaling based on charge (e.g., at full charge level 5 = 3.0x)
+		damage_multiplier = 1.0 + (last_heavy_charge * DAMAGE_CHARGE_SCALING_FACTOR)
+		
+		# Find appropriate heavy attack data for additional stats
+		var heavy_data = _get_heavy_attack_data(weapon_data, last_heavy_charge)
+		if heavy_data:
+			armor_break = heavy_data.armor_break_power
+			stagger_power = heavy_data.stagger_power
+		
+		print("[COMBAT] Heavy attack hit - Charge: %.2f, Multiplier: %.2fx" % [last_heavy_charge, damage_multiplier])
+		
+		# Reset last heavy charge after using it
+		last_heavy_charge = 0.0
 	# Check if this was a combo attack
-	if not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
+	elif not weapon_data.combo_attacks.is_empty() and combo_stage < weapon_data.combo_attacks.size():
 		var combo_data = weapon_data.combo_attacks[combo_stage]
 		damage_multiplier = combo_data.damage_multiplier
 		armor_break = combo_data.armor_break_power

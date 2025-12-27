@@ -147,8 +147,8 @@ func fire_main_weapons():
 		if weapon and weapon.current_charge > max_charge:
 			max_charge = weapon.current_charge
 
-	if max_charge <= 0:
-		return
+	# Allow firing at any charge level (including 0)
+	# Damage will scale with charge level
 
 	# Calculate total ATP cost
 	var total_atp_cost = 0.0
@@ -163,10 +163,10 @@ func fire_main_weapons():
 	# Consume ATP
 	if actor_attribute_component:
 		actor_attribute_component.metabolism_component.consume_atp(total_atp_cost)
-	# Fire weapons that match the max charge level
+	# Fire all weapons (not just those matching max charge)
 	var fired_count = 0
 	for weapon in main_weapons:
-		if weapon and weapon.current_charge == max_charge:
+		if weapon:
 			weapon.fire(weapon_effect)
 			fired_count += 1
 
