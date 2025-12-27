@@ -35,8 +35,7 @@ func _ready():
 		inventory_component.set_data(actor_data)
 	
 	# Get dodge component reference
-	if has_node("DodgeComponent"):
-		dodge_component = $DodgeComponent as DodgeComponent
+	dodge_component = get_node_or_null("DodgeComponent") as DodgeComponent
 	
 	# Setup dodge component if present
 	if dodge_component:
@@ -44,6 +43,8 @@ func _ready():
 		dodge_component.dodge_ended.connect(_on_dodge_ended)
 		dodge_component.dodge_failed.connect(_on_dodge_failed)
 		dodge_component.invincibility_ended.connect(_on_invincibility_ended)
+	else:
+		push_warning("Player: DodgeComponent not found - dodge functionality disabled")
 	
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")

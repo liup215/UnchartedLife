@@ -37,11 +37,15 @@ func _ready():
 		push_error("DodgeComponent must be child of CharacterBody2D")
 		return
 	
-	# Find metabolism component
+	# Find metabolism component - required for ATP cost
 	if actor.has_node("AttributeComponent/MetabolismComponent"):
 		metabolism_component = actor.get_node("AttributeComponent/MetabolismComponent")
-	elif actor.get("attribute_component"):
+	elif actor.get("attribute_component") and actor.attribute_component:
 		metabolism_component = actor.attribute_component.metabolism_component
+	
+	# Warn if metabolism component not found - dodge won't work without it
+	if not metabolism_component:
+		push_warning("DodgeComponent: MetabolismComponent not found - dodge will not work")
 
 func _physics_process(delta: float):
 	# Update dodge timer
@@ -78,7 +82,7 @@ func attempt_dodge(direction: Vector2) -> bool:
 	
 	# Check ATP availability
 	if not metabolism_component:
-		push_error("Metabolism component not found")
+		push_error("Metabolism component not found - cannot perform dodge")
 		dodge_failed.emit("No metabolism component")
 		return false
 	
@@ -164,8 +168,16 @@ func _create_afterimage():
 		return
 	
 	# Validate sprite data before accessing
-	if not sprite.sprite_frames or sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
-		push_warning("Cannot create afterimage: invalid sprite data")
+	if not sprite.sprite_frames:
+		push_warning("Cannot create afterimage: sprite has no sprite_frames")
+		return
+	
+	if not sprite.animation or sprite.animation == "":
+		push_warning("Cannot create afterimage: sprite has no valid animation")
+		return
+	
+	if sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
+		push_warning("Cannot create afterimage: animation has no frames")
 		return
 	
 	# Get parent for afterimage
