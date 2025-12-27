@@ -39,19 +39,68 @@
   - Added defensive `is_playing()` check in actor animation logic
   - Created animation testing documentation and debug guides
 
-### Previous Achievements
+- **Advanced Combat System Implementation**:
+  - **Combo Attack System**: Light attacks with 3-stage combo progression (damage, armor break, stagger scaling)
+  - **Heavy Charge System**: Hold-to-charge mechanic with 5 charge levels (2.0x to 5.0x damage multipliers)
+  - **ChargeComponent**: Universal charge management supporting both hit accumulation and hold-to-charge
+  - **ChargeDisplay UI**: Real-time charge level display in bottom-right corner with color-coded feedback
+  - **ComboAttackData & HeavyAttackData**: Resource-based attack configuration per weapon
+  - **DamageCalculator**: Comprehensive damage calculation considering all combat factors
+  - **ToughnessComponent**: Complete toughness/stagger system (韧性/僵直)
+  - **Stagger Mechanics**: 2-second duration with input lockout, movement lock, and visual feedback
+  - **Weapon-Specific Configs**: Each weapon can have unique combo sequences and charge properties
+  - Complete integration with existing combat systems (projectiles, hit detection, visual effects)
+
+- **Map/Level Switching System**:
+  - **MapData Resource**: Define maps with chunk scenes, spawn positions, and metadata
+  - **Multi-Map Support**: Switch between different maps with automatic chunk loading/unloading
+  - **Default Initial Map**: "main_world" configured as default map for new games
+  - **Map-Specific Saves**: Current map ID and player position saved/loaded correctly
+  - **Vehicle-Map Binding**: Vehicles assigned to specific maps with `assigned_map_id` property
+  - **Portal System**: Example portal implementation for map transitions
+  - **EventBus Integration**: `map_changed` signal for system notifications
+  - Complete documentation in MAP_SYSTEM.md and MAP_SYSTEM_CN.md
+
+### Previous Achievements (Earlier 2025)
 - **Map System Refactor**: `MapManager` now loads chunks dynamically using `WorldData` resource. No more hardcoded `res://world/chunk_*.tscn` paths.
 - **Inventory System**: Implemented comprehensive inventory management with `InventoryComponent`, `InventoryData` resources, and tabbed UI with item details panel.
 - **Equipment System**: Added equipment slots (Weapon/Armor/Gloves/Helmet/Boots) with visual display of equipped items and stats.
 - **Dialogue System**: Complete NPC dialogue system with branching choices, conditions, quest integration, and typewriter effect.
 - **Quest System**: Hierarchical quest/objective system with runtime state management and event-based tracking.
-- **Combat Enhancement**: Unified weapon system supporting both actors and vehicles, with charge mechanics and combo systems.
 
 ## Next Steps
-- Expand BioBlitz question bank with diverse biology topics
-- Implement biology-themed enemy varieties using Resource-driven system
-- Add vehicle bionic modifications based on animal adaptations
-- Create educational tooltips for biological systems
-- Continue expanding AI behavior library with more composable behaviors
-- Performance profiling and optimization for save/load system
-- Add hints system for BioBlitz questions tied to ATP cost
+- **BioBlitz Enhancement:**
+  - Expand question bank with diverse biology topics
+  - Add different question types (multiple choice, fill-in-blank, matching)
+  - Implement difficulty progression
+  - Add hints system tied to ATP cost
+
+- **Biology Content Integration:**
+  - Create educational tooltips for all biological systems
+  - Design biology-themed enemies (viruses, bacteria, mutated cells)
+  - Build ecology restoration mini-game
+  - Implement genetic modification lab interface
+
+- **Vehicle Bionic Modifications:**
+  - Create bionic modification system based on animal adaptations
+  - Each modification teaches evolutionary biology concepts
+  - Visual representation of modifications on vehicle
+
+- **Combat System Polish:**
+  - Balance combo progression and charge levels
+  - Tune toughness/stagger mechanics
+  - Add more visual effects for combat feedback
+  - Create weapon-specific combo animations
+  - Implement elemental damage type effectiveness
+
+- **Map & Level Design:**
+  - Create additional maps with distinct biomes
+  - Design portal/transition systems between maps
+  - Add map-specific enemies and challenges
+  - Implement minimap and map discovery system
+
+- **Performance & Polish:**
+  - Profile combat system performance
+  - Optimize damage calculation for large battles
+  - Add audio feedback for combat actions
+  - Improve visual effects and screen shake

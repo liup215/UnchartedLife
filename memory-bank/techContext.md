@@ -200,7 +200,150 @@ if main_menu_ref and "menu_container" in main_menu_ref:
     main_menu_ref.menu_container.visible = false
 ```
 
-## 10. Future Technical Enhancements
+## 10. Combat System Architecture
+
+### 10.1. Combat Component Design
+- **ChargeComponent:** Universal charge management system
+  - Light attack hit accumulation
+  - Heavy attack hold-to-charge
+  - 5-level charge progression (0.5s per level)
+  - Signal-based UI updates
+  
+- **DamageCalculator:** Static class for comprehensive damage calculation
+  - Considers attacker stats (attack, weapon damage, multipliers)
+  - Considers defender stats (defense, equipment, resistances)
+  - Armor break reduces effective defense
+  - Damage type effectiveness system
+  - Returns detailed breakdown for debugging
+  
+- **ToughnessComponent:** Stagger/poise system management
+  - Toughness tracking with passive regeneration (10/sec)
+  - Stagger state at 0 toughness (2-second duration)
+  - Input lockout and AI suspension during stagger
+  - Visual feedback (red tint, flash effects)
+  - Auto-recovery restores 30% toughness
+
+### 10.2. Data-Driven Combat Configuration
+```gdscript
+# ComboAttackData Resource
+- damage_multiplier: float     # 1.0x, 1.3x, 1.8x progression
+- armor_break_power: float     # 10, 20, 40 progression
+- stagger_power: float         # 15, 25, 50 progression
+- charge_gain: int             # Charge gained on hit
+- animation_name: String       # Combo stage animation
+- combo_window: float          # Time window for next hit
+
+# HeavyAttackData Resource
+- required_charge_level: int   # 1, 3, 5 levels
+- damage_multiplier: float     # 2.0x, 3.5x, 5.0x progression
+- armor_break_power: float     # 50, 75, 100 progression
+- stagger_power: float         # High stagger on heavy attacks
+- animation_name: String       # Heavy attack animation
+- effect_scene: PackedScene    # Visual effects
+- recovery_time: float         # Post-attack cooldown
+```
+
+### 10.3. Damage Calculation Formula
+```
+Step 1: Base = (Weapon Damage + Attack) × Stage Multiplier
+Step 2: With Bonuses = Base × Attacker Bonus
+Step 3: Effective Defense = Defense × (1 - Armor Break / 100)
+Step 4: After Defense = With Bonuses × (100 / (100 + Effective Defense))
+Step 5: Final = After Defense × Defender Reduction × Type Effectiveness
+Step 6: Toughness = Final × 0.5 × (1 + Stagger Power / 100)
+```
+
+### 10.4. Combat UI Integration
+- **ChargeDisplay:** Bottom-right corner (anchored 1.0, 1.0)
+  - Progress bar showing charge level (0-5)
+  - Label showing "Level X / 5"
+  - Color-coded: White → Yellow → Orange → Red
+  - Scale animation on level up
+  - Flash effect at max charge
+
+## 11. Map/Level System Architecture
+
+### 11.1. MapData Resource System
+```gdscript
+class_name MapData extends Resource
+
+@export var map_id: String                    # Unique identifier
+@export var map_name: String                  # Display name
+@export var chunk_scenes: Dictionary          # Vector2i -> scene path
+@export var default_spawn_position: Vector2   # Player spawn
+@export var use_chunk_loading: bool = true    # Loading strategy
+```
+
+### 11.2. Multi-Map Management
+- **MapManager Autoload:** Central map system controller
+  - `available_maps: Dictionary[String, MapData]` - All registered maps
+  - `current_map_id: String` - Active map identifier
+  - `DEFAULT_MAP_ID = "main_world"` - Initial map for new games
+  
+- **Map Switching API:**
+  ```gdscript
+  MapManager.switch_to_map(map_id: String, spawn_position: Vector2) -> bool
+  MapManager.register_map(map_data: MapData) -> void
+  MapManager.get_map_data(map_id: String) -> MapData
+  ```
+  
+- **Map Transition Flow:**
+  1. Unload all current chunks
+  2. Update current_map_id and current_map_data
+  3. Load chunks for new map (if chunk-based)
+  4. Emit EventBus.map_changed signal
+  5. Update vehicle visibility based on map bindings
+
+### 11.3. Vehicle-Map Binding
+```gdscript
+# Vehicle properties
+@export var assigned_map_id: String = ""  # Empty = all maps
+
+# Visibility logic
+func _update_visibility_for_current_map():
+    if assigned_map_id.is_empty():
+        visible = true
+    else:
+        visible = (MapManager.current_map_id == assigned_map_id)
+```
+
+### 11.4. Map Persistence
+- **Save Data Structure:**
+  ```gdscript
+  # MapManager
+  {
+    "current_map_id": "main_world",
+    "loaded_chunks": [Vector2i(0, 0), Vector2i(1, 0)]
+  }
+  
+  # Vehicle
+  {
+    "assigned_map_id": "main_world",
+    "position": {"x": 640, "y": 360},
+    "visible": true
+  }
+  ```
+  
+- **Load Sequence:**
+  1. MapManager loads current_map_id from save
+  2. Switches to saved map
+  3. Vehicles restore assigned_map_id
+  4. Vehicle visibility updated based on current map
+
+### 11.5. Portal/Transition System
+```gdscript
+# Example portal implementation
+extends Area2D
+@export var target_map_id: String
+@export var target_spawn_position: Vector2
+
+func _on_body_entered(body: Node2D):
+    if body.is_in_group("player"):
+        MapManager.switch_to_map(target_map_id, target_spawn_position)
+        body.global_position = target_spawn_position
+```
+
+## 12. Future Technical Enhancements
 
 ### 10.1. Advanced Biology Simulations
 - Gene expression visualization
@@ -236,3 +379,9 @@ if main_menu_ref and "menu_container" in main_menu_ref:
 12. **Deferred Loading:** Wait for scene initialization before restoring state
 13. **Animation Motion First:** Place motion frames at start of sequences
 14. **NodePath to String:** Convert for save data to avoid type issues
+15. **Combat Data Resources:** Use ComboAttackData and HeavyAttackData for weapon configs
+16. **Damage Calculation:** Always use DamageCalculator for consistency
+17. **Toughness Integration:** Add ToughnessComponent to all combat entities
+18. **Map Data Resources:** Define maps using MapData resources
+19. **Vehicle Binding:** Assign vehicles to maps via assigned_map_id
+20. **Map Transitions:** Use EventBus.map_changed for system coordination

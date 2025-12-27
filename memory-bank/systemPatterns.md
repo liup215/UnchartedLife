@@ -409,7 +409,100 @@ Each weapon can have unique combo sequences and heavy attack properties:
 - Timer-based player discovery for performance
 - Signal-based updates from ChargeComponent
 
-## 12. State Restoration Patterns
+## 12. Map System Architecture
+
+### MapData Resource System
+Maps are defined as data resources with configurable properties:
+
+#### MapData Structure
+```gdscript
+class_name MapData extends Resource
+
+@export var map_id: String                    # Unique identifier (e.g., "main_world")
+@export var map_name: String                  # Display name
+@export var chunk_scenes: Dictionary          # Vector2i -> scene path mapping
+@export var default_spawn_position: Vector2   # Player spawn point
+@export var use_chunk_loading: bool = true    # Chunk-based vs full map loading
+```
+
+#### Multi-Map Management
+```gdscript
+# MapManager (Autoload)
+var available_maps: Dictionary[String, MapData]  # All registered maps
+var current_map_id: String                        # Active map
+var current_map_data: MapData                     # Active map data
+
+# Register new map
+func register_map(map_data: MapData) -> void:
+    available_maps[map_data.map_id] = map_data
+
+# Switch between maps
+func switch_to_map(map_id: String, spawn_position: Vector2 = Vector2.ZERO) -> bool:
+    # 1. Unload all current chunks
+    # 2. Update current_map_id and current_map_data
+    # 3. Load chunks for new map
+    # 4. Emit EventBus.map_changed signal
+    # 5. Return success/failure
+```
+
+### Vehicle-Map Binding
+Vehicles can be assigned to specific maps:
+
+```gdscript
+# In Vehicle scene
+@export var assigned_map_id: String = ""  # Empty = available on all maps
+
+func _ready():
+    EventBus.map_changed.connect(_on_map_changed)
+    _update_visibility_for_current_map()
+
+func _on_map_changed(new_map_id: String, _spawn_pos: Vector2):
+    _update_visibility_for_current_map()
+
+func _update_visibility_for_current_map():
+    if assigned_map_id.is_empty():
+        visible = true  # Available on all maps
+    else:
+        visible = (MapManager.current_map_id == assigned_map_id)
+```
+
+### Portal/Transition Pattern
+```gdscript
+# Example portal implementation
+extends Area2D
+@export var target_map_id: String = "dungeon_1"
+@export var target_spawn_position: Vector2 = Vector2(640, 360)
+
+func _on_body_entered(body: Node2D):
+    if body.is_in_group("player"):
+        if MapManager.switch_to_map(target_map_id, target_spawn_position):
+            body.global_position = target_spawn_position
+```
+
+### Map-Specific Save/Load
+```gdscript
+# MapManager save/load
+func save_data() -> Dictionary:
+    return {
+        "current_map_id": current_map_id,
+        "loaded_chunks": _serialize_loaded_chunks()
+    }
+
+func load_data(data: Dictionary):
+    current_map_id = data.get("current_map_id", DEFAULT_MAP_ID)
+    # Restore chunks after scene ready
+    chunks_to_restore = data.get("loaded_chunks", [])
+
+# Vehicle save/load includes map binding
+func save_data() -> Dictionary:
+    return {
+        "assigned_map_id": assigned_map_id,
+        "position": {"x": global_position.x, "y": global_position.y},
+        # ... other state
+    }
+```
+
+## 13. State Restoration Patterns
 
 ### Vehicle Re-entry Pattern
 When loading a save where player is in vehicle:
@@ -450,3 +543,7 @@ func reset_for_new_game() -> void:
 16. **Combat data-driven** - combo/heavy attacks configured per weapon
 17. **Comprehensive damage** - use DamageCalculator for all combat
 18. **Toughness management** - integrate ToughnessComponent for stagger mechanics
+19. **Map data resources** - define maps using MapData resources
+20. **Vehicle-map binding** - assign vehicles to specific maps via assigned_map_id
+21. **Map transitions** - use EventBus.map_changed for system notifications
+22. **Map-specific saves** - persist current_map_id in save data
