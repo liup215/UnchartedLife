@@ -260,6 +260,23 @@ func reset_combo():
 	combo_stage = 0
 	emit_signal("combo_updated", combo_counter, combo_stage)
 
+## Helper method to find appropriate heavy attack data for a charge level
+func _get_heavy_attack_data(weapon_data: WeaponData, effective_charge: float) -> HeavyAttackData:
+	var charge_level_tier = max(1, int(ceil(effective_charge)))
+	var heavy_data: HeavyAttackData = null
+	
+	for ha in weapon_data.heavy_attacks:
+		if ha.charge_level <= charge_level_tier:
+			heavy_data = ha
+		else:
+			break
+	
+	# Use first tier if no appropriate data found
+	if not heavy_data and weapon_data.heavy_attacks.size() > 0:
+		heavy_data = weapon_data.heavy_attacks[0]
+	
+	return heavy_data
+
 ## Start charging heavy attack
 func start_heavy_attack_charge():
 	if not charge_component:
@@ -296,18 +313,7 @@ func release_heavy_attack():
 		return
 	
 	# Find appropriate heavy attack data for charge level
-	# Use ceiling to determine which heavy attack tier to use, with minimum of 1
-	var charge_level_tier = max(1, int(ceil(effective_charge)))
-	var heavy_data: HeavyAttackData = null
-	for ha in weapon_data.heavy_attacks:
-		if ha.charge_level <= charge_level_tier:
-			heavy_data = ha
-		else:
-			break
-	
-	# Use first tier if no appropriate data found
-	if not heavy_data and weapon_data.heavy_attacks.size() > 0:
-		heavy_data = weapon_data.heavy_attacks[0]
+	var heavy_data = _get_heavy_attack_data(weapon_data, effective_charge)
 	
 	if not heavy_data:
 		print("[COMBAT] No heavy attack data found for charge level: ", effective_charge)
@@ -388,12 +394,10 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 		damage_multiplier = 1.0 + (last_heavy_charge * DAMAGE_CHARGE_SCALING_FACTOR)
 		
 		# Find appropriate heavy attack data for additional stats
-		# Use max(1, ...) to ensure we always get at least tier 1 stats
-		var charge_level_tier = max(1, int(ceil(last_heavy_charge)))
-		for ha in weapon_data.heavy_attacks:
-			if ha.charge_level <= charge_level_tier:
-				armor_break = ha.armor_break_power
-				stagger_power = ha.stagger_power
+		var heavy_data = _get_heavy_attack_data(weapon_data, last_heavy_charge)
+		if heavy_data:
+			armor_break = heavy_data.armor_break_power
+			stagger_power = heavy_data.stagger_power
 		
 		print("[COMBAT] Heavy attack hit - Charge: %.2f, Multiplier: %.2fx" % [last_heavy_charge, damage_multiplier])
 		
