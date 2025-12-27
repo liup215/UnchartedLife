@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dodge_comp_uid_123"]
+
+[ext_resource type="Script" path="res://features/components/dodge_component.gd" id="1_dodge_script"]
+
+[node name="DodgeComponent" type="Node"]
+script = ExtResource("1_dodge_script")
+dodge_distance = 150.0
+dodge_duration = 0.3
+dodge_atp_cost = 30.0
+invincibility_duration = 0.4
+cooldown_duration = 0.5

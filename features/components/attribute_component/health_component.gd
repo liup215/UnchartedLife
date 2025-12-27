@@ -9,6 +9,7 @@ signal died
 
 var max_health: int = 100
 var current_health: int = 100
+var is_invincible: bool = false  # Invincibility flag for dodge and other effects
 
 func _ready():
 	pass
@@ -35,6 +36,10 @@ func set_current_health(value: int):
 		emit_signal("died")
 
 func take_damage(amount: int):
+	# Check invincibility flag
+	if is_invincible:
+		return  # No damage taken when invincible
+	
 	# set_current_health(data_source.current_health - amount)
 	set_current_health(current_health - amount)
 
@@ -63,3 +68,11 @@ func get_current_health() -> int:
 func get_max_health() -> int:
 	# return data_source.max_health
 	return max_health
+
+func set_invincible(invincible: bool):
+	"""Set invincibility state"""
+	is_invincible = invincible
+
+func get_is_invincible() -> bool:
+	"""Get invincibility state"""
+	return is_invincible
