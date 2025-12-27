@@ -2,11 +2,13 @@ extends Control
 
 @onready var intro_btn: Button = $VBoxContainer/IntroButton
 @onready var more_btn: Button = $VBoxContainer/MoreButton
+@onready var tts_btn: Button = $VBoxContainer/TTSButton
 @onready var reset_btn: Button = $VBoxContainer/ResetButton
 @onready var status_label: Label = $VBoxContainer/StatusLabel
 
 @export var intro_data: DialogueData
 @export var more_data: DialogueData
+@export var tts_demo_data: DialogueData
 
 func _ready() -> void:
 	
@@ -15,15 +17,24 @@ func _ready() -> void:
 		DialogueManager.register_dialogue(intro_data)
 	if more_data:
 		DialogueManager.register_dialogue(more_data)
+	if tts_demo_data:
+		DialogueManager.register_dialogue(tts_demo_data)
 		
 	# Connect signals
 	intro_btn.pressed.connect(_on_intro_pressed)
 	more_btn.pressed.connect(_on_more_pressed)
+	tts_btn.pressed.connect(_on_tts_pressed)
 	reset_btn.pressed.connect(_on_reset_pressed)
 	
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.dialogue_choice_made.connect(_on_choice_made)
+	
+	# Display TTS availability status
+	if TTSManager and TTSManager.is_available():
+		status_label.text = "Ready (TTS Available)"
+	else:
+		status_label.text = "Ready (TTS Not Available)"
 
 func _on_intro_pressed() -> void:
 	if intro_data:
@@ -34,6 +45,11 @@ func _on_more_pressed() -> void:
 	if more_data:
 		DialogueManager.start_dialogue(more_data, "test_npc")
 		status_label.text = "Started More"
+
+func _on_tts_pressed() -> void:
+	if tts_demo_data:
+		DialogueManager.start_dialogue(tts_demo_data, "test_npc")
+		status_label.text = "Started TTS Demo"
 
 func _on_reset_pressed() -> void:
 	# Resetting internal manager state isn't directly exposed, 

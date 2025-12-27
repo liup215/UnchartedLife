@@ -54,5 +54,12 @@ scroll_active = false
 visible = false
 layout_mode = 2
 
+[node name="ContinuePrompt" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Press Space to Continue..."
+horizontal_alignment = 2
+
 [node name="TypingTimer" type="Timer" parent="."]
 wait_time = 0.5
