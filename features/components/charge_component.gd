@@ -51,7 +51,8 @@ func start_heavy_charge():
 ## Returns: effective charge level (e.g., 2.5 means level 2 with 50% progress to level 3)
 func stop_heavy_charge() -> float:
 	is_charging_heavy = false
-	var effective_charge = float(current_charge_level) + (current_charge_progress / progress_per_level)
+	var progress_ratio = current_charge_progress / progress_per_level if progress_per_level > 0 else 0.0
+	var effective_charge = float(current_charge_level) + progress_ratio
 	print("[CHARGE] Released heavy attack with charge level: %.2f (level %d, %.1f%% progress)" % [effective_charge, current_charge_level, current_charge_progress])
 	return effective_charge
 
