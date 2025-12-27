@@ -323,7 +323,7 @@ func release_heavy_attack():
 	
 	# Calculate ATP cost based on effective charge (scales with partial charge)
 	var base_atp_cost = weapon.get_atp_cost()
-	# Base cost for uncharged attack + scaling based on effective charge
+	# Multiplier starts at 1.0x and scales up based on charge (1.0x at charge 0, 3.5x at charge 5)
 	var charge_multiplier = 1.0 + (effective_charge * ATP_CHARGE_SCALING_FACTOR)
 	var total_atp_cost = base_atp_cost * charge_multiplier * heavy_data.atp_cost_multiplier
 	
