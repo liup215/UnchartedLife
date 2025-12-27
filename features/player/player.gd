@@ -265,15 +265,17 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 		
 		# Apply permanent HP damage at intervals
 		if atp_depletion_timer >= ATP_DEPLETION_DAMAGE_INTERVAL:
-			# Apply permanent damage
+			# Apply permanent damage only if we have more than 1 HP
 			if attribute_component.health_component.get_current_health() > 1:
 				# Reduce max_health permanently (this damage cannot be healed)
-				var new_max_health = attribute_component.health_component.get_max_health() - ATP_DEPLETION_DAMAGE_AMOUNT
-				new_max_health = max(new_max_health, 1)  # Keep at least 1 HP
+				var current_max = attribute_component.health_component.get_max_health()
+				var current_hp = attribute_component.health_component.get_current_health()
 				
-				# Also reduce current health
-				var new_current_health = attribute_component.health_component.get_current_health() - ATP_DEPLETION_DAMAGE_AMOUNT
-				new_current_health = max(new_current_health, 1)  # Keep at least 1 HP to prevent death
+				var new_max_health = max(current_max - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
+				var new_current_health = max(current_hp - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
+				
+				# Ensure current health doesn't exceed new max health
+				new_current_health = min(new_current_health, new_max_health)
 				
 				# Apply the permanent damage
 				attribute_component.health_component.set_max_health(new_max_health, false)
@@ -281,8 +283,8 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 				
 				print("[METABOLISM] ATP depletion! Permanent HP damage: -", ATP_DEPLETION_DAMAGE_AMOUNT, " (Max HP now: ", new_max_health, ")")
 			
-			# Reset timer for next damage tick
-			atp_depletion_timer -= ATP_DEPLETION_DAMAGE_INTERVAL
+			# Reset timer, preserving fractional time for precise timing
+			atp_depletion_timer = fmod(atp_depletion_timer, ATP_DEPLETION_DAMAGE_INTERVAL)
 	else:
 		# ATP is available, reset the depletion timer
 		atp_depletion_timer = 0.0
