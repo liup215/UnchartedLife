@@ -224,7 +224,8 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 	attribute_component.metabolism_component.consume_atp(total_atp_consumption)
 
 	# 2. Glucose-Based ATP Recovery
-	# ATP should recover toward max when below max, independent of consumption rate
+	# ATP recovers toward max at a fixed production rate, independent of consumption rate
+	# However, glucose is still consumed based on the conversion rate
 	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
 		# Use the production rate from metabolism component for recovery
 		var atp_needed = attribute_component.metabolism_component.get_max_atp() - attribute_component.metabolism_component.get_current_atp()
@@ -234,18 +235,17 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
+			var current_glucose = attribute_component.metabolism_component.get_current_glucose()
 			
 			# Check if we have enough glucose
-			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
+			if current_glucose >= glucose_for_atp:
 				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
 				attribute_component.metabolism_component.recover_atp(atp_to_recover)
-			else:
+			elif current_glucose > 0:
 				# Not enough glucose - recover what we can with remaining glucose
-				var remaining_glucose = attribute_component.metabolism_component.get_current_glucose()
-				if remaining_glucose > 0:
-					var partial_atp = remaining_glucose * conversion_rate
-					attribute_component.metabolism_component.consume_glucose(remaining_glucose)
-					attribute_component.metabolism_component.recover_atp(partial_atp)
+				var partial_atp = current_glucose * conversion_rate
+				attribute_component.metabolism_component.consume_glucose(current_glucose)
+				attribute_component.metabolism_component.recover_atp(partial_atp)
 
 	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
 	# This continues even when ATP is full, representing basic cellular maintenance

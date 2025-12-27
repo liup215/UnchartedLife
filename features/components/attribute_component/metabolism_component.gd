@@ -186,6 +186,16 @@ func from_dict(data: Dictionary) -> void:
 	atp_production_rate = data.get("atp_production_rate", atp_production_rate)
 	atp_conversion_rate = data.get("atp_conversion_rate", atp_conversion_rate)
 	
+	# Validate loaded values
+	current_atp = clamp(current_atp, 0.0, max_atp)
+	current_glucose = clamp(current_glucose, 0.0, max_glucose)
+	max_atp = max(max_atp, 1.0)
+	max_glucose = max(max_glucose, 1.0)
+	atp_consume_rate = max(atp_consume_rate, 0.0)
+	glucose_consume_rate = max(glucose_consume_rate, 0.0)
+	atp_production_rate = max(atp_production_rate, 0.0)
+	atp_conversion_rate = max(atp_conversion_rate, 0.1)  # Prevent division by zero
+	
 	# Emit signals to update UI after loading
 	atp_changed.emit(current_atp, max_atp)
 	glucose_changed.emit(current_glucose, max_glucose)
