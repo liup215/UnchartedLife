@@ -349,5 +349,5 @@ Dodge (instant):       30.0 ATP per dodge
 
 
 ## Change History
-- **2024-12-27**: Created test guide for metabolism system fix
-- **2024-12-27**: Fixed ATP movement consumption bug (velocity timing issue)
+- Initial version: Created test guide for metabolism system fix
+- v1.0: Fixed ATP movement consumption bug (velocity timing issue)

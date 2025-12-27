@@ -85,9 +85,9 @@ func _handle_on_foot_logic(delta: float):
 	if is_staggered or is_dodging:
 		return
 	
-	# Handle dodge input
+	# Handle dodge input (reuse direction variable from above)
 	if Input.is_action_just_pressed("dodge") and dodge_component:
-		var dodge_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		var dodge_direction = direction  # Use the direction already calculated
 		# If no input, use last direction or velocity direction
 		if dodge_direction.length() == 0:
 			if velocity.length() > 0:
