@@ -2,8 +2,8 @@
 extends Node
 class_name MetabolismComponent
 
-signal atp_changed(current_atp: float, max_atp: int)
-signal glucose_changed(current_glucose: float, max_glucose: int)
+signal atp_changed(current_atp: float, max_atp: float)
+signal glucose_changed(current_glucose: float, max_glucose: float)
 signal atp_depleted()
 signal glucose_depleted()
 
@@ -15,8 +15,8 @@ var current_atp: float = 0.0
 var current_glucose: float = 0.0
 
 # # 配置参数（初始化时从 data_source 读取）
-var max_atp: int = 100
-var max_glucose: int = 100
+var max_atp: float = 100.0
+var max_glucose: float = 100.0
 var atp_consume_rate: float = 1.0
 var glucose_consume_rate: float = 0.1
 var atp_production_rate: float = 5.0
@@ -34,6 +34,10 @@ func set_actor_data(data: Resource):
 	glucose_consume_rate = data.glucose_consume_rate
 	atp_production_rate = data.atp_production_rate
 	atp_conversion_rate = data.atp_conversion_rate
+	
+	# Emit initial signals to update UI
+	atp_changed.emit(current_atp, max_atp)
+	glucose_changed.emit(current_glucose, max_glucose)
 
 func consume_atp(amount: float) -> bool:
 	if current_atp >= amount:
@@ -139,7 +143,7 @@ func get_current_atp() -> float:
 	# return data_source.current_atp
 	return current_atp
 
-func get_max_atp() -> int:
+func get_max_atp() -> float:
 	# return data_source.max_atp
 	return max_atp
 
@@ -147,7 +151,7 @@ func get_current_glucose() -> float:
 	# return data_source.current_glucose
 	return current_glucose
 
-func get_max_glucose() -> int:
+func get_max_glucose() -> float:
 	# return data_source.max_glucose
 	return max_glucose
 
@@ -158,3 +162,40 @@ func get_atp_conversion_rate() -> float:
 func get_glucose_consume_rate() -> float:
 	# return data_source.glucose_consume_rate
 	return glucose_consume_rate
+
+# Serialization methods for save/load
+func to_dict() -> Dictionary:
+	return {
+		"current_atp": current_atp,
+		"current_glucose": current_glucose,
+		"max_atp": max_atp,
+		"max_glucose": max_glucose,
+		"atp_consume_rate": atp_consume_rate,
+		"glucose_consume_rate": glucose_consume_rate,
+		"atp_production_rate": atp_production_rate,
+		"atp_conversion_rate": atp_conversion_rate
+	}
+
+func from_dict(data: Dictionary) -> void:
+	current_atp = data.get("current_atp", current_atp)
+	current_glucose = data.get("current_glucose", current_glucose)
+	max_atp = data.get("max_atp", max_atp)
+	max_glucose = data.get("max_glucose", max_glucose)
+	atp_consume_rate = data.get("atp_consume_rate", atp_consume_rate)
+	glucose_consume_rate = data.get("glucose_consume_rate", glucose_consume_rate)
+	atp_production_rate = data.get("atp_production_rate", atp_production_rate)
+	atp_conversion_rate = data.get("atp_conversion_rate", atp_conversion_rate)
+	
+	# Validate loaded values
+	current_atp = clamp(current_atp, 0.0, max_atp)
+	current_glucose = clamp(current_glucose, 0.0, max_glucose)
+	max_atp = max(max_atp, 1.0)
+	max_glucose = max(max_glucose, 1.0)
+	atp_consume_rate = max(atp_consume_rate, 0.0)
+	glucose_consume_rate = max(glucose_consume_rate, 0.0)
+	atp_production_rate = max(atp_production_rate, 0.0)
+	atp_conversion_rate = max(atp_conversion_rate, 0.1)  # Prevent division by zero
+	
+	# Emit signals to update UI after loading
+	atp_changed.emit(current_atp, max_atp)
+	glucose_changed.emit(current_glucose, max_glucose)

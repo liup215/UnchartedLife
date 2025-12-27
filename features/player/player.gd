@@ -9,6 +9,12 @@ enum PlayerState {
 	IN_VEHICLE      # Inside a vehicle
 }
 
+# Constants
+const MOVEMENT_INPUT_THRESHOLD: float = 0.1  # Minimum input magnitude to consider as movement
+const ATP_DEPLETION_DAMAGE_AMOUNT: int = 1  # HP damage per interval when ATP is 0
+const ATP_DEPLETION_DAMAGE_INTERVAL: float = 1.0  # Damage applied every 1 second
+const ATP_DEPLETION_THRESHOLD: float = 0.001  # Consider ATP depleted if below this value
+
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
 var current_vehicle: Node2D = null  # Will be Vehicle when available
@@ -17,6 +23,9 @@ var interaction_ui_visible: bool = false
 
 # Dodge component (initialized in _ready)
 var dodge_component: DodgeComponent = null
+
+# ATP depletion tracking
+var atp_depletion_timer: float = 0.0  # Time ATP has been at 0
 
 func get_current_state() -> int:
 	return current_state
@@ -68,9 +77,12 @@ func _physics_process(delta: float) -> void:
 
 func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes (Always run, even during stagger/dodge) ---
+	# Get movement input once for metabolism and movement logic (performance optimization)
+	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
 	# Determine if sprinting for metabolism calculation
 	var is_sprinting = Input.is_action_pressed("shift")
-	_process_metabolism(delta, is_sprinting)
+	_process_metabolism(delta, is_sprinting, has_movement_input)
 	
 	# Check if staggered - if so, no input allowed but metabolism continues
 	var is_staggered = attribute_component and attribute_component.toughness_component and attribute_component.toughness_component.is_in_stagger()
@@ -82,9 +94,9 @@ func _handle_on_foot_logic(delta: float):
 	if is_staggered or is_dodging:
 		return
 	
-	# Handle dodge input
+	# Handle dodge input (reuse direction variable from above)
 	if Input.is_action_just_pressed("dodge") and dodge_component:
-		var dodge_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		var dodge_direction = direction  # Use the direction already calculated
 		# If no input, use last direction or velocity direction
 		if dodge_direction.length() == 0:
 			if velocity.length() > 0:
@@ -94,7 +106,7 @@ func _handle_on_foot_logic(delta: float):
 		dodge_component.attempt_dodge(dodge_direction)
 	
 	# --- Input and Movement ---
-	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# Note: direction was calculated above for metabolism to avoid duplicate Input.get_vector() calls
 
 	# Update last direction if moving
 	if direction.length() > 0:
@@ -200,48 +212,74 @@ func set_in_vehicle_state(in_vehicle: bool):
 			child.disabled = in_vehicle
 	# The player's physics process is not disabled, so AI can still track them.
 
-func _process_metabolism(delta: float, is_sprinting: bool = false):
+func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_input: bool = false):
 	# 1. ATP Consumption (Rest + Movement + Sprinting)
 	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
 	var movement_atp_consumption = 0.0
 	var sprint_atp_consumption = 0.0
 
-	# Check if player is moving (has input)
-	var is_moving = velocity.length() > 10.0  # Threshold to detect movement
-	if is_moving:
+	# Use the has_movement_input parameter passed from input detection
+	if has_movement_input:
 		movement_atp_consumption = 3.0 * delta  # Additional 3 ATP/sec during movement
 
 	# Extra consumption when sprinting
-	if is_sprinting:
+	if is_sprinting and has_movement_input:  # Only consume sprint ATP if actually moving
 		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
 
 	var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
 	attribute_component.metabolism_component.consume_atp(total_atp_consumption)
 
-	# 2. Glucose-Based ATP Recovery (matches actual ATP consumption rate)
+	# 2. Glucose-Based ATP Recovery
+	# ATP recovers toward max at a fixed production rate, independent of consumption rate
+	# However, glucose is still consumed based on the conversion rate
 	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
-		# ATP recovery should match the consumption rate to maintain balance
-		# This ensures glucose consumption reflects the actual energy demand
-		var atp_to_recover = total_atp_consumption  # Match the consumption rate
-
+		# Use the production rate from metabolism component for recovery
+		var atp_needed = attribute_component.metabolism_component.get_max_atp() - attribute_component.metabolism_component.get_current_atp()
+		var atp_to_recover = min(attribute_component.metabolism_component.atp_production_rate * delta, atp_needed)
+		
 		# Calculate the glucose cost for that much ATP
 		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
-
+			var current_glucose = attribute_component.metabolism_component.get_current_glucose()
+			
 			# Check if we have enough glucose
-			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
+			if current_glucose >= glucose_for_atp:
 				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
 				attribute_component.metabolism_component.recover_atp(atp_to_recover)
-			else:
-				# Out of glucose! Cannot recover ATP - this will lead to ATP depletion
-				pass
+			elif current_glucose > 0:
+				# Not enough glucose - recover what we can with remaining glucose
+				var partial_atp = current_glucose * conversion_rate
+				attribute_component.metabolism_component.consume_glucose(current_glucose)
+				attribute_component.metabolism_component.recover_atp(partial_atp)
 
 	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
 	# This continues even when ATP is full, representing basic cellular maintenance
 	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.3  # Reduced to 30% of original rate
 	if attribute_component.metabolism_component.get_current_glucose() > 0:
 		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
+	
+	# 4. ATP Depletion Damage (damages current health when ATP stays at 0)
+	# This damage does NOT auto-recover, but can be healed with healing items
+	if attribute_component.metabolism_component.get_current_atp() < ATP_DEPLETION_THRESHOLD:
+		atp_depletion_timer += delta
+		
+		# Apply HP damage at intervals
+		if atp_depletion_timer >= ATP_DEPLETION_DAMAGE_INTERVAL:
+			# Damage current health only if we have more than 1 HP
+			var current_hp = attribute_component.health_component.get_current_health()
+			if current_hp > 1:
+				# Reduce current_health (not max_health!)
+				# This damage doesn't auto-recover but can be healed with healing items
+				var new_current_health = max(current_hp - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
+				attribute_component.health_component.set_current_health(new_current_health)
+			
+			# Reset timer, preserving fractional time for precise timing
+			atp_depletion_timer = fmod(atp_depletion_timer, ATP_DEPLETION_DAMAGE_INTERVAL)
+	else:
+		# ATP is available, reset the depletion timer
+		# Note: Damaged health doesn't auto-recover, but can be healed with healing items
+		atp_depletion_timer = 0.0
 
 func _handle_combat_input():
 	if not actor_combat_component:
@@ -300,6 +338,7 @@ func save_data() -> Dictionary:
 		"position": {"x": global_position.x, "y": global_position.y},
 		"current_state": current_state,
 		"current_vehicle_path": vehicle_path,
+		"atp_depletion_timer": atp_depletion_timer,
 		# Actor stats are saved in PlayerData.actor_data singleton
 	}
 
@@ -312,6 +351,8 @@ func load_data(data: Dictionary) -> void:
 			global_position = pos_data
 	if data.has("current_state"):
 		current_state = data["current_state"]
+	if data.has("atp_depletion_timer"):
+		atp_depletion_timer = data["atp_depletion_timer"]
 	
 	# Restore vehicle reference if player was in a vehicle
 	if data.has("current_vehicle_path") and data["current_vehicle_path"] != "":
