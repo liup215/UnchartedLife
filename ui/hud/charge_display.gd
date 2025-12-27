@@ -71,13 +71,13 @@ func _connect_to_player(player: Node):
 		charge_component.charge_max_reached.connect(_on_charge_max_reached)
 		
 		# Initialize display
-		_update_display(charge_component.get_current_charge(), charge_component.get_max_charge())
+		_update_display(charge_component.get_current_charge_level(), charge_component.get_current_charge_progress(), charge_component.get_max_charge_level())
 		print("[CHARGE UI] Connected to charge component")
 	else:
 		print("[CHARGE UI] Could not find charge component")
 
-func _on_charge_changed(current: int, max: int):
-	_update_display(current, max)
+func _on_charge_changed(level: int, progress: float, max_level: int):
+	_update_display(level, progress, max_level)
 
 func _on_charge_level_up(level: int):
 	# Visual feedback for level up
@@ -92,25 +92,30 @@ func _on_charge_max_reached():
 	tween.tween_property(charge_bar, "modulate", Color.YELLOW, 0.2)
 	tween.tween_property(charge_bar, "modulate", Color.WHITE, 0.2)
 
-func _update_display(current: int, max: int):
+func _update_display(level: int, progress: float, max_level: int):
+	# Progress bar shows progress within current level (0-100)
 	if charge_bar:
-		charge_bar.max_value = max
-		charge_bar.value = current
+		charge_bar.max_value = 100.0  # Always 100 units per level
+		charge_bar.value = progress
 	
 	if charge_label:
 		charge_label.text = "Charge"
 	
 	if charge_level_label:
-		charge_level_label.text = "Level %d / %d" % [current, max]
+		# Show current level and progress percentage
+		var progress_percent = int(progress)
+		charge_level_label.text = "Lv %d/%d (%d%%)" % [level, max_level, progress_percent]
 	
-	# Change bar color based on charge level
-	if charge_bar and max > 0:
-		var ratio = float(current) / float(max)
-		if ratio >= 1.0:
-			charge_bar.modulate = Color.RED  # Max charge
-		elif ratio >= 0.6:
-			charge_bar.modulate = Color.ORANGE  # High charge
-		elif ratio >= 0.3:
-			charge_bar.modulate = Color.YELLOW  # Medium charge
+	# Change bar color based on charge level (not progress)
+	if charge_bar and max_level > 0:
+		var level_ratio = float(level) / float(max_level)
+		if level >= max_level:
+			charge_bar.modulate = Color.RED  # Max level
+		elif level_ratio >= 0.6:
+			charge_bar.modulate = Color.ORANGE  # High level
+		elif level_ratio >= 0.3:
+			charge_bar.modulate = Color.YELLOW  # Medium level
+		elif level > 0:
+			charge_bar.modulate = Color.LIGHT_BLUE  # Low level, charging
 		else:
-			charge_bar.modulate = Color.WHITE  # Low charge
+			charge_bar.modulate = Color.WHITE  # No charge

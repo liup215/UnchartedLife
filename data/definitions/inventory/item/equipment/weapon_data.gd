@@ -81,8 +81,10 @@ enum DamageType { PHYSICAL, FIRE, ICE, ELECTRIC, EXPLOSIVE }
 @export_group("Heavy Attack System")
 ## Array of heavy attack configurations for different charge levels
 @export var heavy_attacks: Array[HeavyAttackData] = []
-## Time to charge one level (seconds)
-@export var charge_time_per_level: float = 0.5
+## Charge rate per second when holding heavy attack button (progress units/second)
+@export var charge_rate_per_second: float = 50.0
+## Progress units required to complete one charge level
+@export var progress_per_level: float = 100.0
 ## Whether light attack hits accumulate charge
 @export var light_attacks_build_charge: bool = true
 

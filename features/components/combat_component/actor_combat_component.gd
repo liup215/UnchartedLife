@@ -77,6 +77,18 @@ func set_actor_data(data: ActorData):
 func add_actor_weapon(weapon_component) -> bool:
 	actor_weapons.append(weapon_component)
 	_connect_weapon_signals(weapon_component)
+	
+	# Configure charge component based on first weapon's settings
+	if actor_weapons.size() == 1 and charge_component and weapon_component.item_data:
+		var weapon_data = weapon_component.item_data.weapon_data as WeaponData
+		if weapon_data:
+			# Set charge rate and progress requirements from weapon
+			charge_component.set_charge_rate(weapon_data.charge_rate_per_second)
+			charge_component.progress_per_level = weapon_data.progress_per_level
+			charge_component.light_attacks_build_charge = weapon_data.light_attacks_build_charge
+			print("[COMBAT] Configured charge component: rate=", weapon_data.charge_rate_per_second, 
+				  " progress/level=", weapon_data.progress_per_level)
+	
 	return true
 func remove_actor_weapon(index: int) -> bool:
 	if index >= 0 and index < actor_weapons.size():
@@ -388,16 +400,18 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 		if target_attr.toughness_component:
 			target_attr.toughness_component.apply_toughness_damage(toughness_damage, stagger_power)
 	
-	# Add charge based on combo stage
+	# Add charge based on combo stage (charge_gain is progress amount, not full levels)
 	if weapon_data.light_attacks_build_charge:
-		charge_component.add_light_attack_charge(charge_gain)
+		# Charge gain from combo data represents progress amount (e.g., 20 = 20% of a level)
+		var progress_gain = charge_gain * 20.0  # Scale charge_gain to progress amount
+		charge_component.add_light_attack_charge(progress_gain)
 	
 	# Emit hit signal with combat stats
 	emit_signal("enemy_hit", target, final_damage, armor_break, stagger_power)
 
 ## Charge component callbacks
-func _on_charge_changed(current: int, max: int):
-	print("[COMBAT] Charge changed: ", current, "/", max)
+func _on_charge_changed(level: int, progress: float, max_level: int):
+	print("[COMBAT] Charge changed: Lv %d (%.1f%%) / Max Lv %d" % [level, progress, max_level])
 
 func _on_charge_level_up(level: int):
 	print("[COMBAT] Charge level up: ", level)
