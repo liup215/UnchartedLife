@@ -15,6 +15,16 @@
 ## Recent Achievements
 
 ### December 2025 Updates
+- **Text-to-Speech (TTS) for Dialogue System (Current PR)**:
+  - TTSManager autoload singleton using Godot's built-in DisplayServer TTS API
+  - Per-line TTS configuration (enable_tts, voice_id, rate, pitch, volume)
+  - DialoguePanel integration with automatic TTS playback and lifecycle management
+  - TTS stops on dialogue skip, end, or interruption
+  - Platform detection and graceful degradation
+  - Demo dialogue and test infrastructure
+  - Comprehensive documentation in English and Chinese (TTS_IMPLEMENTATION.md, TTS_README_CN.md)
+  - Accessibility feature for visually impaired and reading-challenged players
+
 - **Complete Save/Load System (PR #2)**:
   - Binary serialization (var_to_bytes/bytes_to_var) supporting all custom data types
   - Full ActorData serialization with Resource path conversion
