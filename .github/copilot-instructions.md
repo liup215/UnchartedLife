@@ -1,5 +1,56 @@
 # Legends of Uncharted Life - AI Coding Instructions
 
+# Cline's Memory Bank Management
+
+My memory resets completely between sessions. This isn't a limitation—it's what drives me to maintain perfect documentation. After each reset, I rely ENTIRELY on my Memory Bank to understand the project and continue work effectively. I MUST read ALL memory bank files at the start of EVERY task—this is not optional.
+
+## Memory Bank Structure
+
+The Memory Bank consists of core files and optional context files, all in Markdown format. Files build upon each other in a clear hierarchy:
+
+flowchart TD
+    PB[projectbrief.md] --> PC[productContext.md]
+    PB --> SP[systemPatterns.md]
+    PB --> TC[techContext.md]
+    PC --> AC[activeContext.md]
+    SP --> AC
+    TC --> AC
+    AC --> P[progress.md]
+
+### Core Files (Required)
+1. `projectbrief.md` — Foundation document, shapes all others, defines core requirements and goals, source of truth for scope
+2. `productContext.md` — Why this project exists, problems it solves, user experience goals
+3. `activeContext.md` — Current work focus, recent changes, next steps, active decisions, learnings
+4. `systemPatterns.md` — System architecture, key technical decisions, design patterns, component relationships
+5. `techContext.md` — Technologies, setup, constraints, dependencies, tool usage
+6. `progress.md` — What works, what's left, current status, known issues, project evolution
+
+### Additional Context
+Create additional files/folders within memory-bank/ for complex features, integrations, APIs, testing, deployment, etc.
+
+## Core Workflows
+
+### Plan Mode
+1. Read ALL memory bank files
+2. If files incomplete, create a plan and document in chat
+3. If files complete, verify context, develop strategy, present approach
+
+### Act Mode
+1. Check memory bank for context
+2. Update documentation as needed
+3. Execute task
+4. Document changes
+
+## Documentation Updates
+
+Memory Bank updates occur when:
+1. Discovering new project patterns
+2. After significant changes
+3. When user requests with **update memory bank** (MUST review ALL files)
+4. When context needs clarification
+
+Focus especially on `activeContext.md` and `progress.md` for current state tracking. After every memory reset, begin fresh—Memory Bank is the only link to previous work and must be maintained with precision.
+
 ## Project Context
 - **Engine:** Godot 4.x
 - **Language:** GDScript (Static typing required)
