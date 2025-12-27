@@ -9,6 +9,9 @@ enum PlayerState {
 	IN_VEHICLE      # Inside a vehicle
 }
 
+# Constants
+const MOVEMENT_INPUT_THRESHOLD: float = 0.1  # Minimum input magnitude to consider as movement
+
 # Vehicle interaction
 var current_state: PlayerState = PlayerState.ON_FOOT
 var current_vehicle: Node2D = null  # Will be Vehicle when available
@@ -70,7 +73,7 @@ func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes (Always run, even during stagger/dodge) ---
 	# Get movement input to determine if player is moving
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var is_moving = direction.length() > 0.1  # Check if there's movement input
+	var is_moving = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
 	# Determine if sprinting for metabolism calculation
 	var is_sprinting = Input.is_action_pressed("shift")
 	_process_metabolism(delta, is_sprinting, is_moving)
