@@ -71,12 +71,12 @@ func _physics_process(delta: float) -> void:
 
 func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes (Always run, even during stagger/dodge) ---
-	# Get movement input to determine if player is moving
+	# Get movement input once for metabolism and movement logic (performance optimization)
 	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var is_moving = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
+	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
 	# Determine if sprinting for metabolism calculation
 	var is_sprinting = Input.is_action_pressed("shift")
-	_process_metabolism(delta, is_sprinting, is_moving)
+	_process_metabolism(delta, is_sprinting, has_movement_input)
 	
 	# Check if staggered - if so, no input allowed but metabolism continues
 	var is_staggered = attribute_component and attribute_component.toughness_component and attribute_component.toughness_component.is_in_stagger()
@@ -100,7 +100,7 @@ func _handle_on_foot_logic(delta: float):
 		dodge_component.attempt_dodge(dodge_direction)
 	
 	# --- Input and Movement ---
-	# Note: direction was already calculated above for metabolism
+	# Note: direction was calculated above for metabolism to avoid duplicate Input.get_vector() calls
 
 	# Update last direction if moving
 	if direction.length() > 0:
@@ -206,18 +206,18 @@ func set_in_vehicle_state(in_vehicle: bool):
 			child.disabled = in_vehicle
 	# The player's physics process is not disabled, so AI can still track them.
 
-func _process_metabolism(delta: float, is_sprinting: bool = false, is_moving: bool = false):
+func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_input: bool = false):
 	# 1. ATP Consumption (Rest + Movement + Sprinting)
 	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
 	var movement_atp_consumption = 0.0
 	var sprint_atp_consumption = 0.0
 
-	# Use the is_moving parameter passed from input detection
-	if is_moving:
+	# Use the has_movement_input parameter passed from input detection
+	if has_movement_input:
 		movement_atp_consumption = 3.0 * delta  # Additional 3 ATP/sec during movement
 
 	# Extra consumption when sprinting
-	if is_sprinting and is_moving:  # Only consume sprint ATP if actually moving
+	if is_sprinting and has_movement_input:  # Only consume sprint ATP if actually moving
 		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
 
 	var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
