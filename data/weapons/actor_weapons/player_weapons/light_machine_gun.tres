@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://dtykwpgayen17" path="res://features/effects/base_bullet.tscn" id="1_gve21"]
 [ext_resource type="Texture2D" uid="uid://16wmra0hr20o" path="res://assets/effects/base_bullet.png" id="2_r151a"]
 [ext_resource type="Texture2D" uid="uid://cm4o36xvxjsa3" path="res://assets/effects/explosion_scaled_down.png" id="3_3pbod"]
-[ext_resource type="Script" uid="uid://brb0nd8kyt52x" path="res://data/definitions/inventory/item/equipment/combo_attack_data.gd" id="3_l4aui"]
+[ext_resource type="Script" path="res://data/definitions/inventory/item/equipment/combo_attack_data.gd" id="3_l4aui"]
 [ext_resource type="Script" uid="uid://bvjir4py0k3nc" path="res://data/definitions/inventory/item/equipment/weapon_data.gd" id="4_ec6mm"]
 [ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_1.tres" id="6_combo1"]
-[ext_resource type="Script" uid="uid://b12sblhnvofw2" path="res://data/definitions/inventory/item/equipment/heavy_attack_data.gd" id="7_5nl4f"]
+[ext_resource type="Script" path="res://data/definitions/inventory/item/equipment/heavy_attack_data.gd" id="7_5nl4f"]
 [ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_2.tres" id="7_combo2"]
 [ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/combo_stage_3.tres" id="8_combo3"]
 [ext_resource type="Resource" path="res://data/weapons/actor_weapons/player_weapons/combo_data/heavy_level_1.tres" id="9_heavy1"]
@@ -18,7 +18,8 @@ script = ExtResource("4_ec6mm")
 weapon_type = 2
 energy_cost = 2
 rate_of_fire = 0.1
-ammo_capacity = 30
+ammo_capacity = 2
+requires_quiz_reload = true
 max_charge_level = 5
 charge_time = 2.5
 bullet_scene = ExtResource("1_gve21")
