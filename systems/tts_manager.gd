@@ -61,6 +61,8 @@ func speak(text: String, voice_id: String = "", rate: float = -1.0, pitch: float
 	final_volume = clamp(final_volume, 0.0, 100.0)
 	
 	# Start speaking
+	# Note: The 0 parameter is the utterance_id, which can be used to track specific speech instances
+	# For now we use 0 (default) as we only need basic speech functionality
 	_is_speaking = true
 	DisplayServer.tts_speak(text, voice_id, final_volume, final_pitch, final_rate, 0, interrupt)
 	tts_started.emit()

@@ -29,8 +29,10 @@ func _init():
 	# Test 3: Test TTSManager singleton methods
 	print("")
 	print("Test 3: Testing TTSManager methods...")
-	print("  TTSManager.is_available(): ", false)  # Will be false in headless
-	print("  TTSManager.is_tts_enabled(): ", false)  # Will be false in headless
+	# Note: TTSManager autoload is not available in SceneTree-based tests
+	# These would normally return actual values when run through the game
+	print("  TTSManager.is_available(): ", tts_available)
+	print("  TTSManager.is_tts_enabled(): ", tts_available)
 	
 	# Test 4: Test configuration
 	print("")

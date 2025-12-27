@@ -127,15 +127,13 @@ func _play_tts_for_line(line: DialogueLineData) -> void:
 	if text_to_speak.is_empty():
 		return
 	
-	# Convert volume from 0-1 range to 0-100 range
-	var volume := line.tts_volume * 100.0
-	
+	# Volume is already in 0-1 range, TTSManager will handle conversion to 0-100
 	TTSManager.speak(
 		text_to_speak,
 		line.tts_voice_id,
 		line.tts_rate,
 		line.tts_pitch,
-		volume,
+		line.tts_volume * 100.0,  # Convert to 0-100 range
 		true  # Interrupt any previous speech
 	)
 
