@@ -34,6 +34,10 @@ func set_actor_data(data: Resource):
 	glucose_consume_rate = data.glucose_consume_rate
 	atp_production_rate = data.atp_production_rate
 	atp_conversion_rate = data.atp_conversion_rate
+	
+	# Emit initial signals to update UI
+	atp_changed.emit(current_atp, max_atp)
+	glucose_changed.emit(current_glucose, max_glucose)
 
 func consume_atp(amount: float) -> bool:
 	if current_atp >= amount:
@@ -158,3 +162,38 @@ func get_atp_conversion_rate() -> float:
 func get_glucose_consume_rate() -> float:
 	# return data_source.glucose_consume_rate
 	return glucose_consume_rate
+
+# Serialization methods for save/load
+func to_dict() -> Dictionary:
+	return {
+		"current_atp": current_atp,
+		"current_glucose": current_glucose,
+		"max_atp": max_atp,
+		"max_glucose": max_glucose,
+		"atp_consume_rate": atp_consume_rate,
+		"glucose_consume_rate": glucose_consume_rate,
+		"atp_production_rate": atp_production_rate,
+		"atp_conversion_rate": atp_conversion_rate
+	}
+
+func from_dict(data: Dictionary) -> void:
+	if data.has("current_atp"):
+		current_atp = data["current_atp"]
+	if data.has("current_glucose"):
+		current_glucose = data["current_glucose"]
+	if data.has("max_atp"):
+		max_atp = data["max_atp"]
+	if data.has("max_glucose"):
+		max_glucose = data["max_glucose"]
+	if data.has("atp_consume_rate"):
+		atp_consume_rate = data["atp_consume_rate"]
+	if data.has("glucose_consume_rate"):
+		glucose_consume_rate = data["glucose_consume_rate"]
+	if data.has("atp_production_rate"):
+		atp_production_rate = data["atp_production_rate"]
+	if data.has("atp_conversion_rate"):
+		atp_conversion_rate = data["atp_conversion_rate"]
+	
+	# Emit signals to update UI after loading
+	atp_changed.emit(current_atp, max_atp)
+	glucose_changed.emit(current_glucose, max_glucose)

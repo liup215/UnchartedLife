@@ -66,10 +66,6 @@ func _ready():
 	get_tree().node_added.connect(_on_node_added)
 	_find_player()
 	
-	# Initial glucose update
-	if PlayerData:
-		_update_glucose_label()
-	
 	# Hide boss info by default
 	hide_boss_health()
 
@@ -94,8 +90,13 @@ func _on_player_ready(player_node: Actor):
 	if player_node.has_node("AttributeComponent"):
 		var attribute_component = player_node.get_node("AttributeComponent")
 		attribute_component.metabolism_component.atp_changed.connect(_on_player_atp_changed)
+		attribute_component.metabolism_component.glucose_changed.connect(_on_player_glucose_changed)
+		
 		# Set initial ATP value
 		_on_player_atp_changed(attribute_component.metabolism_component.get_current_atp(), attribute_component.metabolism_component.get_max_atp())
+		
+		# Set initial glucose value
+		_on_player_glucose_changed(attribute_component.metabolism_component.get_current_glucose(), attribute_component.metabolism_component.get_max_glucose())
 	
 	# Set initial health value
 	print("Player HUD: Initializing health display")
@@ -119,14 +120,12 @@ func _on_player_atp_changed(current_atp: int, max_atp: int):
 	atp_bar.value = current_atp
 	atp_value.text = "%d/%d" % [current_atp, max_atp]
 
-func _physics_process(_delta):
-	# Continuously update glucose, as it can change frequently
-	# if PlayerData:
-	# 	# _update_glucose_label()
-	_update_tank_status()
+func _on_player_glucose_changed(current_glucose: float, max_glucose: int):
+	glucose_label.text = "Glucose: %.1f/%.1f" % [current_glucose, max_glucose]
 
-func _update_glucose_label():
-	glucose_label.text = "Glucose: %.1f" % PlayerData.actor_data.current_glucose
+func _physics_process(_delta):
+	# Glucose is now updated via signal, no need to poll
+	_update_tank_status()
 
 # --- Boss Health API ---
 
