@@ -10,6 +10,7 @@ extends CanvasLayer
 @onready var speaker_label: Label = $Panel/MarginContainer/VBoxContainer/HBoxContainer/SpeakerName
 @onready var body_label: RichTextLabel = $Panel/MarginContainer/VBoxContainer/Body
 @onready var choices_container: VBoxContainer = $Panel/MarginContainer/VBoxContainer/Choices
+@onready var continue_prompt: Label = $Panel/MarginContainer/VBoxContainer/ContinuePrompt
 @onready var typing_timer: Timer = $TypingTimer
 
 var _current_line: DialogueLineData
@@ -22,6 +23,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	hide()
 	panel.hide()
+	continue_prompt.hide()  # Hide prompt initially
 	typing_timer.timeout.connect(_on_typing_tick)
 	typing_timer.process_mode = Node.PROCESS_MODE_ALWAYS
 	EventBus.dialogue_started.connect(_on_dialogue_started)
@@ -32,6 +34,7 @@ func _ready() -> void:
 func _on_dialogue_started(_dialogue: DialogueData, _npc_id: String) -> void:
 	show()
 	panel.show()
+	continue_prompt.hide()  # Hide prompt at start
 	_clear_choices()
 	body_label.text = ""
 	body_label.visible_characters = -1
@@ -43,6 +46,7 @@ func _on_dialogue_started(_dialogue: DialogueData, _npc_id: String) -> void:
 func _on_dialogue_line(line: DialogueLineData, _index: int, _total: int, _npc_id: String) -> void:
 	_current_line = line
 	_clear_choices()
+	continue_prompt.hide()  # Hide prompt when new line starts
 	portrait.texture = line.portrait
 	speaker_label.text = line.resolve_speaker_name()
 	_full_text = line.resolve_text()
@@ -60,6 +64,7 @@ func _on_dialogue_choices(choices: Array[DialogueChoiceData], _npc_id: String) -
 	_typing = false
 	typing_timer.stop()
 	_stop_tts()  # Stop TTS when choices are presented
+	continue_prompt.hide()  # Hide prompt when showing choices
 	_current_choices = choices
 	choices_container.show()
 	for i in choices.size():
@@ -72,6 +77,7 @@ func _on_dialogue_ended(_npc_id: String, _reason: String) -> void:
 	typing_timer.stop()
 	_typing = false
 	_clear_choices()
+	continue_prompt.hide()  # Hide prompt when dialogue ends
 	_stop_tts()  # Stop TTS when dialogue ends
 	if auto_hide_on_end:
 		hide()
@@ -91,6 +97,9 @@ func _on_typing_tick() -> void:
 	else:
 		_typing = false
 		typing_timer.stop()
+		# Show continue prompt when typing finishes and no choices
+		if _current_choices.is_empty():
+			continue_prompt.show()
 
 func _input(event: InputEvent) -> void:
 	if not visible:
@@ -110,6 +119,9 @@ func _finish_typing() -> void:
 	body_label.visible_characters = -1
 	_typing = false
 	typing_timer.stop()
+	# Show continue prompt when typing is skipped and no choices
+	if _current_choices.is_empty():
+		continue_prompt.show()
 
 func _clear_choices() -> void:
 	for child in choices_container.get_children():
