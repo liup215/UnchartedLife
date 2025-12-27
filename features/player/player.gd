@@ -273,8 +273,6 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 				# This damage doesn't auto-recover but can be healed with healing items
 				var new_current_health = max(current_hp - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
 				attribute_component.health_component.set_current_health(new_current_health)
-				
-				print("[METABOLISM] ATP depletion! HP damage: -", ATP_DEPLETION_DAMAGE_AMOUNT, " (Current HP now: ", new_current_health, "/", attribute_component.health_component.get_max_health(), ")")
 			
 			# Reset timer, preserving fractional time for precise timing
 			atp_depletion_timer = fmod(atp_depletion_timer, ATP_DEPLETION_DAMAGE_INTERVAL)
