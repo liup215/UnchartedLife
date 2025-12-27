@@ -260,7 +260,7 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
 	
 	# 4. ATP Depletion Damage (damages current health when ATP stays at 0)
-	# This damage is NOT recoverable - current health won't regenerate automatically
+	# This damage does NOT auto-recover, but can be healed with healing items
 	if attribute_component.metabolism_component.get_current_atp() < ATP_DEPLETION_THRESHOLD:
 		atp_depletion_timer += delta
 		
@@ -270,7 +270,7 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 			var current_hp = attribute_component.health_component.get_current_health()
 			if current_hp > 1:
 				# Reduce current_health (not max_health!)
-				# This damage is permanent and won't auto-recover even when ATP recovers
+				# This damage doesn't auto-recover but can be healed with healing items
 				var new_current_health = max(current_hp - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
 				attribute_component.health_component.set_current_health(new_current_health)
 				
@@ -280,7 +280,7 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 			atp_depletion_timer = fmod(atp_depletion_timer, ATP_DEPLETION_DAMAGE_INTERVAL)
 	else:
 		# ATP is available, reset the depletion timer
-		# Note: Current health is NOT automatically recovered when ATP recovers
+		# Note: Damaged health doesn't auto-recover, but can be healed with healing items
 		atp_depletion_timer = 0.0
 
 func _handle_combat_input():
