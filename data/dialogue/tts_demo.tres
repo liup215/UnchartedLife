@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=6 format=3 uid="uid://bxyw7v5h3m1pq"]
+
+[ext_resource type="Script" path="res://data/definitions/dialogue/dialogue_data.gd" id="1"]
+[ext_resource type="Script" path="res://data/definitions/dialogue/dialogue_line_data.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="3"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2")
+speaker_id = "Scientist"
+speaker_name = "Dr. Cell"
+speaker_name_key = ""
+text = "Welcome to the world of biology! Let me explain how cells work."
+text_key = ""
+portrait = ExtResource("3")
+mood = ""
+voice_sfx = null
+auto_advance = false
+typing_speed = 0.03
+enable_tts = true
+tts_voice_id = ""
+tts_rate = 1.0
+tts_pitch = 1.0
+tts_volume = 0.8
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2")
+speaker_id = "Scientist"
+speaker_name = "Dr. Cell"
+speaker_name_key = ""
+text = "This is a demonstration of text-to-speech in the dialogue system. The voice will read this text aloud."
+text_key = ""
+portrait = ExtResource("3")
+mood = ""
+voice_sfx = null
+auto_advance = false
+typing_speed = 0.03
+enable_tts = true
+tts_voice_id = ""
+tts_rate = 1.2
+tts_pitch = 1.1
+tts_volume = 0.9
+
+[resource]
+script = ExtResource("1")
+id = "tts_demo"
+lines = Array[ExtResource("2")]([SubResource("Resource_line1"), SubResource("Resource_line2")])
+choices = []
+typing_speed = 0.03
+can_skip = true
+metadata = {}
