@@ -17,11 +17,11 @@ signal invincibility_ended()
 
 # Internal state
 var is_dodging: bool = false
-var is_invincible: bool = false
 var can_dodge: bool = true
 var dodge_timer: float = 0.0
 var invincibility_timer: float = 0.0
 var cooldown_timer: float = 0.0
+var current_dodge_tween: Tween = null
 
 # Reference to parent actor
 var actor: CharacterBody2D = null
@@ -51,10 +51,9 @@ func _physics_process(delta: float):
 			_end_dodge()
 	
 	# Update invincibility timer
-	if is_invincible:
+	if invincibility_timer > 0.0:
 		invincibility_timer -= delta
 		if invincibility_timer <= 0.0:
-			is_invincible = false
 			_end_invincibility()
 	
 	# Update cooldown timer
@@ -97,11 +96,14 @@ func attempt_dodge(direction: Vector2) -> bool:
 func _start_dodge(direction: Vector2):
 	"""Internal method to start the dodge"""
 	is_dodging = true
-	is_invincible = true
 	can_dodge = false
 	dodge_timer = dodge_duration
 	invincibility_timer = invincibility_duration
 	cooldown_timer = cooldown_duration
+	
+	# Kill any existing dodge tween
+	if current_dodge_tween and current_dodge_tween.is_valid():
+		current_dodge_tween.kill()
 	
 	# Create afterimage at current position
 	_create_afterimage()
@@ -140,11 +142,11 @@ func _apply_dodge_movement(direction: Vector2):
 	# Calculate target position
 	var target_position = actor.global_position + dodge_direction * dodge_distance
 	
-	# Create a tween for smooth movement
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(actor, "global_position", target_position, dodge_duration)
+	# Create a tween for smooth movement and store reference
+	current_dodge_tween = create_tween()
+	current_dodge_tween.set_ease(Tween.EASE_OUT)
+	current_dodge_tween.set_trans(Tween.TRANS_QUAD)
+	current_dodge_tween.tween_property(actor, "global_position", target_position, dodge_duration)
 
 func _create_afterimage():
 	"""Create an afterimage at the current position"""
@@ -161,6 +163,17 @@ func _create_afterimage():
 	if not sprite:
 		return
 	
+	# Validate sprite data before accessing
+	if not sprite.sprite_frames or sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
+		push_warning("Cannot create afterimage: invalid sprite data")
+		return
+	
+	# Get parent for afterimage
+	var parent = actor.get_parent()
+	if not parent:
+		push_warning("Cannot create afterimage: actor has no parent")
+		return
+	
 	# Create afterimage sprite
 	var afterimage = Sprite2D.new()
 	afterimage.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
@@ -172,7 +185,7 @@ func _create_afterimage():
 	afterimage.modulate = afterimage_modulate
 	
 	# Add to scene tree (not as child of actor, so it stays in place)
-	actor.get_parent().add_child(afterimage)
+	parent.add_child(afterimage)
 	
 	# Fade out and remove afterimage
 	# Use afterimage's own tween to ensure it completes even if component is freed
@@ -197,7 +210,7 @@ func is_in_dodge() -> bool:
 
 func is_currently_invincible() -> bool:
 	"""Returns true if currently invincible"""
-	return is_invincible
+	return invincibility_timer > 0.0
 
 func can_perform_dodge() -> bool:
 	"""Returns true if dodge can be performed"""

@@ -15,8 +15,8 @@ var current_vehicle: Node2D = null  # Will be Vehicle when available
 var nearby_vehicle: Node2D = null   # Vehicle player can interact with
 var interaction_ui_visible: bool = false
 
-# Dodge component
-@onready var dodge_component: DodgeComponent = $DodgeComponent if has_node("DodgeComponent") else null
+# Dodge component (initialized in _ready)
+var dodge_component: DodgeComponent = null
 
 func get_current_state() -> int:
 	return current_state
@@ -33,6 +33,10 @@ func _ready():
 	# Initialize the actor's inventory 
 	if inventory_component.containers.is_empty():
 		inventory_component.set_data(actor_data)
+	
+	# Get dodge component reference
+	if has_node("DodgeComponent"):
+		dodge_component = $DodgeComponent as DodgeComponent
 	
 	# Setup dodge component if present
 	if dodge_component:
