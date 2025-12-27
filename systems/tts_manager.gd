@@ -20,13 +20,20 @@ signal tts_cancelled()
 
 func _ready() -> void:
 	# Check if TTS is available on this platform
-	if not DisplayServer.tts_is_speaking_supported():
+	# In Godot 4.x, we check by attempting to get voices or using has_feature
+	if not _check_tts_support():
 		push_warning("TTSManager: Text-to-speech is not supported on this platform")
 		tts_enabled = false
 
 func is_available() -> bool:
 	"""Check if TTS is available on the current platform."""
-	return DisplayServer.tts_is_speaking_supported()
+	return _check_tts_support()
+
+func _check_tts_support() -> bool:
+	"""Check if TTS is supported by checking if we can get voices."""
+	# Try to get voices as a way to check TTS support
+	var voices = DisplayServer.tts_get_voices()
+	return voices.size() > 0 or OS.has_feature("web")
 
 func speak(text: String, voice_id: String = "", rate: float = -1.0, pitch: float = -1.0, volume: float = -1.0, interrupt: bool = true) -> void:
 	"""

@@ -8,7 +8,8 @@ func _init():
 	
 	# Test 1: Check if TTS is available
 	print("Test 1: Checking TTS availability...")
-	var tts_available = DisplayServer.tts_is_speaking_supported()
+	var voices = DisplayServer.tts_get_voices()
+	var tts_available = voices.size() > 0
 	print("  TTS Supported: ", tts_available)
 	
 	if not tts_available:
