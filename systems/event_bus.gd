@@ -102,6 +102,15 @@ signal player_dodge_ended(player: Node)
 # Carries the player actor node and the reason for failure.
 signal player_dodge_failed(player: Node, reason: String)
 
+# --- Story System Signals ---
+# Emitted when entering a story scene.
+# Carries the scene_id (e.g., "prologue_01", "chapter_01_scene_02").
+signal story_scene_entered(scene_id: String)
+
+# Emitted when a story milestone is reached.
+# Carries the milestone_id and any associated data.
+signal story_milestone_reached(milestone_id: String, data: Dictionary)
+
 # Add other global signals here as the game grows.
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."

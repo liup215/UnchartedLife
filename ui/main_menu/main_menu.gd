@@ -117,8 +117,8 @@ func _on_new_game_pressed():
 func _on_new_game_confirmed(settings):
 	# Called when NewGameSettings emits game_started
 	OnEnteringGame(true)
-	# Load the main game scene
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	# Load the opening animation scene for new games
+	get_tree().change_scene_to_file("res://scenes/story/opening/opening_animation.tscn")
 
 func _on_continue_pressed():
 	var latest_slot = SaveManager.get_latest_slot_id()
