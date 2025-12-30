@@ -16,6 +16,10 @@ const FINE_ADJUSTMENT: float = 0.1
 const EYEPIECE_MAGS: Array[int] = [5, 10, 15]
 const OBJECTIVE_MAGS: Array[int] = [4, 10, 40, 100]
 
+# Specimen movement
+const MOVE_STEP: float = 10.0  # Pixels per move
+const MAX_OFFSET_RADIUS: float = 150.0  # Maximum distance from center
+
 # UI references
 @onready var microscope_view: Panel = $CenterContainer/MicroscopeView
 @onready var view_content: ColorRect = $CenterContainer/MicroscopeView/ViewContent
@@ -40,6 +44,11 @@ const OBJECTIVE_MAGS: Array[int] = [4, 10, 40, 100]
 @onready var distance_label: Label = $ControlPanel/InfoSection/DistanceLabel
 @onready var magnification_label: Label = $ControlPanel/InfoSection/MagnificationLabel
 
+@onready var move_up: Button = $ControlPanel/MovementSection/MovementControls/MoveUp
+@onready var move_down: Button = $ControlPanel/MovementSection/MovementRow3/MoveDown
+@onready var move_left: Button = $ControlPanel/MovementSection/MovementRow2/MoveLeft
+@onready var move_right: Button = $ControlPanel/MovementSection/MovementRow2/MoveRight
+
 @onready var continue_button: Button = $ContinueButton
 
 # State variables
@@ -48,6 +57,7 @@ var current_eyepiece_index: int = 1  # Start with 10x
 var current_objective_index: int = 1  # Start with 10x
 var current_brightness: float = 0.5
 var is_focused: bool = false
+var specimen_offset: Vector2 = Vector2.ZERO  # Specimen position offset from center
 
 func _ready() -> void:
 	_setup_controls()
@@ -77,6 +87,12 @@ func _setup_controls() -> void:
 	fine_focus_up.pressed.connect(_on_fine_focus_up_pressed)
 	fine_focus_down.pressed.connect(_on_fine_focus_down_pressed)
 	
+	# Movement controls
+	move_up.pressed.connect(_on_move_up_pressed)
+	move_down.pressed.connect(_on_move_down_pressed)
+	move_left.pressed.connect(_on_move_left_pressed)
+	move_right.pressed.connect(_on_move_right_pressed)
+	
 	# Brightness control
 	brightness_slider.value_changed.connect(_on_brightness_changed)
 	brightness_slider.value = current_brightness * 100
@@ -86,8 +102,16 @@ func _setup_controls() -> void:
 		continue_button.pressed.connect(_on_continue_pressed)
 
 func _reset_distance() -> void:
-	"""Reset focus distance when changing magnification"""
+	"""Reset focus distance and randomize specimen position when changing magnification"""
 	current_distance = 0.0
+	
+	# Randomize specimen position within radius when magnification changes
+	var random_angle = randf() * TAU  # Random angle in radians (0 to 2π)
+	var random_distance = randf() * MAX_OFFSET_RADIUS  # Random distance within max radius
+	specimen_offset = Vector2(
+		cos(random_angle) * random_distance,
+		sin(random_angle) * random_distance
+	)
 
 func _on_eyepiece_up_pressed() -> void:
 	"""Increase eyepiece magnification"""
@@ -142,6 +166,40 @@ func _on_brightness_changed(value: float) -> void:
 	current_brightness = value / 100.0
 	_update_display()
 
+func _on_move_up_pressed() -> void:
+	"""Move specimen up (inverted: image moves down)"""
+	# Microscope inverts image, so control opposite to movement
+	specimen_offset.y += MOVE_STEP
+	_clamp_specimen_position()
+	_update_display()
+
+func _on_move_down_pressed() -> void:
+	"""Move specimen down (inverted: image moves up)"""
+	# Microscope inverts image, so control opposite to movement
+	specimen_offset.y -= MOVE_STEP
+	_clamp_specimen_position()
+	_update_display()
+
+func _on_move_left_pressed() -> void:
+	"""Move specimen left (inverted: image moves right)"""
+	# Microscope inverts image, so control opposite to movement
+	specimen_offset.x += MOVE_STEP
+	_clamp_specimen_position()
+	_update_display()
+
+func _on_move_right_pressed() -> void:
+	"""Move specimen right (inverted: image moves left)"""
+	# Microscope inverts image, so control opposite to movement
+	specimen_offset.x -= MOVE_STEP
+	_clamp_specimen_position()
+	_update_display()
+
+func _clamp_specimen_position() -> void:
+	"""Constrain specimen position within maximum radius"""
+	var distance = specimen_offset.length()
+	if distance > MAX_OFFSET_RADIUS:
+		specimen_offset = specimen_offset.normalized() * MAX_OFFSET_RADIUS
+
 func _update_display() -> void:
 	"""Update the microscope view based on current settings"""
 	# Update labels
@@ -184,6 +242,9 @@ func _update_display() -> void:
 	# Update sample image visibility based on focus only
 	if sample_image:
 		sample_image.modulate.a = focus_quality
+		# Apply specimen offset position (inverted image in microscope)
+		# Negative offset because microscope inverts the image
+		sample_image.position = -specimen_offset
 	
 	# Check if properly focused
 	is_focused = distance_from_target <= FOCUS_TOLERANCE

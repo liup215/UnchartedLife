@@ -216,6 +216,71 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 value = 50.0
 
+[node name="MovementSection" type="VBoxContainer" parent="ControlPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="MovementLabel" type="Label" parent="ControlPanel/MovementSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "标本移动 Specimen Movement (Inverted):"
+horizontal_alignment = 1
+
+[node name="MovementControls" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Spacer1" type="Control" parent="ControlPanel/MovementSection/MovementControls"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="MoveUp" type="Button" parent="ControlPanel/MovementSection/MovementControls"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "▲"
+
+[node name="Spacer2" type="Control" parent="ControlPanel/MovementSection/MovementControls"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="MovementRow2" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="MoveLeft" type="Button" parent="ControlPanel/MovementSection/MovementRow2"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "◄"
+
+[node name="CenterSpacer" type="Control" parent="ControlPanel/MovementSection/MovementRow2"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="MoveRight" type="Button" parent="ControlPanel/MovementSection/MovementRow2"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "►"
+
+[node name="MovementRow3" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Spacer3" type="Control" parent="ControlPanel/MovementSection/MovementRow3"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="MoveDown" type="Button" parent="ControlPanel/MovementSection/MovementRow3"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "▼"
+
+[node name="Spacer4" type="Control" parent="ControlPanel/MovementSection/MovementRow3"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
 [node name="InfoSection" type="HBoxContainer" parent="ControlPanel"]
 layout_mode = 2
 theme_override_constants/separation = 40
