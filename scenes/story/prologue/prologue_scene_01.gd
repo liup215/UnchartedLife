@@ -162,20 +162,20 @@ func _update_display() -> void:
 	if blur_overlay:
 		blur_overlay.modulate.a = 1.0 - focus_quality
 	
-	# Update view content visibility based on focus
-	if view_content:
-		view_content.modulate.a = focus_quality
-	
-	# Update brightness - allow going beyond 1.0 to achieve full white
+	# Update background brightness independently (ViewContent acts as backlight)
 	# Brightness range: 0.0 (black) to 2.0 (pure white, overexposed)
 	if view_content:
 		var brightness_multiplier = current_brightness * 2.0  # Scale to 0-2 range
 		view_content.modulate = Color(
-			focus_quality * brightness_multiplier,
-			focus_quality * brightness_multiplier,
-			focus_quality * brightness_multiplier,
-			focus_quality
+			brightness_multiplier,
+			brightness_multiplier,
+			brightness_multiplier,
+			1.0  # Keep alpha at 1.0 for consistent backlight
 		)
+	
+	# Update sample image visibility based on focus only
+	if sample_image:
+		sample_image.modulate.a = focus_quality
 	
 	# Check if properly focused
 	is_focused = distance_from_target <= FOCUS_TOLERANCE

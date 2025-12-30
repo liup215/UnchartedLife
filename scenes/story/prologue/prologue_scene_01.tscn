@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cutjmmcfu7du4"]
+[gd_scene load_steps=7 format=3 uid="uid://cutjmmcfu7du4"]
 
 [ext_resource type="Script" uid="uid://cov3ms88tckk6" path="res://scenes/story/prologue/prologue_scene_01.gd" id="1_prologue"]
 [ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
@@ -16,6 +16,21 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_circle_mask"]
 shader = SubResource("Shader_circle_mask")
+
+[sub_resource type="Shader" id="Shader_circle_frame"]
+code = "shader_type canvas_item;
+
+void fragment() {
+	vec2 center = vec2(0.5, 0.5);
+	float dist = distance(UV, center);
+	float radius = 0.45;
+	// Invert the mask - show black outside the circle
+	float alpha = smoothstep(radius - 0.01, radius, dist);
+	COLOR.a = alpha;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_circle_frame"]
+shader = SubResource("Shader_circle_frame")
 
 [node name="PrologueScene01" type="Control"]
 layout_mode = 3
@@ -65,7 +80,6 @@ custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
 
 [node name="ViewContent" type="ColorRect" parent="CenterContainer/MicroscopeView"]
-material = SubResource("ShaderMaterial_circle_mask")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -75,6 +89,7 @@ grow_vertical = 2
 color = Color(1, 1, 1, 1)
 
 [node name="SampleImage" type="TextureRect" parent="CenterContainer/MicroscopeView/ViewContent"]
+material = SubResource("ShaderMaterial_circle_mask")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -95,6 +110,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.5, 0.5, 0.5, 1)
+
+[node name="CircleFrame" type="ColorRect" parent="CenterContainer/MicroscopeView"]
+material = SubResource("ShaderMaterial_circle_frame")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="ControlPanel" type="VBoxContainer" parent="."]
 layout_mode = 1
