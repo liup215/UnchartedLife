@@ -166,10 +166,16 @@ func _update_display() -> void:
 	if view_content:
 		view_content.modulate.a = focus_quality
 	
-	# Update brightness
-	if microscope_view:
-		var brightness_color = Color(current_brightness, current_brightness, current_brightness, 1.0)
-		microscope_view.modulate = brightness_color
+	# Update brightness - allow going beyond 1.0 to achieve full white
+	# Brightness range: 0.0 (black) to 2.0 (pure white, overexposed)
+	if view_content:
+		var brightness_multiplier = current_brightness * 2.0  # Scale to 0-2 range
+		view_content.modulate = Color(
+			focus_quality * brightness_multiplier,
+			focus_quality * brightness_multiplier,
+			focus_quality * brightness_multiplier,
+			focus_quality
+		)
 	
 	# Check if properly focused
 	is_focused = distance_from_target <= FOCUS_TOLERANCE
