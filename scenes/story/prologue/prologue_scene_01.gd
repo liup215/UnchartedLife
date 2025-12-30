@@ -17,9 +17,9 @@ const EYEPIECE_MAGS: Array[int] = [5, 10, 15]
 const OBJECTIVE_MAGS: Array[int] = [4, 10, 40, 100]
 
 # UI references
-@onready var microscope_view: TextureRect = $CenterContainer/MicroscopeView
+@onready var microscope_view: Panel = $CenterContainer/MicroscopeView
 @onready var view_content: ColorRect = $CenterContainer/MicroscopeView/ViewContent
-@onready var blur_overlay: ColorRect = $CenterContainer/MicroscopeView/BlurOverlay
+@ontml:parameter name="blur_overlay: ColorRect = $CenterContainer/MicroscopeView/BlurOverlay
 @onready var sample_image: TextureRect = $CenterContainer/MicroscopeView/ViewContent/SampleImage
 
 # Control buttons
