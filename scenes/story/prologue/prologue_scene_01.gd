@@ -158,14 +158,22 @@ func _update_display() -> void:
 	var distance_from_target = abs(current_distance - TARGET_DISTANCE)
 	var focus_quality = 1.0 - clamp(distance_from_target / 50.0, 0.0, 1.0)
 	
+	# Calculate brightness first
+	var brightness_multiplier = current_brightness * 2.0  # Scale to 0-2 range
+	
 	# Update blur overlay opacity (more blur when out of focus)
+	# Blur overlay color should match brightness to allow white at max brightness
 	if blur_overlay:
-		blur_overlay.modulate.a = 1.0 - focus_quality
+		blur_overlay.modulate = Color(
+			brightness_multiplier,
+			brightness_multiplier,
+			brightness_multiplier,
+			1.0 - focus_quality  # More visible when out of focus
+		)
 	
 	# Update background brightness independently (ViewContent acts as backlight)
 	# Brightness range: 0.0 (black) to 2.0 (pure white, overexposed)
 	if view_content:
-		var brightness_multiplier = current_brightness * 2.0  # Scale to 0-2 range
 		view_content.modulate = Color(
 			brightness_multiplier,
 			brightness_multiplier,
