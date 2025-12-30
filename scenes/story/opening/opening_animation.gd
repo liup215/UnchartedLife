@@ -70,7 +70,7 @@ func _transition_to_prologue() -> void:
 	
 	# Load the game icon for loading screen
 	var microscope_image: Texture2D = load("res://icon.svg")
-	var microscope_intro_text: String = "显微镜使用教学\n\n学习如何使用显微镜观察细胞\n调节焦距、亮度和位置\n\nMicroscope Tutorial\n\nLearn how to use the microscope\nAdjust focus, brightness and position"
+	var microscope_intro_text: String = "Microscope Tutorial\n\nLearn how to use the microscope\nAdjust focus, brightness and position"
 	
 	# Use SceneManager to load prologue scene with custom content
 	SceneManager.load_scene_with_progress(

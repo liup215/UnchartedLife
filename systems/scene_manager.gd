@@ -83,12 +83,12 @@ func is_loading() -> bool:
 func load_scene_with_progress(scene_path: String, custom_image: Texture2D = null, custom_text: String = "") -> void:
 	"""Load a scene with progress display"""
 	# Show loading screen
-	var text = custom_text if custom_text else "加载场景中... / Loading scene..."
+	var text = custom_text if custom_text else "Loading scene..."
 	show_loading_screen(custom_image, text)
 	
 	# Track start time to enforce minimum display duration
 	var start_time: float = Time.get_ticks_msec() / 1000.0
-	const MIN_DISPLAY_TIME: float = 5.0  # Minimum 5 seconds display time
+	const MIN_DISPLAY_TIME: float = 10.0  # Minimum 5 seconds display time
 	
 	# Start loading scene
 	var loader = ResourceLoader.load_threaded_request(scene_path)
