@@ -24,17 +24,17 @@
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
+║                          ┌─────┐                           ║
+║                          │     │                           ║
+║                          │ 🧫  │  ← Petri dish/cell icon  ║
+║                          │     │     (300x300 px)          ║
+║                          └─────┘                           ║
 ║                                                            ║
+║              帮助培养皿中的细胞生存下去                        ║
+║          Help the cells in the petri dish survive          ║
 ║                                                            ║
-║                                                            ║
-║              Legends of Uncharted Life                     ║
-║                                                            ║
-║              A Journey Through Biology                     ║
-║                                                            ║
-║                                                            ║
-║                                                            ║
-║                                           [Skip >>]        ║
-║                                                            ║
+║          按任意键继续 / Press any key to continue             ║
+║                                          [跳过 Skip >>]      ║
 ╚════════════════════════════════════════════════════════════╝
          [Dark blue/purple background with gradual fade]
 ```
@@ -43,10 +43,18 @@
 - **Duration**: 8 seconds total
 - **0-1s**: Fade from black
 - **1-2s**: Background fades to dark blue/purple
-- **2-6s**: Title and subtitle visible, fully lit
-- **6-8s**: Fade out to black
-- **Skip Button**: Always visible in bottom-right corner
-- **User Input**: ESC or Skip button → immediate transition
+- **2s**: Center image fades in
+- **2.5s**: Description text fades in (bilingual)
+- **3s**: Prompt text fades in
+- **6-8s**: All elements fade out to black
+- **Skip Button**: Always visible in bottom-right corner (bilingual)
+- **User Input**: ESC, any key, or Skip button → immediate transition
+
+### Content
+- **Image**: Game icon (icon.svg) displayed at 300x300px in center
+- **Description**: "帮助培养皿中的细胞生存下去 / Help the cells in the petri dish survive"
+- **Prompt**: "按任意键继续 / Press any key to continue"
+- **Theme**: Petri dish and cellular biology survival game
 
 ---
 

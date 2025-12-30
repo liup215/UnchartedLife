@@ -31,11 +31,18 @@ data/story/                # 故事相关数据资源目录（预留）
 **文件:** `scenes/story/opening/opening_animation.tscn`
 
 **功能:**
-- 显示游戏标题："Legends of Uncharted Life"
-- 显示副标题："A Journey Through Biology"
+- 显示游戏图标（培养皿/细胞主题）
+- 显示游戏概念："帮助培养皿中的细胞生存下去 / Help the cells in the petri dish survive"
+- 显示继续提示："按任意键继续 / Press any key to continue"
 - 8秒淡入淡出动画
-- 可跳过（点击Skip按钮或按ESC键）
+- 可跳过（点击Skip按钮、按ESC键或按任意键）
 - 自动跳转到序章第一场景
+
+**布局:**
+- 中心：300x300px 图标图片
+- 图片下方：双语游戏描述文字（中文+英文）
+- 底部：继续提示文字
+- 右下角：跳过按钮（双语）
 
 **特性:**
 ```gdscript

@@ -7,8 +7,9 @@ extends Control
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var skip_button: Button = $SkipButton
 @onready var background: ColorRect = $Background
-@onready var title_label: Label = $CenterContainer/VBoxContainer/TitleLabel
-@onready var subtitle_label: Label = $CenterContainer/VBoxContainer/SubtitleLabel
+@onready var center_image: TextureRect = $CenterContainer/VBoxContainer/CenterImage
+@onready var description_label: Label = $CenterContainer/VBoxContainer/DescriptionLabel
+@onready var prompt_label: Label = $CenterContainer/VBoxContainer/PromptLabel
 
 var can_skip: bool = true
 var animation_finished: bool = false
