@@ -65,11 +65,16 @@ func _transition_to_prologue() -> void:
 		return
 	can_skip = false
 	
-	# Add fade out effect before transition (optional)
-	# var tween = create_tween()
-	# tween.tween_property(self, "modulate:a", 0.0, 0.5)
-	# await tween.finished
+	# Transition to prologue using loading screen with microscope introduction
+	print("Opening animation complete, transitioning to prologue with loading screen...")
 	
-	# Transition to prologue
-	print("Opening animation complete, transitioning to prologue...")
-	SceneManager.SwitchToScene("res://scenes/story/prologue/prologue_scene_01.tscn")
+	# Load the game icon for loading screen
+	var microscope_image: Texture2D = load("res://icon.svg")
+	var microscope_intro_text: String = "显微镜使用教学\n\n学习如何使用显微镜观察细胞\n调节焦距、亮度和位置\n\nMicroscope Tutorial\n\nLearn how to use the microscope\nAdjust focus, brightness and position"
+	
+	# Use LoadingManager to load prologue scene with custom content
+	LoadingManager.load_scene_with_progress(
+		"res://scenes/story/prologue/prologue_scene_01.tscn",
+		microscope_image,
+		microscope_intro_text
+	)
