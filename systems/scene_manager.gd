@@ -86,6 +86,10 @@ func load_scene_with_progress(scene_path: String, custom_image: Texture2D = null
 	var text = custom_text if custom_text else "加载场景中... / Loading scene..."
 	show_loading_screen(custom_image, text)
 	
+	# Track start time to enforce minimum display duration
+	var start_time: float = Time.get_ticks_msec() / 1000.0
+	const MIN_DISPLAY_TIME: float = 5.0  # Minimum 5 seconds display time
+	
 	# Start loading scene
 	var loader = ResourceLoader.load_threaded_request(scene_path)
 	
@@ -93,6 +97,7 @@ func load_scene_with_progress(scene_path: String, custom_image: Texture2D = null
 	await get_tree().process_frame
 	
 	# Monitor loading progress
+	var scene = null
 	while true:
 		var status = ResourceLoader.load_threaded_get_status(scene_path)
 		var progress = []
@@ -105,16 +110,26 @@ func load_scene_with_progress(scene_path: String, custom_image: Texture2D = null
 		elif status == ResourceLoader.THREAD_LOAD_LOADED:
 			# Loading complete
 			set_progress(1.0)
-			var scene = ResourceLoader.load_threaded_get(scene_path)
-			if scene:
-				# Wait for loading screen to finish
-				await get_tree().create_timer(0.5).timeout
-				# Change scene
-				get_tree().change_scene_to_packed(scene)
+			scene = ResourceLoader.load_threaded_get(scene_path)
 			break
 		elif status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 			push_error("SceneManager: Failed to load scene: " + scene_path)
 			hide_loading_screen()
-			break
+			return
 		
 		await get_tree().process_frame
+	
+	# Ensure minimum display time of 5 seconds
+	var elapsed_time: float = (Time.get_ticks_msec() / 1000.0) - start_time
+	var remaining_time: float = MIN_DISPLAY_TIME - elapsed_time
+	
+	if remaining_time > 0:
+		# Wait for remaining time to reach minimum display duration
+		await get_tree().create_timer(remaining_time).timeout
+	
+	# Additional brief wait for smooth transition
+	await get_tree().create_timer(0.5).timeout
+	
+	# Change scene
+	if scene:
+		get_tree().change_scene_to_packed(scene)
