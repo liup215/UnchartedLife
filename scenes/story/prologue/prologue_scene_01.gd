@@ -7,10 +7,11 @@ extends Control
 # Microscope configuration
 const DISTANCE_MIN: float = 0.0
 const DISTANCE_MAX: float = 100.0
-const TARGET_DISTANCE: float = 50.0  # Perfect focus distance
-const FOCUS_TOLERANCE: float = 10.0  # Distance range for acceptable focus
+var target_distance: float = 51.0  # Perfect focus distance (randomized)
+const FOCUS_TOLERANCE: float = 0.2  # Distance range for acceptable focus (narrowed)
 const COARSE_ADJUSTMENT: float = 5.0
 const FINE_ADJUSTMENT: float = 0.1
+const VISIBILITY_RANGE: float = 4.0  # Range where image starts to become visible
 
 # Magnification levels
 const EYEPIECE_MAGS: Array[int] = [5, 10, 15]
@@ -27,27 +28,27 @@ const MAX_OFFSET_RADIUS: float = 150.0  # Maximum distance from center
 @onready var sample_image: TextureRect = $CenterContainer/MicroscopeView/ViewContent/SampleImage
 
 # Control buttons
-@onready var eyepiece_label: Label = $ControlPanel/EyepieceSection/EyepieceLabel
-@onready var eyepiece_up: Button = $ControlPanel/EyepieceSection/EyepieceUp
-@onready var eyepiece_down: Button = $ControlPanel/EyepieceSection/EyepieceDown
+@onready var eyepiece_label: Label = $ControlPanel/LeftControls/EyepieceSection/EyepieceLabel
+@onready var eyepiece_up: Button = $ControlPanel/LeftControls/EyepieceSection/EyepieceUp
+@onready var eyepiece_down: Button = $ControlPanel/LeftControls/EyepieceSection/EyepieceDown
 
-@onready var objective_label: Label = $ControlPanel/ObjectiveSection/ObjectiveLabel
-@onready var objective_up: Button = $ControlPanel/ObjectiveSection/ObjectiveUp
-@onready var objective_down: Button = $ControlPanel/ObjectiveSection/ObjectiveDown
+@onready var objective_label: Label = $ControlPanel/LeftControls/ObjectiveSection/ObjectiveLabel
+@onready var objective_up: Button = $ControlPanel/LeftControls/ObjectiveSection/ObjectiveUp
+@onready var objective_down: Button = $ControlPanel/LeftControls/ObjectiveSection/ObjectiveDown
 
-@onready var coarse_focus_up: Button = $ControlPanel/FocusSection/CoarseUp
-@onready var coarse_focus_down: Button = $ControlPanel/FocusSection/CoarseDown
-@onready var fine_focus_up: Button = $ControlPanel/FocusSection/FineUp
-@onready var fine_focus_down: Button = $ControlPanel/FocusSection/FineDown
+@onready var coarse_focus_up: Button = $ControlPanel/LeftControls/FocusSection/CoarseUp
+@onready var coarse_focus_down: Button = $ControlPanel/LeftControls/FocusSection/CoarseDown
+@onready var fine_focus_up: Button = $ControlPanel/LeftControls/FocusSection/FineUp
+@onready var fine_focus_down: Button = $ControlPanel/LeftControls/FocusSection/FineDown
 
-@onready var brightness_slider: HSlider = $ControlPanel/BrightnessSection/BrightnessSlider
-@onready var distance_label: Label = $ControlPanel/InfoSection/DistanceLabel
-@onready var magnification_label: Label = $ControlPanel/InfoSection/MagnificationLabel
+@onready var brightness_slider: HSlider = $ControlPanel/LeftControls/BrightnessSection/BrightnessSlider
+@onready var distance_label: Label = $ControlPanel/CenterControls/InfoSection/DistanceLabel
+@onready var magnification_label: Label = $ControlPanel/CenterControls/InfoSection/MagnificationLabel
 
-@onready var move_up: Button = $ControlPanel/MovementSection/MovementControls/MoveUp
-@onready var move_down: Button = $ControlPanel/MovementSection/MovementRow3/MoveDown
-@onready var move_left: Button = $ControlPanel/MovementSection/MovementRow2/MoveLeft
-@onready var move_right: Button = $ControlPanel/MovementSection/MovementRow2/MoveRight
+@onready var move_up: Button = $ControlPanel/RightControls/MovementSection/MovementControls/MoveUp
+@onready var move_down: Button = $ControlPanel/RightControls/MovementSection/MovementRow3/MoveDown
+@onready var move_left: Button = $ControlPanel/RightControls/MovementSection/MovementRow2/MoveLeft
+@onready var move_right: Button = $ControlPanel/RightControls/MovementSection/MovementRow2/MoveRight
 
 @onready var continue_button: Button = $ContinueButton
 
@@ -58,6 +59,25 @@ var current_objective_index: int = 1  # Start with 10x
 var current_brightness: float = 0.5
 var is_focused: bool = false
 var specimen_offset: Vector2 = Vector2.ZERO  # Specimen position offset from center
+
+func _randomize_target_distance() -> void:
+	"""Generate a target distance that cannot be reached by coarse adjustment alone"""
+	# Coarse steps are multiples of 5.0 (0, 5, 10, etc.)
+	
+	# Pick a random coarse step base (avoiding extremes)
+	var min_step = int(DISTANCE_MIN / COARSE_ADJUSTMENT) + 1
+	var max_step = int(DISTANCE_MAX / COARSE_ADJUSTMENT) - 2
+	var coarse_base = randi_range(min_step, max_step) * COARSE_ADJUSTMENT
+	
+	# Add an offset that requires fine adjustment
+	# Offset must be > FOCUS_TOLERANCE and < COARSE_ADJUSTMENT - FOCUS_TOLERANCE
+	# This ensures even the closest coarse step is outside the focus tolerance
+	var min_offset = FOCUS_TOLERANCE + 0.2
+	var max_offset = COARSE_ADJUSTMENT - (FOCUS_TOLERANCE + 0.2)
+	var offset = randf_range(min_offset, max_offset)
+	
+	target_distance = coarse_base + offset
+	print("New target distance: ", target_distance)
 
 func _ready() -> void:
 	_setup_controls()
@@ -104,10 +124,11 @@ func _setup_controls() -> void:
 func _reset_distance() -> void:
 	"""Reset focus distance and randomize specimen position when changing magnification"""
 	current_distance = 0.0
+	_randomize_target_distance()
 	
 	# Randomize specimen position within radius when magnification changes
 	var random_angle = randf() * TAU  # Random angle in radians (0 to 2π)
-	var random_distance = randf() * MAX_OFFSET_RADIUS  # Random distance within max radius
+	var random_distance = randf() * (MAX_OFFSET_RADIUS * 2.0)  # Random distance within extended radius
 	specimen_offset = Vector2(
 		cos(random_angle) * random_distance,
 		sin(random_angle) * random_distance
@@ -169,36 +190,26 @@ func _on_brightness_changed(value: float) -> void:
 func _on_move_up_pressed() -> void:
 	"""Move specimen up (inverted: image moves down)"""
 	# Microscope inverts image, so control opposite to movement
-	specimen_offset.y += MOVE_STEP
-	_clamp_specimen_position()
+	specimen_offset.y -= MOVE_STEP
 	_update_display()
 
 func _on_move_down_pressed() -> void:
 	"""Move specimen down (inverted: image moves up)"""
 	# Microscope inverts image, so control opposite to movement
-	specimen_offset.y -= MOVE_STEP
-	_clamp_specimen_position()
+	specimen_offset.y += MOVE_STEP
 	_update_display()
 
 func _on_move_left_pressed() -> void:
 	"""Move specimen left (inverted: image moves right)"""
 	# Microscope inverts image, so control opposite to movement
-	specimen_offset.x += MOVE_STEP
-	_clamp_specimen_position()
+	specimen_offset.x -= MOVE_STEP
 	_update_display()
 
 func _on_move_right_pressed() -> void:
 	"""Move specimen right (inverted: image moves left)"""
 	# Microscope inverts image, so control opposite to movement
-	specimen_offset.x -= MOVE_STEP
-	_clamp_specimen_position()
+	specimen_offset.x += MOVE_STEP
 	_update_display()
-
-func _clamp_specimen_position() -> void:
-	"""Constrain specimen position within maximum radius"""
-	var distance = specimen_offset.length()
-	if distance > MAX_OFFSET_RADIUS:
-		specimen_offset = specimen_offset.normalized() * MAX_OFFSET_RADIUS
 
 func _update_display() -> void:
 	"""Update the microscope view based on current settings"""
@@ -207,14 +218,19 @@ func _update_display() -> void:
 	var objective_mag = OBJECTIVE_MAGS[current_objective_index]
 	var total_mag = eyepiece_mag * objective_mag
 	
-	eyepiece_label.text = "目镜 Eyepiece: %dx" % eyepiece_mag
-	objective_label.text = "物镜 Objective: %dx" % objective_mag
-	magnification_label.text = "总倍数 Total Mag: %dx" % total_mag
-	distance_label.text = "距离 Distance: %.1f" % current_distance
+	eyepiece_label.text = "Eyepiece: %dx" % eyepiece_mag
+	objective_label.text = "Objective: %dx" % objective_mag
+	magnification_label.text = "Total Mag: %dx" % total_mag
+	distance_label.text = "Distance: %.1f" % current_distance
 	
 	# Calculate focus quality (0.0 = completely out of focus, 1.0 = perfect focus)
-	var distance_from_target = abs(current_distance - TARGET_DISTANCE)
-	var focus_quality = 1.0 - clamp(distance_from_target / 50.0, 0.0, 1.0)
+	var distance_from_target = abs(current_distance - target_distance)
+	var focus_quality = 1.0 - clamp(distance_from_target / VISIBILITY_RANGE, 0.0, 1.0)
+	
+	# Calculate scale based on magnification
+	# Base magnification (scale 1.0) is the lowest possible setting (20x)
+	var min_mag = float(EYEPIECE_MAGS[0] * OBJECTIVE_MAGS[0])
+	var scale_factor = float(total_mag) / min_mag
 	
 	# Calculate brightness first
 	var brightness_multiplier = current_brightness * 2.0  # Scale to 0-2 range
@@ -242,9 +258,16 @@ func _update_display() -> void:
 	# Update sample image visibility based on focus only
 	if sample_image:
 		sample_image.modulate.a = focus_quality
+		
+		# Apply scaling and position
+		# Set pivot to center so scaling expands from the middle
+		sample_image.pivot_offset = sample_image.size / 2.0
+		sample_image.scale = Vector2(scale_factor, scale_factor)
+		
 		# Apply specimen offset position (inverted image in microscope)
+		# Scale the offset so movement speed feels consistent relative to zoom
 		# Negative offset because microscope inverts the image
-		sample_image.position = -specimen_offset
+		sample_image.position = -specimen_offset * scale_factor
 	
 	# Check if properly focused
 	is_focused = distance_from_target <= FOCUS_TOLERANCE

@@ -156,8 +156,7 @@ stretch_mode = 5
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
-text = "帮助培养皿中的细胞生存下去
-Help the cells in the petri dish survive"
+text = "Help the cells in the petri dish survive"
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -165,7 +164,7 @@ autowrap_mode = 2
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "按任意键继续 / Press any key to continue"
+text = "Press any key to continue"
 horizontal_alignment = 1
 
 [node name="SkipButton" type="Button" parent="."]
@@ -181,7 +180,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "跳过 Skip >>"
+text = "Skip >>"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

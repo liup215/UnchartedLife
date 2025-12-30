@@ -1,21 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cutjmmcfu7du4"]
+[gd_scene load_steps=5 format=3 uid="uid://cutjmmcfu7du4"]
 
 [ext_resource type="Script" uid="uid://cov3ms88tckk6" path="res://scenes/story/prologue/prologue_scene_01.gd" id="1_prologue"]
 [ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
-
-[sub_resource type="Shader" id="Shader_circle_mask"]
-code = "shader_type canvas_item;
-
-void fragment() {
-	vec2 center = vec2(0.5, 0.5);
-	float dist = distance(UV, center);
-	float radius = 0.45;
-	float alpha = 1.0 - smoothstep(radius - 0.01, radius, dist);
-	COLOR.a *= alpha;
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_circle_mask"]
-shader = SubResource("Shader_circle_mask")
 
 [sub_resource type="Shader" id="Shader_circle_frame"]
 code = "shader_type canvas_item;
@@ -59,6 +45,8 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MicroscopeView" type="Panel" parent="CenterContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(1000, 1000)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -70,13 +58,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
 [node name="SampleImage" type="TextureRect" parent="CenterContainer/MicroscopeView/ViewContent"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -500.0
+offset_bottom = -500.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_icon")
@@ -91,7 +80,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
 [node name="CircleFrame" type="ColorRect" parent="CenterContainer/MicroscopeView"]
 material = SubResource("ShaderMaterial_circle_frame")
@@ -103,179 +91,217 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="ControlPanel" type="VBoxContainer" parent="."]
+[node name="ControlPanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -250.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="LeftControls" type="VBoxContainer" parent="ControlPanel"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -220.0
+offset_right = 400.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="EyepieceSection" type="HBoxContainer" parent="ControlPanel/LeftControls"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EyepieceLabel" type="Label" parent="ControlPanel/LeftControls/EyepieceSection"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Eyepiece: 10x"
+
+[node name="EyepieceDown" type="Button" parent="ControlPanel/LeftControls/EyepieceSection"]
+layout_mode = 2
+text = "◄"
+
+[node name="EyepieceUp" type="Button" parent="ControlPanel/LeftControls/EyepieceSection"]
+layout_mode = 2
+text = "►"
+
+[node name="ObjectiveSection" type="HBoxContainer" parent="ControlPanel/LeftControls"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ObjectiveLabel" type="Label" parent="ControlPanel/LeftControls/ObjectiveSection"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Objective: 10x"
+
+[node name="ObjectiveDown" type="Button" parent="ControlPanel/LeftControls/ObjectiveSection"]
+layout_mode = 2
+text = "◄"
+
+[node name="ObjectiveUp" type="Button" parent="ControlPanel/LeftControls/ObjectiveSection"]
+layout_mode = 2
+text = "►"
+
+[node name="FocusSection" type="HBoxContainer" parent="ControlPanel/LeftControls"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="CoarseLabel" type="Label" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Coarse:"
+
+[node name="CoarseDown" type="Button" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+text = "▼ -5"
+
+[node name="CoarseUp" type="Button" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+text = "▲ +5"
+
+[node name="FineLabel" type="Label" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "  Fine:"
+
+[node name="FineDown" type="Button" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+text = "▼ -0.1"
+
+[node name="FineUp" type="Button" parent="ControlPanel/LeftControls/FocusSection"]
+layout_mode = 2
+text = "▲ +0.1"
+
+[node name="BrightnessSection" type="HBoxContainer" parent="ControlPanel/LeftControls"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BrightnessLabel" type="Label" parent="ControlPanel/LeftControls/BrightnessSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Brightness:"
+
+[node name="BrightnessSlider" type="HSlider" parent="ControlPanel/LeftControls/BrightnessSection"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+value = 50.0
+
+[node name="CenterControls" type="VBoxContainer" parent="ControlPanel"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -400.0
-offset_top = -200.0
-offset_right = 400.0
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 10
+alignment = 2
 
-[node name="EyepieceSection" type="HBoxContainer" parent="ControlPanel"]
+[node name="InfoSection" type="HBoxContainer" parent="ControlPanel/CenterControls"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 40
+alignment = 1
 
-[node name="EyepieceLabel" type="Label" parent="ControlPanel/EyepieceSection"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "目镜 Eyepiece: 10x"
-
-[node name="EyepieceDown" type="Button" parent="ControlPanel/EyepieceSection"]
-layout_mode = 2
-text = "◄"
-
-[node name="EyepieceUp" type="Button" parent="ControlPanel/EyepieceSection"]
-layout_mode = 2
-text = "►"
-
-[node name="ObjectiveSection" type="HBoxContainer" parent="ControlPanel"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="ObjectiveLabel" type="Label" parent="ControlPanel/ObjectiveSection"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "物镜 Objective: 10x"
-
-[node name="ObjectiveDown" type="Button" parent="ControlPanel/ObjectiveSection"]
-layout_mode = 2
-text = "◄"
-
-[node name="ObjectiveUp" type="Button" parent="ControlPanel/ObjectiveSection"]
-layout_mode = 2
-text = "►"
-
-[node name="FocusSection" type="HBoxContainer" parent="ControlPanel"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="CoarseLabel" type="Label" parent="ControlPanel/FocusSection"]
+[node name="DistanceLabel" type="Label" parent="ControlPanel/CenterControls/InfoSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "粗调 Coarse:"
+text = "Distance: 0.0"
 
-[node name="CoarseDown" type="Button" parent="ControlPanel/FocusSection"]
-layout_mode = 2
-text = "▼ -5"
-
-[node name="CoarseUp" type="Button" parent="ControlPanel/FocusSection"]
-layout_mode = 2
-text = "▲ +5"
-
-[node name="FineLabel" type="Label" parent="ControlPanel/FocusSection"]
+[node name="MagnificationLabel" type="Label" parent="ControlPanel/CenterControls/InfoSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "  细调 Fine:"
+text = "Total Mag: 100x"
 
-[node name="FineDown" type="Button" parent="ControlPanel/FocusSection"]
-layout_mode = 2
-text = "▼ -0.1"
+[node name="RightControls" type="VBoxContainer" parent="ControlPanel"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -220.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+alignment = 2
 
-[node name="FineUp" type="Button" parent="ControlPanel/FocusSection"]
-layout_mode = 2
-text = "▲ +0.1"
-
-[node name="BrightnessSection" type="HBoxContainer" parent="ControlPanel"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="BrightnessLabel" type="Label" parent="ControlPanel/BrightnessSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "亮度 Brightness:"
-
-[node name="BrightnessSlider" type="HSlider" parent="ControlPanel/BrightnessSection"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-value = 50.0
-
-[node name="MovementSection" type="VBoxContainer" parent="ControlPanel"]
+[node name="MovementSection" type="VBoxContainer" parent="ControlPanel/RightControls"]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="MovementLabel" type="Label" parent="ControlPanel/MovementSection"]
+[node name="MovementLabel" type="Label" parent="ControlPanel/RightControls/MovementSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "标本移动 Specimen Movement (Inverted):"
+text = "Specimen Movement (Inverted):"
 horizontal_alignment = 1
 
-[node name="MovementControls" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+[node name="MovementControls" type="HBoxContainer" parent="ControlPanel/RightControls/MovementSection"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="Spacer1" type="Control" parent="ControlPanel/MovementSection/MovementControls"]
+[node name="Spacer1" type="Control" parent="ControlPanel/RightControls/MovementSection/MovementControls"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="MoveUp" type="Button" parent="ControlPanel/MovementSection/MovementControls"]
+[node name="MoveUp" type="Button" parent="ControlPanel/RightControls/MovementSection/MovementControls"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "▲"
 
-[node name="Spacer2" type="Control" parent="ControlPanel/MovementSection/MovementControls"]
+[node name="Spacer2" type="Control" parent="ControlPanel/RightControls/MovementSection/MovementControls"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="MovementRow2" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+[node name="MovementRow2" type="HBoxContainer" parent="ControlPanel/RightControls/MovementSection"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="MoveLeft" type="Button" parent="ControlPanel/MovementSection/MovementRow2"]
+[node name="MoveLeft" type="Button" parent="ControlPanel/RightControls/MovementSection/MovementRow2"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "◄"
 
-[node name="CenterSpacer" type="Control" parent="ControlPanel/MovementSection/MovementRow2"]
+[node name="CenterSpacer" type="Control" parent="ControlPanel/RightControls/MovementSection/MovementRow2"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="MoveRight" type="Button" parent="ControlPanel/MovementSection/MovementRow2"]
+[node name="MoveRight" type="Button" parent="ControlPanel/RightControls/MovementSection/MovementRow2"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "►"
 
-[node name="MovementRow3" type="HBoxContainer" parent="ControlPanel/MovementSection"]
+[node name="MovementRow3" type="HBoxContainer" parent="ControlPanel/RightControls/MovementSection"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="Spacer3" type="Control" parent="ControlPanel/MovementSection/MovementRow3"]
+[node name="Spacer3" type="Control" parent="ControlPanel/RightControls/MovementSection/MovementRow3"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="MoveDown" type="Button" parent="ControlPanel/MovementSection/MovementRow3"]
+[node name="MoveDown" type="Button" parent="ControlPanel/RightControls/MovementSection/MovementRow3"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "▼"
 
-[node name="Spacer4" type="Control" parent="ControlPanel/MovementSection/MovementRow3"]
+[node name="Spacer4" type="Control" parent="ControlPanel/RightControls/MovementSection/MovementRow3"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-
-[node name="InfoSection" type="HBoxContainer" parent="ControlPanel"]
-layout_mode = 2
-theme_override_constants/separation = 40
-
-[node name="DistanceLabel" type="Label" parent="ControlPanel/InfoSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "距离 Distance: 0.0"
-
-[node name="MagnificationLabel" type="Label" parent="ControlPanel/InfoSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "总倍数 Total Mag: 100x"
 
 [node name="ContinueButton" type="Button" parent="."]
 visible = false
@@ -292,4 +318,4 @@ offset_bottom = -210.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
-text = "继续 Continue →"
+text = "Continue →"
