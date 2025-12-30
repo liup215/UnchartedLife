@@ -30,6 +30,7 @@ ItemUseService="*res://systems/item_use_service.gd"
 QuestManager="*res://systems/quest_manager.gd"
 DialogueManager="*res://systems/dialogue_manager.gd"
 TTSManager="*res://systems/tts_manager.gd"
+LoadingManager="*res://systems/loading_manager.gd"
 
 [display]
 
