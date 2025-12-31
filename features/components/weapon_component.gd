@@ -61,7 +61,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# Allow firing at any charge level (including 0)
 		# Damage will scale with charge level
 		if current_ammo <= 0:
-			reload()
+			print("Out of ammo! Cannot fire.")
 			return
 		# Consume ammo
 		current_ammo -= 1
@@ -74,7 +74,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		emit_signal("charge_updated", current_charge)
 	elif item_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
 		if current_ammo <= 0:
-			reload()
+			print("Out of ammo! Cannot fire.")
 			return
 		# Consume ammo
 		print("Firing actor weapon, ammo left: %d" % current_ammo)
