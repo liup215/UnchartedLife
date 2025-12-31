@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bx7k9n2mpl4qw"]
+[gd_scene load_steps=6 format=3 uid="uid://dgbyydsllrnai"]
 
-[ext_resource type="Script" path="res://features/prologue/prologue_game.gd" id="1_game"]
-[ext_resource type="PackedScene" uid="uid://c5y8qhml9dkj2" path="res://features/prologue/target_cell.tscn" id="2_cell"]
+[ext_resource type="Script" uid="uid://dxt57l68xsdk2" path="res://features/prologue/prologue_game.gd" id="1_game"]
+[ext_resource type="PackedScene" uid="uid://c5y8qhmmadkj2" path="res://features/prologue/target_cell.tscn" id="2_cell"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="3_player"]
-[ext_resource type="PackedScene" uid="uid://d3p8yqr9fkl5n" path="res://ui/prologue/prologue_ui.tscn" id="4_ui"]
+[ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="4_jlky6"]
+[ext_resource type="PackedScene" uid="uid://d3p8yqsafkl5n" path="res://ui/prologue/prologue_ui.tscn" id="4_ui"]
 
 [node name="PrologueGame" type="Node2D"]
 script = ExtResource("1_game")
@@ -24,6 +25,7 @@ position = Vector2(800, 450)
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(200, 450)
+actor_data = ExtResource("4_jlky6")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
