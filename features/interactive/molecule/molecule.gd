@@ -57,10 +57,13 @@ func _setup_visuals():
 		label.modulate = color
 
 func _on_body_entered(body: Node2D):
+	print("Molecule: body_entered triggered - ", body.name, " - is player: ", body.is_in_group("player"))
+	
 	if picked_up:
 		return
 		
 	if body.is_in_group("player"):
+		print("Molecule: Player detected! Interacting...")
 		_interact_with_player(body)
 
 func _on_area_entered(area: Area2D):
