@@ -7,6 +7,9 @@ signal health_changed(current: int, max_hp: int, percentage: float)
 signal cell_healed()
 signal cell_died()
 
+# Constants
+const BASE_SPRITE_SIZE: float = 32.0  # Base size of the sprite in pixels
+
 @export var max_health: int = 1000
 @export var health_drain_rate: float = 1.0  # HP per second to drain
 @export var victory_health: int = 500  # HP needed to win
@@ -31,7 +34,7 @@ func _ready():
 func _setup_visuals():
 	# Set up a large circular sprite for the cell
 	sprite.modulate = Color(0.8, 0.3, 0.3, 0.7)  # Reddish, semi-transparent
-	sprite.scale = Vector2(cell_size / 32.0, cell_size / 32.0)  # Assuming 32px base sprite
+	sprite.scale = Vector2(cell_size / BASE_SPRITE_SIZE, cell_size / BASE_SPRITE_SIZE)
 	
 	# Set label
 	if label:
@@ -106,7 +109,7 @@ func _animate_pulse(delta: float):
 	
 	var time = Time.get_ticks_msec() / 1000.0
 	var pulse = sin(time * pulse_speed) * pulse_amount
-	sprite.scale = Vector2.ONE * (cell_size / 32.0) * (1.0 + pulse)
+	sprite.scale = Vector2.ONE * (cell_size / BASE_SPRITE_SIZE) * (1.0 + pulse)
 
 func _flash_heal():
 	# Flash green when healed

@@ -12,6 +12,9 @@ enum MoleculeType {
 	MALTOSE       # Wrong answer - damages player
 }
 
+# Constants
+const PICKUP_ANIMATION_DURATION: float = 0.2  # Duration of pickup animation
+
 @export var molecule_type: MoleculeType = MoleculeType.GLUCOSE
 @export var molecule_name: String = "Glucose"
 @export var damage_amount: int = 10  # HP damage for wrong molecules
@@ -84,7 +87,7 @@ func _interact_with_player(player: Node):
 	
 	# Visual feedback and removal
 	_play_pickup_animation()
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(PICKUP_ANIMATION_DURATION).timeout
 	queue_free()
 
 func _give_ammo(player: Node):
@@ -147,4 +150,4 @@ func _play_negative_feedback():
 func _play_pickup_animation():
 	# Float up animation
 	var tween = create_tween()
-	tween.tween_property(self, "position", position + Vector2(0, -30), 0.2)
+	tween.tween_property(self, "position", position + Vector2(0, -30), PICKUP_ANIMATION_DURATION)

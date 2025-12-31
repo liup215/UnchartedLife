@@ -6,6 +6,9 @@ extends Node2D
 # Preload scenes
 const MOLECULE_SCENE = preload("res://features/interactive/molecule/molecule.tscn")
 
+# Constants
+const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before returning to menu
+
 @export var spawn_area_size: Vector2 = Vector2(1600, 900)
 @export var molecule_count: int = 30
 @export var glucose_percentage: float = 0.4  # 40% glucose, 60% other sugars
@@ -137,7 +140,7 @@ func _show_victory_screen():
 		ui.show_victory()
 	
 	# Pause game or transition to next scene
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(GAME_OVER_DELAY).timeout
 	_return_to_menu()
 
 func _show_game_over_screen(reason: String):
@@ -148,7 +151,7 @@ func _show_game_over_screen(reason: String):
 		ui.show_game_over(reason)
 	
 	# Wait before returning to menu
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(GAME_OVER_DELAY).timeout
 	_return_to_menu()
 
 func _return_to_menu():
