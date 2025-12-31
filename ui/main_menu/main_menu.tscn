@@ -47,6 +47,10 @@ theme_override_constants/separation = 10
 layout_mode = 2
 text = "New Game"
 
+[node name="PrologueButton" type="Button" parent="CenterContainer/VBoxContainer/MenuButtons"]
+layout_mode = 2
+text = "Prologue (Tutorial)"
+
 [node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer/MenuButtons"]
 layout_mode = 2
 text = "Continue"

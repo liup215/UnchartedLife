@@ -74,12 +74,12 @@ func _interact_with_player(player: Node):
 	if molecule_type == MoleculeType.GLUCOSE:
 		# Correct molecule - refill ammo
 		_give_ammo(player)
-		EventBus.emit_signal("molecule_collected", molecule_type, true)
+		EventBus.molecule_collected.emit(molecule_type, true)
 		_play_positive_feedback()
 	else:
 		# Wrong molecule - damage player
 		_damage_player(player)
-		EventBus.emit_signal("molecule_collected", molecule_type, false)
+		EventBus.molecule_collected.emit(molecule_type, false)
 		_play_negative_feedback()
 	
 	# Visual feedback and removal
@@ -92,12 +92,12 @@ func _give_ammo(player: Node):
 	if player.has_node("ActorCombatComponent"):
 		var combat_component = player.get_node("ActorCombatComponent")
 		# Refill first weapon's ammo
-		if combat_component.weapon_components.size() > 0:
-			var weapon_comp = combat_component.weapon_components[0]
-			if weapon_comp and weapon_comp.weapon_data:
+		if combat_component.actor_weapons.size() > 0:
+			var weapon_comp = combat_component.actor_weapons[0]
+			if weapon_comp and weapon_comp.item_data and weapon_comp.item_data.weapon_data:
 				weapon_comp.current_ammo = min(
 					weapon_comp.current_ammo + ammo_amount,
-					weapon_comp.weapon_data.max_ammo
+					weapon_comp.item_data.weapon_data.max_ammo
 				)
 				print("Glucose collected! Ammo +%d" % ammo_amount)
 
@@ -105,9 +105,8 @@ func _damage_player(player: Node):
 	# Find player's health component and apply damage
 	if player.has_node("AttributeComponent"):
 		var attr_component = player.get_node("AttributeComponent")
-		if attr_component.has_node("HealthComponent"):
-			var health_component = attr_component.get_node("HealthComponent")
-			health_component.take_damage(damage_amount)
+		if attr_component.health_component:
+			attr_component.health_component.take_damage(damage_amount)
 			print("Wrong molecule! -%d HP" % damage_amount)
 
 func _play_positive_feedback():
