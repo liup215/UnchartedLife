@@ -22,6 +22,7 @@ color = Color(0.1, 0.1, 0.15, 1)
 
 [node name="TargetCell" parent="." instance=ExtResource("2_cell")]
 position = Vector2(800, 450)
+victory_health = 1000
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(200, 450)

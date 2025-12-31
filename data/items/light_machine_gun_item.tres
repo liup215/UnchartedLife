@@ -1,21 +1,15 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://lmg_item"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://b5x2xojajflyf"]
 
-[ext_resource type="Script" path="res://data/definitions/inventory/item_data.gd" id="1_item_data"]
+[ext_resource type="Script" uid="uid://by6ym07087qd4" path="res://data/definitions/inventory/item_data.gd" id="1_item_data"]
+[ext_resource type="Script" uid="uid://cqqwgho1owjhk" path="res://data/definitions/item/item_effect_data.gd" id="1_vss37"]
+[ext_resource type="Texture2D" uid="uid://chbcpfty3e6eg" path="res://assets/sprites/machine_gun.png" id="2_vss37"]
 [ext_resource type="Resource" uid="uid://b31hmsxhowote" path="res://data/weapons/actor_weapons/player_weapons/light_machine_gun.tres" id="2_weapon_data"]
-[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="3_icon"]
 
 [resource]
 script = ExtResource("1_item_data")
 item_name = "Light Machine Gun"
 item_type = 0
-item_type/name = "WEAPON"
 description = "Standard issue LMG."
-icon = ExtResource("3_icon")
-stackable = false
-max_stack_size = 1
-usable = true
-cooldown = 0.0
-consumption_mode = 2
+icon = ExtResource("2_vss37")
 weapon_data = ExtResource("2_weapon_data")
-effects = []
-use_requirements = []
+consumption_mode = 2
