@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5y8qhml9dkj2"]
+
+[ext_resource type="Script" path="res://features/prologue/target_cell.gd" id="1_target_cell"]
+[ext_resource type="Texture2D" uid="uid://c7k3m9p2n5wqv" path="res://assets/sprites/cell_sprite.png" id="2_texture"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 100.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2"]
+radius = 110.0
+
+[node name="TargetCell" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_target_cell")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.8, 0.3, 0.3, 0.7)
+scale = Vector2(6, 6)
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_2")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -100.0
+offset_top = -130.0
+offset_right = 100.0
+offset_bottom = -110.0
+max_value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="."]
+offset_left = -80.0
+offset_top = -150.0
+offset_right = 80.0
+offset_bottom = -130.0
+text = "Dying Cell"
+horizontal_alignment = 1

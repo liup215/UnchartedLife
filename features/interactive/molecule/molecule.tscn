@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvdl3v7x8qhml"]
+
+[ext_resource type="Script" path="res://features/interactive/molecule/molecule.gd" id="1_molecule"]
+[ext_resource type="Texture2D" uid="uid://b5qv6y8w9t7xm" path="res://assets/sprites/molecules/molecule_circle.png" id="2_texture"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 32.0
+
+[node name="Molecule" type="Node2D"]
+script = ExtResource("1_molecule")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.5, 1, 0.5, 1)
+texture = ExtResource("2_texture")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -40.0
+offset_top = -60.0
+offset_right = 40.0
+offset_bottom = -40.0
+text = "Glucose"
+horizontal_alignment = 1

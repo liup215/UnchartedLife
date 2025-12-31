@@ -111,6 +111,11 @@ signal story_scene_entered(scene_id: String)
 # Carries the milestone_id and any associated data.
 signal story_milestone_reached(milestone_id: String, data: Dictionary)
 
+# --- Prologue System Signals ---
+# Emitted when a molecule is collected in the prologue.
+# Carries the molecule type and whether it was correct (glucose).
+signal molecule_collected(molecule_type: int, is_glucose: bool)
+
 # Add other global signals here as the game grows.
 
 # NOTE: The engine will show warnings that these signals are "declared but never used."
