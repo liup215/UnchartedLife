@@ -9,7 +9,7 @@ var containers: Dictionary[String, InventoryData] = {}
 
 func set_data(data: ActorData):
 	containers.clear()
-	if data.inventory_config:
+	if data and data.inventory_config:
 		containers = data.inventory_config.duplicate()
 	
 
