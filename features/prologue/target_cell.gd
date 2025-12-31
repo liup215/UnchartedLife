@@ -19,16 +19,14 @@ var is_dead: bool = false
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_bar: ProgressBar = $HealthBar
 @onready var label: Label = $Label
-@onready var hitbox: Area2D = $Hitbox
 
 func _ready():
 	_setup_visuals()
-	_setup_hitbox()
 	_update_health_display()
 	
 	# Add to group for easy identification
 	add_to_group("target_cell")
-	add_to_group("ally")  # So player projectiles can hit it
+	add_to_group("ally")  # So it's recognized as friendly
 
 func _setup_visuals():
 	# Set up a large circular sprite for the cell
@@ -39,11 +37,6 @@ func _setup_visuals():
 	if label:
 		label.text = "Dying Cell"
 		label.add_theme_font_size_override("font_size", 24)
-
-func _setup_hitbox():
-	# Connect hitbox to receive damage from projectiles
-	if hitbox:
-		hitbox.area_entered.connect(_on_hitbox_area_entered)
 
 func _physics_process(delta: float):
 	if is_dead:
@@ -78,17 +71,11 @@ func heal(amount: int):
 	if current_health >= victory_health:
 		_victory()
 
-func _on_hitbox_area_entered(area: Area2D):
-	# When hit by player projectile, heal the cell instead of damaging it
-	if area.is_in_group("projectile"):
-		# Get damage from projectile and convert to healing
-		var damage_amount = area.get("damage")
-		if damage_amount:
-			heal(damage_amount)
-			print("Cell healed for %d HP!" % damage_amount)
-		
-		# Destroy the projectile
-		area.get_parent().queue_free()
+# This method is called by bullets that hit the cell
+func take_damage(amount: int):
+	# In this game, "damage" heals the cell instead!
+	heal(amount)
+	print("Cell hit! Healing for %d HP" % amount)
 
 func _update_health_display():
 	var health_percentage = float(current_health) / float(max_health)

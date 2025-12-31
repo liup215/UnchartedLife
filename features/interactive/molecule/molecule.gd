@@ -89,25 +89,48 @@ func _interact_with_player(player: Node):
 
 func _give_ammo(player: Node):
 	# Find the player's combat component and refill weapon ammo
-	if player.has_node("ActorCombatComponent"):
-		var combat_component = player.get_node("ActorCombatComponent")
-		# Refill first weapon's ammo
-		if combat_component.actor_weapons.size() > 0:
-			var weapon_comp = combat_component.actor_weapons[0]
-			if weapon_comp and weapon_comp.item_data and weapon_comp.item_data.weapon_data:
-				weapon_comp.current_ammo = min(
-					weapon_comp.current_ammo + ammo_amount,
-					weapon_comp.item_data.weapon_data.max_ammo
-				)
-				print("Glucose collected! Ammo +%d" % ammo_amount)
+	if not player.has_node("ActorCombatComponent"):
+		print("Warning: Player has no ActorCombatComponent")
+		return
+		
+	var combat_component = player.get_node("ActorCombatComponent")
+	
+	# Check if player has any weapons
+	if combat_component.actor_weapons.is_empty():
+		print("Warning: Player has no weapons equipped")
+		return
+	
+	# Refill first weapon's ammo
+	var weapon_comp = combat_component.actor_weapons[0]
+	if not weapon_comp:
+		print("Warning: Weapon component is null")
+		return
+		
+	if not weapon_comp.item_data or not weapon_comp.item_data.weapon_data:
+		print("Warning: Weapon has no data")
+		return
+	
+	var max_ammo = weapon_comp.item_data.weapon_data.ammo_capacity
+	weapon_comp.current_ammo = min(
+		weapon_comp.current_ammo + ammo_amount,
+		max_ammo
+	)
+	weapon_comp.ammo_updated.emit(weapon_comp.current_ammo)
+	print("Glucose collected! Ammo +%d (now %d/%d)" % [ammo_amount, weapon_comp.current_ammo, max_ammo])
 
 func _damage_player(player: Node):
 	# Find player's health component and apply damage
-	if player.has_node("AttributeComponent"):
-		var attr_component = player.get_node("AttributeComponent")
-		if attr_component.health_component:
-			attr_component.health_component.take_damage(damage_amount)
-			print("Wrong molecule! -%d HP" % damage_amount)
+	if not player.has_node("AttributeComponent"):
+		print("Warning: Player has no AttributeComponent")
+		return
+		
+	var attr_component = player.get_node("AttributeComponent")
+	if not attr_component.health_component:
+		print("Warning: Player AttributeComponent has no health_component")
+		return
+		
+	attr_component.health_component.take_damage(damage_amount)
+	print("Wrong molecule! -%d HP" % damage_amount)
 
 func _play_positive_feedback():
 	# Visual feedback for correct pickup

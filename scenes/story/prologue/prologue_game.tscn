@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://features/prologue/prologue_game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://c5y8qhml9dkj2" path="res://features/prologue/target_cell.tscn" id="2_cell"]
-[ext_resource type="PackedScene" uid="uid://dnrctdp5lflq1" path="res://features/player/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="3_player"]
 [ext_resource type="PackedScene" uid="uid://d3p8yqr9fkl5n" path="res://ui/prologue/prologue_ui.tscn" id="4_ui"]
 
 [node name="PrologueGame" type="Node2D"]
