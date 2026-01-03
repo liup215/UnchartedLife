@@ -23,11 +23,16 @@ class_name SpawnableEntityData
 
 # Convert to dictionary for saving
 func to_dict() -> Dictionary:
+	# Helper to safely get resource path
+	var resource_path_str: String = ""
+	if entity_resource and entity_resource.resource_path:
+		resource_path_str = entity_resource.resource_path
+	
 	return {
 		"entity_type": entity_type,
 		"scene_path": scene_path,
 		"spawn_position": {"x": spawn_position.x, "y": spawn_position.y},
-		"entity_resource": entity_resource.resource_path if (entity_resource and "resource_path" in entity_resource) else "",
+		"entity_resource": resource_path_str,
 		"spawn_id": spawn_id,
 		"additional_config": additional_config
 	}
