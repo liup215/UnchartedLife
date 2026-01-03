@@ -12,9 +12,9 @@ var loading_screen_instance: Control = null
 
 func _ready():
 	# Check if we should start with prologue
-	if PlayerData.has("should_start_prologue") and PlayerData.get("should_start_prologue"):
+	if PlayerData.should_start_prologue:
 		# Clear the flag
-		PlayerData.set("should_start_prologue", false)
+		PlayerData.should_start_prologue = false
 		# Start prologue sequence
 		_start_prologue_sequence()
 	else:

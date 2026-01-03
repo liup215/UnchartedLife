@@ -70,6 +70,6 @@ func _transition_to_prologue() -> void:
 	print("Opening animation complete, transitioning to main scene...")
 	
 	# Mark that we should start with prologue
-	PlayerData.set("should_start_prologue", true)
+	PlayerData.should_start_prologue = true
 	
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
