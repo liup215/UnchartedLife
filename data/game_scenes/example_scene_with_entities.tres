@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="GameSceneData" load_steps=12 format=3 uid="uid://example_scene_with_entities"]
+
+[ext_resource type="Script" path="res://data/definitions/system/game_scene_data.gd" id="1_scene_data"]
+[ext_resource type="Script" path="res://data/definitions/system/map_data.gd" id="2_map_data"]
+[ext_resource type="Script" path="res://data/definitions/system/player_spawn_data.gd" id="3_player_spawn"]
+[ext_resource type="Script" path="res://data/definitions/system/spawnable_entity_data.gd" id="4_spawnable"]
+[ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="5_player_data"]
+[ext_resource type="Resource" path="res://data/vehicles/basic_tank_data.tres" id="6_tank_data"]
+[ext_resource type="Resource" path="res://data/actors/enemies/head_cutter/goblin_data.tres" id="7_goblin_data"]
+
+[sub_resource type="Resource" id="MapData_example"]
+script = ExtResource("2_map_data")
+map_id = "main_world"
+map_name = "Main World"
+map_description = "The main game world with spawned entities"
+map_scene_path = ""
+chunk_scenes = {}
+default_spawn_position = Vector2(631, 356)
+use_chunk_loading = true
+
+[sub_resource type="Resource" id="PlayerSpawnData_example"]
+script = ExtResource("3_player_spawn")
+spawn_position = Vector2(631, 356)
+spawn_id = "default"
+player_data = ExtResource("5_player_data")
+
+[sub_resource type="Resource" id="SpawnableEntity_vehicle"]
+script = ExtResource("4_spawnable")
+entity_type = "vehicle"
+scene_path = "res://features/vehicle/base_vehicle.tscn"
+spawn_position = Vector2(800, 400)
+entity_resource = ExtResource("6_tank_data")
+spawn_id = "tank_1"
+additional_config = {
+	"assigned_map_id": "main_world"
+}
+
+[sub_resource type="Resource" id="SpawnableEntity_enemy"]
+script = ExtResource("4_spawnable")
+entity_type = "enemy"
+scene_path = "res://features/actor/base_actor.tscn"
+spawn_position = Vector2(1000, 500)
+entity_resource = ExtResource("7_goblin_data")
+spawn_id = "enemy_1"
+additional_config = {}
+
+[resource]
+script = ExtResource("1_scene_data")
+scene_id = "example_scene_with_entities"
+scene_name = "Example Scene With Entities"
+map_data = SubResource("MapData_example")
+player_spawn = SubResource("PlayerSpawnData_example")
+spawnable_entities = Array[ExtResource("4_spawnable")]([SubResource("SpawnableEntity_vehicle"), SubResource("SpawnableEntity_enemy")])
+background_music = null
+ambient_sound = null
+scene_settings = {}
