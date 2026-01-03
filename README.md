@@ -49,6 +49,33 @@ Common functionalities are encapsulated in reusable components (both scenes and 
 **Unified Combat/Weapon/AI System:**  
 All attack behaviors for actors, enemies, and vehicles are now handled by a unified set of components (`CombatComponent`, `WeaponComponent`, `WeaponEffect`, and data-driven `AIBehavior`). This enables any entity to perform attacks, and all logic is reusable and extensible. WeaponEffect supports flexible attack effects and visual feedback, and can be configured for different weapon types and entities. AIBehavior is assigned via data resources, allowing both player and enemy to use the same behavior system, fully data-driven.
 
+### Game Scene Loading System
+The game scene loading system takes the data-driven philosophy to the scene level, allowing complete game scenes to be configured through data resources.
+
+**Core Architecture:**
+-   `GameSceneData`: Main resource defining a complete scene configuration
+-   `SpawnableEntityData`: Resource defining where and what entities to spawn (NPCs, vehicles, enemies, etc.)
+-   `PlayerSpawnData`: Resource defining player spawn location and configuration
+-   `game_scene.tscn`: Generic container scene that loads from GameSceneData
+
+**Key Features:**
+-   **Static Map Loading:** Reference MapData resources for map/level configuration
+-   **Dynamic Entity Spawning:** Define entity types, positions, and data resources
+-   **Designer-Friendly:** Configure entire scenes in the Inspector without code changes
+-   **Reusable Resources:** Share entity data across multiple scenes
+-   **Save/Load Integration:** Full support for SaveManager persistence
+
+**Workflow Example: Creating a New Level**
+1.  **Create GameSceneData:** Right-click in `data/game_scenes/`, create new Resource of type `GameSceneData`
+2.  **Configure Map:** Set MapData reference for static map/chunks
+3.  **Set Player Spawn:** Configure spawn position and optional custom player data
+4.  **Add Entities:** Add SpawnableEntityData elements for enemies, vehicles, NPCs
+    -   Set entity type, scene path, spawn position, and resource data
+    -   Use `additional_config` for entity-specific settings
+5.  **Use in Game:** Reference GameSceneData in main.tscn or load dynamically
+
+See `docs/GAME_SCENE_SYSTEM.md` for comprehensive documentation.
+
 ### Inventory System
 The inventory system provides a comprehensive item management interface with data-driven containers and intuitive UI.
 
@@ -91,7 +118,8 @@ The project has completed several major development phases, establishing a robus
 -   **Phase 5 (Complete):** The core combat loop, including player-vehicle systems, weapon mechanics, and visual feedback (damage numbers, effects), is complete.
 -   **Phase 6 (Complete):** A major refactor to a fully data-driven architecture has been completed. Enemies, weapons, and core stats are now defined almost entirely by `Resource` files.
 -   **Phase 7 (Complete):** Comprehensive inventory system with tabbed containers, item management, and detailed UI implemented.
--   **Phase 8 (In Progress):** Focus is now on building out advanced gameplay features like the "Just Frame" mechanic and the Virtual Lab.
+-   **Phase 8 (Complete):** Game scene loading system implemented - complete scenes can now be configured through data resources without code changes.
+-   **Phase 9 (In Progress):** Focus is now on building out advanced gameplay features like the "Just Frame" mechanic and the Virtual Lab.
 
 ---
 
