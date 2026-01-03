@@ -214,14 +214,9 @@ func _check_and_load_prologue() -> void:
 	
 	# Check if coming from prologue_scene_01 (microscope) - if so, load glucose game
 	# Load glucose game if microscope tutorial is completed but glucose tutorial is not
-	var has_microscope_prop: bool = PlayerData.has("completed_microscope_tutorial")
-	var has_glucose_prop: bool = PlayerData.has("completed_glucose_tutorial")
-	
-	if has_microscope_prop and has_glucose_prop:
-		var microscope_completed: bool = PlayerData.get("completed_microscope_tutorial", false)
-		var glucose_completed: bool = PlayerData.get("completed_glucose_tutorial", false)
-		if microscope_completed and not glucose_completed:
-			_load_prologue_scene_02()
+	# PlayerData properties are simple booleans, access directly
+	if PlayerData.completed_microscope_tutorial and not PlayerData.completed_glucose_tutorial:
+		_load_prologue_scene_02()
 
 func _load_prologue_scene_02() -> void:
 	"""Load the glucose identification game as an overlay"""
@@ -245,12 +240,9 @@ func _on_prologue_completed() -> void:
 		prologue_scene_instance.queue_free()
 		prologue_scene_instance = null
 	
-	# Mark as completed with safe property setting
-	if PlayerData and PlayerData.has("completed_glucose_tutorial"):
-		PlayerData.set("completed_glucose_tutorial", true)
-	elif PlayerData:
-		# If property doesn't exist, we can't set it
-		push_warning("GameScene: PlayerData doesn't have 'completed_glucose_tutorial' property")
+	# Mark as completed - PlayerData is guaranteed to have this property
+	if PlayerData:
+		PlayerData.completed_glucose_tutorial = true
 
 func _physics_process(_delta: float) -> void:
 	"""Update map chunks based on player position"""
