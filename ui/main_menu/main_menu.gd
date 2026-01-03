@@ -2,7 +2,6 @@ extends Control
 
 @onready var menu_container = $CenterContainer
 @onready var new_game_button = $CenterContainer/VBoxContainer/MenuButtons/NewGameButton
-@onready var prologue_button = $CenterContainer/VBoxContainer/MenuButtons/PrologueButton
 @onready var continue_button = $CenterContainer/VBoxContainer/MenuButtons/ContinueButton
 @onready var load_game_button = $CenterContainer/VBoxContainer/MenuButtons/LoadGameButton
 @onready var options_button = $CenterContainer/VBoxContainer/MenuButtons/OptionsButton
@@ -36,7 +35,6 @@ func _ready():
 func RunMenuSetup():
 	# Initialize buttons
 	new_game_button.pressed.connect(_on_new_game_pressed)
-	prologue_button.pressed.connect(_on_prologue_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	load_game_button.pressed.connect(_on_load_game_pressed)
 	options_button.pressed.connect(_on_options_pressed)
@@ -114,12 +112,6 @@ func _on_new_game_pressed():
 		new_game_settings.OpenFromMainMenu(self)
 	else:
 		print("NewGameSettings node not found.")
-
-
-func _on_prologue_pressed():
-	# Launch the prologue scene directly
-	print("Launching prologue...")
-	get_tree().change_scene_to_file("res://scenes/story/prologue/prologue_game.tscn")
 
 
 func _on_new_game_confirmed(settings):

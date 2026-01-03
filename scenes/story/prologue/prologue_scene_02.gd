@@ -1,13 +1,16 @@
-## prologue_game.gd
-## Main game logic for the prologue scene
+## prologue_scene_02.gd
+## Glucose identification mini-game
 ## Spawns molecules and manages game state
 extends Node2D
+
+# Signals
+signal prologue_completed()
 
 # Preload scenes
 const MOLECULE_SCENE = preload("res://features/interactive/molecule/molecule.tscn")
 
 # Constants
-const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before returning to menu
+const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before completing/restarting
 
 @export var spawn_area_size: Vector2 = Vector2(1600, 900)
 @export var molecule_count: int = 30
@@ -15,9 +18,9 @@ const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before returning to menu
 
 @onready var spawn_container: Node2D = $SpawnContainer
 @onready var target_cell: TargetCell = $TargetCell
-@onready var player: Actor = $Player
 @onready var ui: Control = $UI/PrologueUI
 
+var player: Actor = null  # Will be found in the scene tree
 var game_over: bool = false
 var victory: bool = false
 
@@ -32,6 +35,11 @@ var molecule_types = [
 ]
 
 func _ready():
+	# Find the player in the scene tree (it should be in the parent Main scene)
+	player = get_tree().get_first_node_in_group("player")
+	if not player:
+		push_warning("Player not found in scene tree!")
+	
 	_setup_game()
 	_spawn_molecules()
 	_connect_signals()
@@ -41,9 +49,7 @@ func _setup_game():
 	if target_cell:
 		target_cell.position = Vector2(spawn_area_size.x / 2, spawn_area_size.y / 2)
 	
-	# Position player at a safe starting location
-	if player:
-		player.position = Vector2(200, spawn_area_size.y / 2)
+	# Note: Player positioning is handled by the main scene, not here
 
 func _spawn_molecules():
 	if not spawn_container:
@@ -139,9 +145,12 @@ func _show_victory_screen():
 	if ui:
 		ui.show_victory()
 	
-	# Pause game or transition to next scene
+	# Mark as completed
+	PlayerData.set("completed_glucose_tutorial", true)
+	
+	# Wait then emit completion signal
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout
-	_return_to_menu()
+	prologue_completed.emit()
 
 func _show_game_over_screen(reason: String):
 	print("=== GAME OVER ===")
@@ -150,10 +159,7 @@ func _show_game_over_screen(reason: String):
 	if ui:
 		ui.show_game_over(reason)
 	
-	# Wait before returning to menu
+	# Wait before restarting (player can try again)
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout
-	_return_to_menu()
-
-func _return_to_menu():
-	# Return to main menu
-	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+	# Restart the prologue by reloading
+	get_tree().reload_current_scene()
