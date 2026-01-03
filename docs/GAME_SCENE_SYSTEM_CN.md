@@ -46,15 +46,21 @@
 - `player_data`：玩家数据的可选覆盖
 
 #### 4. GameScene（场景 + 脚本）
-从 GameSceneData 加载的通用场景容器。
+从 GameSceneData 加载的通用场景容器。**注意：UI元素（HUD、SystemMenu、DialoguePanel）由父级 Main 场景管理，而非 GameScene。**
 
 **特性：**
 - 从 MapData 加载静态地图
 - 在配置位置生成玩家
 - 从配置生成动态实体
-- 处理 UI（HUD、SystemMenu、DialoguePanel）
 - 支持保存/加载
 - 与 MapManager 集成进行区块加载
+- 处理背景音乐和环境音效
+
+#### 5. Main 场景架构
+主场景（`main.tscn`）包含：
+- **GameScene**：处理游戏/关卡数据加载
+- **UI 元素**：HUD、SystemMenu、DialoguePanel
+- **MainSceneController**：协调 UI 交互（如系统菜单切换）
 
 ## 使用方法
 
@@ -127,11 +133,20 @@ additional_config = {"dialogue_id": "merchant_intro"}
 
 ### 使用游戏场景
 
-#### 方法 1：直接在 main.tscn 中
+#### 标准 main.tscn 设置
+推荐的方法是在主场景中使用 GameScene 以及 UI 元素：
+
 ```gdscript
-# main.tscn
+# main.tscn 结构
+[node name="Main" type="Node2D"]
+script = ExtResource("main_scene_controller.gd")
+
 [node name="GameScene" instance=ExtResource("game_scene.tscn")]
 game_scene_data = ExtResource("your_game_scene_data.tres")
+
+[node name="HUD" instance=ExtResource("hud.tscn")]
+[node name="SystemMenu" instance=ExtResource("system_menu.tscn")]
+[node name="DialoguePanel" instance=ExtResource("dialogue_panel.tscn")]
 ```
 
 #### 方法 2：动态加载

@@ -46,15 +46,21 @@ Defines player spawn configuration.
 - `player_data`: Optional override for player data
 
 #### 4. GameScene (Scene + Script)
-Generic scene container that loads from GameSceneData.
+Generic scene container that loads from GameSceneData. **Note: UI elements (HUD, SystemMenu, DialoguePanel) are managed by the parent Main scene, not GameScene.**
 
 **Features:**
 - Loads static map from MapData
 - Spawns player at configured position
 - Spawns dynamic entities from configuration
-- Handles UI (HUD, SystemMenu, DialoguePanel)
 - Supports save/load
 - Integrates with MapManager for chunk loading
+- Handles background music and ambient sound
+
+#### 5. Main Scene Architecture
+The main scene (`main.tscn`) contains:
+- **GameScene**: Handles game/level data loading
+- **UI Elements**: HUD, SystemMenu, DialoguePanel
+- **MainSceneController**: Coordinates UI interactions (e.g., system menu toggle)
 
 ## Usage
 
@@ -127,11 +133,20 @@ additional_config = {"dialogue_id": "merchant_intro"}
 
 ### Using the Game Scene
 
-#### Method 1: Direct in main.tscn
+#### Standard Setup in main.tscn
+The recommended approach is to use GameScene within the main scene alongside UI elements:
+
 ```gdscript
-# main.tscn
+# main.tscn structure
+[node name="Main" type="Node2D"]
+script = ExtResource("main_scene_controller.gd")
+
 [node name="GameScene" instance=ExtResource("game_scene.tscn")]
 game_scene_data = ExtResource("your_game_scene_data.tres")
+
+[node name="HUD" instance=ExtResource("hud.tscn")]
+[node name="SystemMenu" instance=ExtResource("system_menu.tscn")]
+[node name="DialoguePanel" instance=ExtResource("dialogue_panel.tscn")]
 ```
 
 #### Method 2: Dynamic Loading
