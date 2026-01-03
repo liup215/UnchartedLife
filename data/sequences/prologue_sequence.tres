@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="SceneSequenceData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://data/definitions/system/scene_sequence_data.gd" id="1_sequence"]
+[ext_resource type="Script" path="res://data/definitions/system/scene_transition_data.gd" id="2_transition"]
+[ext_resource type="Texture2D" path="res://assets/items/tools/microscope.webp" id="3_microscope_image"]
+
+[sub_resource type="Resource" id="transition_prologue_01"]
+script = ExtResource("2_transition")
+scene_path = "res://scenes/story/prologue/prologue_scene_01.tscn"
+scene_id = "prologue_01"
+scene_name = "Microscope Tutorial"
+loading_image = ExtResource("3_microscope_image")
+loading_text = "Microscope Tutorial\n\nLearn how to use the microscope\nAdjust focus, brightness and position"
+completion_signal = "tutorial_completed"
+required_condition = ""
+is_overlay = true
+disable_system_menu = true
+loading_screen_delay = 1.0
+completion_flag = "completed_microscope_tutorial"
+
+[sub_resource type="Resource" id="transition_prologue_02"]
+script = ExtResource("2_transition")
+scene_path = "res://scenes/story/prologue/prologue_scene_02.tscn"
+scene_id = "prologue_02"
+scene_name = "Glucose Tutorial"
+loading_image = null
+loading_text = "Glucose Tutorial\n\nLearn to identify glucose molecules\nEssential for survival"
+completion_signal = "prologue_completed"
+required_condition = ""
+is_overlay = true
+disable_system_menu = true
+loading_screen_delay = 1.0
+completion_flag = "completed_glucose_tutorial"
+
+[resource]
+script = ExtResource("1_sequence")
+sequence_id = "prologue_sequence"
+sequence_name = "Prologue Tutorial Sequence"
+transitions = Array[ExtResource("2_transition")]([SubResource("transition_prologue_01"), SubResource("transition_prologue_02")])
+auto_start = false
+start_condition = "should_start_prologue"
+on_completion = 0
+next_sequence_id = ""
