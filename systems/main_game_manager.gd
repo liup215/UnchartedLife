@@ -2,151 +2,161 @@ extends Node2D
 
 @onready var system_menu = $SystemMenu
 @onready var game_scene: Node2D = $GameScene
+@onready var player_instance: Node2D = $Player
 
-## Scene sequence configuration (loaded from data)
-@export var active_sequences: Array[SceneSequenceData] = []
+## Initial game scene to load on start
+@export var initial_game_scene: GameSceneData = null
+
+## All available game scenes (for ID lookup)
+@export var all_game_scenes: Array[GameSceneData] = []
 
 # Runtime state
-var current_sequence: SceneSequenceData = null
-var current_sequence_index: int = -1
-var current_transition_index: int = 0
 var current_scene_instance: Node = null
 var loading_screen_instance: Control = null
 
 func _ready():
-	# Check for sequences that should auto-start
-	_check_and_start_sequences()
+	# Initialize player first
+	_initialize_player()
+	
+	# Connect signals
+	EventBus.request_scene_transition.connect(transition_to_scene)
+	
+	# If configured, start the initial game scene
+	if initial_game_scene:
+		call_deferred("start_new_game")
 
-func _check_and_start_sequences():
-	"""Check if any sequences should start based on conditions"""
-	for sequence in active_sequences:
-		if sequence.can_start():
-			start_sequence(sequence)
-			return
-	
-	# If no sequence started, game_scene handles normal gameplay
-	print("MainGameManager: No sequence to start, game_scene taking over")
+func start_new_game() -> void:
+	"""Start a new game with the initial scene"""
+	if initial_game_scene:
+		load_game_scene(initial_game_scene)
+	else:
+		push_error("MainGameManager: No initial_game_scene configured!")
 
-func start_sequence(sequence: SceneSequenceData):
-	"""Start a scene sequence"""
-	if not sequence or sequence.transitions.is_empty():
-		push_error("MainGameManager: Invalid sequence or no transitions")
-		return
-	
-	print("MainGameManager: Starting sequence '%s'" % sequence.sequence_name)
-	current_sequence = sequence
-	current_transition_index = 0
-	
-	# Clear the condition that triggered this sequence (if any)
-	if sequence.start_condition and PlayerData and sequence.start_condition in PlayerData:
-		PlayerData.set(sequence.start_condition, false)
-	
-	# Load first transition
-	_load_transition(current_sequence.transitions[0])
+func _physics_process(_delta: float) -> void:
+	"""Update map chunks based on player position"""
+	if is_instance_valid(player_instance):
+		MapManager.update_chunks(player_instance.global_position)
 
-func _load_transition(transition: SceneTransitionData):
-	"""Load a scene transition with loading screen"""
-	if not transition:
-		push_error("MainGameManager: Invalid transition")
-		return
-	
-	print("MainGameManager: Loading transition '%s'" % transition.scene_name)
+# Public API for external access
+func get_player() -> Node2D:
+	"""Get the player instance"""
+	return player_instance
+
+func _initialize_player():
+	"""Initialize the persistent player instance"""
+	if player_instance:
+		# Position player if we have an active game scene
+		if game_scene and "game_scene_data" in game_scene and game_scene.game_scene_data:
+			_position_player_in_scene(game_scene.game_scene_data)
+		print("MainGameManager: Player initialized from scene tree")
+	else:
+		push_error("MainGameManager: Player node not found in Main scene!")
+
+func transition_to_scene(scene_id: String, spawn_point_id: String = "default") -> void:
+	"""Handle scene transition request"""
+	print("MainGameManager: Transition requested to '%s' at '%s'" % [scene_id, spawn_point_id])
+	var data = _find_scene_data_by_id(scene_id)
+	if data:
+		load_game_scene(data, spawn_point_id)
+	else:
+		push_error("MainGameManager: Scene data not found for id: " + scene_id)
+
+func _find_scene_data_by_id(scene_id: String) -> GameSceneData:
+	for data in all_game_scenes:
+		if data.scene_id == scene_id:
+			return data
+	return null
+
+func load_game_scene(data: GameSceneData, spawn_point_id: String = "default"):
+	"""Load a game level with loading screen"""
+	print("MainGameManager: Loading game scene '%s'" % data.scene_name)
 	
 	# Show loading screen
-	_show_loading_screen(transition.loading_image, transition.loading_text)
+	_show_loading_screen(null, "Loading " + data.scene_name + "...")
 	
-	# Wait a frame for loading screen to show
+	# Wait a frame
 	await get_tree().process_frame
 	
-	# Load scene
-	var scene_resource = load(transition.scene_path)
-	if not scene_resource:
-		push_error("MainGameManager: Failed to load scene at %s" % transition.scene_path)
-		_hide_loading_screen()
-		return
-	
-	# Instantiate scene
-	current_scene_instance = scene_resource.instantiate()
-	
-	# Connect completion signal if specified
-	if not transition.completion_signal.is_empty():
-		if current_scene_instance.has_signal(transition.completion_signal):
-			current_scene_instance.connect(transition.completion_signal, _on_scene_completed.bind(transition))
-		else:
-			push_warning("MainGameManager: Scene doesn't have signal '%s'" % transition.completion_signal)
-	
-	# Add to scene tree
-	add_child(current_scene_instance)
-	
-	# Hide loading screen after delay
-	await get_tree().create_timer(transition.loading_screen_delay).timeout
-	_hide_loading_screen()
-
-func _on_scene_completed(transition: SceneTransitionData):
-	"""Called when a scene in the sequence completes"""
-	print("MainGameManager: Scene '%s' completed" % transition.scene_name)
-	
-	# Set completion flag if specified
-	if not transition.completion_flag.is_empty() and PlayerData:
-		if transition.completion_flag in PlayerData:
-			PlayerData.set(transition.completion_flag, true)
-	
-	# Clean up current scene
+	# If we have a current sequence scene, clean it up
 	if current_scene_instance:
 		current_scene_instance.queue_free()
 		current_scene_instance = null
 	
-	# Move to next transition
-	current_transition_index += 1
+	# If we have a static game_scene, we can reuse it or replace it.
+	# Replacing ensures clean state.
+	if game_scene:
+		game_scene.queue_free()
 	
-	if current_transition_index < current_sequence.transitions.size():
-		# Load next transition in sequence
-		_load_transition(current_sequence.transitions[current_transition_index])
-	else:
-		# Sequence complete
-		_on_sequence_completed()
-
-func _on_sequence_completed():
-	"""Called when entire sequence completes"""
-	print("MainGameManager: Sequence '%s' completed" % current_sequence.sequence_name)
+	# Instantiate new GameScene
+	var scene_resource = load("res://scenes/game_scene.tscn")
+	if not scene_resource:
+		push_error("MainGameManager: Failed to load game_scene.tscn")
+		_hide_loading_screen()
+		return
+		
+	game_scene = scene_resource.instantiate()
 	
-	match current_sequence.on_completion:
-		SceneSequenceData.SequenceCompletion.CONTINUE_GAMEPLAY:
-			print("MainGameManager: Continuing with gameplay")
-			current_sequence = null
-			# GameScene takes over
-		
-		SceneSequenceData.SequenceCompletion.LOAD_NEXT_SEQUENCE:
-			if not current_sequence.next_sequence_id.is_empty():
-				# Find and load next sequence
-				var next_seq = _find_sequence_by_id(current_sequence.next_sequence_id)
-				if next_seq:
-					start_sequence(next_seq)
-				else:
-					push_error("MainGameManager: Next sequence '%s' not found" % current_sequence.next_sequence_id)
-					current_sequence = null
-			else:
-				push_warning("MainGameManager: LOAD_NEXT_SEQUENCE specified but no next_sequence_id")
-				current_sequence = null
-		
-		SceneSequenceData.SequenceCompletion.CUSTOM:
-			push_warning("MainGameManager: Custom completion handling not implemented")
-			current_sequence = null
+	# Configure it
+	game_scene.game_scene_data = data
+	
+	# Add to tree
+	add_child(game_scene)
+	# Move to correct position (e.g. before HUD)
+	move_child(game_scene, 0)
+	
+	# Position player
+	if player_instance:
+		_position_player_in_scene(data, spawn_point_id)
+	
+	# Hide loading screen
+	await get_tree().create_timer(0.5).timeout
+	_hide_loading_screen()
 
-func _find_sequence_by_id(sequence_id: String) -> SceneSequenceData:
-	"""Find a sequence by its ID"""
-	for sequence in active_sequences:
-		if sequence.sequence_id == sequence_id:
-			return sequence
-	return null
-
-func load_sequence_by_id(sequence_id: String):
-	"""Public API to load a sequence by ID"""
-	var sequence = _find_sequence_by_id(sequence_id)
-	if sequence:
-		start_sequence(sequence)
+func _position_player_in_scene(data: GameSceneData, spawn_point_id: String = "default") -> void:
+	"""Position the player based on scene data"""
+	if not player_instance:
+		return
+		
+	var target_pos = Vector2.ZERO
+	var found_spawn = false
+	
+	# 1. Try named spawn point
+	if data.spawn_points.has(spawn_point_id):
+		target_pos = data.spawn_points[spawn_point_id]
+		found_spawn = true
+		print("MainGameManager: Using named spawn point '%s': %s" % [spawn_point_id, target_pos])
+	
+	# 2. Fallback to default spawn point if "default" was requested but not found in map
+	elif spawn_point_id == "default" and data.player_spawn:
+		target_pos = data.player_spawn.spawn_position
+		found_spawn = true
+		print("MainGameManager: Using legacy default spawn point: %s" % target_pos)
+		
+	if not found_spawn:
+		push_warning("MainGameManager: Could not find spawn point '%s' in scene '%s'" % [spawn_point_id, data.scene_id])
+		# Last resort fallback
+		if data.player_spawn:
+			target_pos = data.player_spawn.spawn_position
+	
+	# Set player position
+	# If loading from save, player position is already set by load_data
+	# Otherwise, use the spawn position from game_scene_data
+	var should_use_spawn_position: bool = true
+	
+	if SaveManager and SaveManager.has_method("is_loading_from_save"):
+		should_use_spawn_position = not SaveManager.is_loading_from_save()
+	
+	if should_use_spawn_position:
+		player_instance.global_position = target_pos
 	else:
-		push_error("MainGameManager: Sequence '%s' not found" % sequence_id)
+		print("MainGameManager: Player position will be loaded from save file")
+	
+	# If custom player data provided, use it
+	if data.player_spawn and data.player_spawn.player_data:
+		if player_instance.has_method("set_actor_data"):
+			player_instance.set_actor_data(data.player_spawn.player_data)
+		elif "actor_data" in player_instance:
+			player_instance.actor_data = data.player_spawn.player_data
 
 func _show_loading_screen(image: Texture2D = null, text: String = "Loading..."):
 	"""Show the loading screen managed by main scene"""
@@ -171,25 +181,9 @@ func _hide_loading_screen():
 	if loading_screen_instance and loading_screen_instance.has_method("hide_loading_screen"):
 		loading_screen_instance.hide_loading_screen()
 
-func is_in_sequence() -> bool:
-	"""Check if currently running a sequence"""
-	return current_sequence != null
-
-func should_disable_system_menu() -> bool:
-	"""Check if system menu should be disabled"""
-	if not current_sequence or current_transition_index >= current_sequence.transitions.size():
-		return false
-	
-	var current_transition = current_sequence.transitions[current_transition_index]
-	return current_transition.disable_system_menu
-
 func _unhandled_input(event):
 	# Using the built-in "ui_cancel" action, which is mapped to Escape by default.
 	if event.is_action_pressed("ui_cancel"):
-		# Don't allow system menu during sequence if disabled
-		if should_disable_system_menu():
-			return
-		
 		if system_menu.visible:
 			system_menu.close_menu()
 		else:

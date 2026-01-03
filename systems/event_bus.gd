@@ -48,6 +48,10 @@ signal request_quiz_reload(weapon_data: Resource)
 # Carries whether the quiz was answered correctly.
 signal quiz_completed(success: bool)
 
+# Signal emitted to request a scene transition.
+# Carries the target scene ID and the target spawn point ID.
+signal request_scene_transition(scene_id: String, spawn_point_id: String)
+
 # --- Quest System Signals ---
 # Emitted when a quest is started.
 # Carries the quest_id.

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="MapData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/definitions/system/map_data.gd" id="1_map_data"]
+
+[resource]
+script = ExtResource("1_map_data")
+map_id = "prologue_map_02"
+map_name = "Prologue Map 02"
+map_description = "The microscopic world"
+map_scene_path = "res://scenes/story/prologue/prologue_scene_02.tscn"
+chunk_scenes = {}
+default_spawn_position = Vector2(0, 0)
+use_chunk_loading = false

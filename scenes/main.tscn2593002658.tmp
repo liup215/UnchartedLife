@@ -1,20 +1,18 @@
-[gd_scene load_steps=11 format=3 uid="uid://7rcsyrqgfrjk"]
+[gd_scene load_steps=10 format=3 uid="uid://7rcsyrqgfrjk"]
 
 [ext_resource type="Script" uid="uid://qhuvoa0s7ean" path="res://systems/main_game_manager.gd" id="1_main_manager"]
 [ext_resource type="PackedScene" uid="uid://cx6y708xav0u1" path="res://scenes/game_scene.tscn" id="2_game_scene"]
+[ext_resource type="Script" uid="uid://c5vp7gmv7enfx" path="res://data/definitions/system/scene_sequence_data.gd" id="2_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="3_hud"]
-[ext_resource type="Script" uid="uid://ca6qcqtup1qcu" path="res://data/definitions/system/game_scene_data.gd" id="4_choun"]
+[ext_resource type="Resource" uid="uid://qsuumb17hgob" path="res://data/sequences/prologue_sequence.tres" id="3_tipki"]
 [ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="4_system_menu"]
 [ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="5_dialogue"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="6_player"]
 [ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="7_o6xl0"]
-[ext_resource type="Resource" path="res://data/game_scenes/prologue_scene_01.tres" id="8_prologue"]
-[ext_resource type="Resource" path="res://data/game_scenes/prologue_scene_02.tres" id="9_prologue02"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_manager")
-initial_game_scene = ExtResource("8_prologue")
-all_game_scenes = Array[ExtResource("4_choun")]([ExtResource("8_prologue"), ExtResource("9_prologue02")])
+active_sequences = Array[ExtResource("2_o6xl0")]([ExtResource("3_tipki")])
 
 [node name="Player" parent="." instance=ExtResource("6_player")]
 actor_data = ExtResource("7_o6xl0")

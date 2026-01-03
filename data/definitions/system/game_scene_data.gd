@@ -16,8 +16,14 @@ class_name GameSceneData
 @export var map_data: MapData = null
 
 # ============ DYNAMIC DATA ============
-# Player spawn configuration
+# Player spawn configuration (Default spawn point)
 @export var player_spawn: PlayerSpawnData = null
+
+# Named spawn points for multiple entrances (key: spawn_id, value: position)
+# Example: {"north_gate": Vector2(100, -500), "dungeon_entrance": Vector2(2000, 100)}
+@export var spawn_points: Dictionary = {
+	"default": Vector2.ZERO
+}
 
 # Array of entities to spawn (NPCs, vehicles, enemies, interactive objects)
 @export var spawnable_entities: Array[SpawnableEntityData] = []

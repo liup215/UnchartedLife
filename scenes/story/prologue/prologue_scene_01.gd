@@ -4,6 +4,11 @@ extends Control
 ## Educational scene teaching players how to use a microscope
 ## Includes focus controls, magnification selection, and brightness adjustment
 
+# Target scene ID to transition to after minigame
+@export var next_scene_id: String = "prologue_02"
+# Target spawn point ID in the next scene
+@export var next_spawn_point: String = "default"
+
 # Signal emitted when tutorial is completed
 signal tutorial_completed
 
@@ -289,6 +294,10 @@ func _on_continue_pressed() -> void:
 	# This allows main.tscn to manage the scene transitions
 	if has_signal("tutorial_completed"):
 		emit_signal("tutorial_completed")
+	
+	# Request scene transition via EventBus
+	print("Prologue 01: Requesting transition to '%s'" % next_scene_id)
+	EventBus.request_scene_transition.emit(next_scene_id, next_spawn_point)
 	
 	# Remove self from parent (main scene will handle next steps)
 	queue_free()

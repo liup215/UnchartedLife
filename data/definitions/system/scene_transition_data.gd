@@ -6,6 +6,13 @@ class_name SceneTransitionData
 ## Scene to load (path to .tscn file)
 @export var scene_path: String = ""
 
+## Optional: GameSceneData if this transition loads a game level
+## If provided, scene_path is ignored and GameScene is loaded with this data
+@export var game_scene_data: GameSceneData = null
+
+## Optional: Spawn point ID if loading a GameScene
+@export var spawn_point_id: String = "default"
+
 ## Unique identifier for this scene
 @export var scene_id: String = ""
 

@@ -8,7 +8,6 @@ extends Node2D
 
 # References to instantiated nodes
 var map_container: Node2D = null
-var player_instance: Node2D = null
 var spawned_entities: Dictionary = {}  # spawn_id -> entity instance
 
 func _ready() -> void:
@@ -30,13 +29,10 @@ func _setup_scene() -> void:
 	# 2. Load static map data
 	_load_map()
 	
-	# 3. Spawn player
-	_spawn_player()
-	
-	# 4. Spawn dynamic entities
+	# 3. Spawn dynamic entities
 	_spawn_entities()
 	
-	# 5. Setup audio
+	# 4. Setup audio
 	_setup_audio()
 	
 	print("GameScene: Scene setup complete")
@@ -69,44 +65,6 @@ func _load_map() -> void:
 	
 	MapManager.switch_to_map(map_data.map_id, spawn_pos)
 	print("GameScene: Loaded map '%s'" % map_data.map_id)
-
-func _spawn_player() -> void:
-	"""Spawn the player at configured position"""
-	if not game_scene_data.player_spawn:
-		push_warning("GameScene: No player_spawn configuration")
-		return
-	
-	# Load the player scene
-	var player_scene: PackedScene = load("res://features/player/player.tscn")
-	if not player_scene:
-		push_error("GameScene: Failed to load player scene")
-		return
-	
-	player_instance = player_scene.instantiate()
-	add_child(player_instance)
-	
-	# Set player position
-	# If loading from save, player position is already set by load_data
-	# Otherwise, use the spawn position from game_scene_data
-	var should_use_spawn_position: bool = true
-	
-	if SaveManager and SaveManager.has_method("is_loading_from_save"):
-		should_use_spawn_position = not SaveManager.is_loading_from_save()
-	
-	if should_use_spawn_position:
-		player_instance.global_position = game_scene_data.player_spawn.spawn_position
-		print("GameScene: Set player position to spawn default: %s" % game_scene_data.player_spawn.spawn_position)
-	else:
-		print("GameScene: Player position will be loaded from save file")
-	
-	# If custom player data provided, use it
-	if game_scene_data.player_spawn.player_data:
-		if player_instance.has_method("set_actor_data"):
-			player_instance.set_actor_data(game_scene_data.player_spawn.player_data)
-		elif "actor_data" in player_instance:
-			player_instance.actor_data = game_scene_data.player_spawn.player_data
-	
-	print("GameScene: Spawned player")
 
 func _spawn_entities() -> void:
 	"""Spawn all dynamic entities from configuration"""
@@ -178,16 +136,6 @@ func _setup_audio() -> void:
 	
 	if game_scene_data.ambient_sound and AudioManager.has_method("play_ambient"):
 		AudioManager.play_ambient(game_scene_data.ambient_sound)
-
-func _physics_process(_delta: float) -> void:
-	"""Update map chunks based on player position"""
-	if is_instance_valid(player_instance):
-		MapManager.update_chunks(player_instance.global_position)
-
-# Public API for external access
-func get_player() -> Node2D:
-	"""Get the player instance"""
-	return player_instance
 
 func get_entity(spawn_id: String) -> Node:
 	"""Get a spawned entity by its spawn_id"""
