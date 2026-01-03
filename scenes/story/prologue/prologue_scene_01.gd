@@ -4,6 +4,9 @@ extends Control
 ## Educational scene teaching players how to use a microscope
 ## Includes focus controls, magnification selection, and brightness adjustment
 
+# Signal emitted when tutorial is completed
+signal tutorial_completed
+
 # Microscope configuration
 const DISTANCE_MIN: float = 0.0
 const DISTANCE_MAX: float = 100.0
@@ -278,7 +281,14 @@ func _update_display() -> void:
 
 func _on_continue_pressed() -> void:
 	"""Continue to next scene after learning microscope basics"""
-	print("Microscope tutorial complete, transitioning to main game...")
+	print("Microscope tutorial complete")
 	# Set flag that microscope tutorial is completed
 	PlayerData.completed_microscope_tutorial = true
-	SceneManager.SwitchToScene("res://scenes/main.tscn")
+	
+	# Emit signal to parent (main scene) instead of direct transition
+	# This allows main.tscn to manage the scene transitions
+	if has_signal("tutorial_completed"):
+		emit_signal("tutorial_completed")
+	
+	# Remove self from parent (main scene will handle next steps)
+	queue_free()

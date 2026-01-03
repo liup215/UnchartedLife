@@ -11,10 +11,6 @@ var map_container: Node2D = null
 var player_instance: Node2D = null
 var spawned_entities: Dictionary = {}  # spawn_id -> entity instance
 
-# Prologue scene reference
-const PROLOGUE_SCENE_02 = preload("res://scenes/story/prologue/prologue_scene_02.tscn")
-var prologue_scene_instance: Node2D = null
-
 func _ready() -> void:
 	# If no data provided, try to get from external source or use default
 	if not game_scene_data:
@@ -42,9 +38,6 @@ func _setup_scene() -> void:
 	
 	# 5. Setup audio
 	_setup_audio()
-	
-	# 6. Check and load prologue if needed
-	_check_and_load_prologue()
 	
 	print("GameScene: Scene setup complete")
 
@@ -185,45 +178,6 @@ func _setup_audio() -> void:
 	
 	if game_scene_data.ambient_sound and AudioManager.has_method("play_ambient"):
 		AudioManager.play_ambient(game_scene_data.ambient_sound)
-
-func _check_and_load_prologue() -> void:
-	"""Check if this is the first time entering main scene and load prologue if needed"""
-	# Check PlayerData is available
-	if not PlayerData:
-		push_warning("GameScene: PlayerData not available, skipping prologue check")
-		return
-	
-	# Check if coming from prologue_scene_01 (microscope) - if so, load glucose game
-	# Load glucose game if microscope tutorial is completed but glucose tutorial is not
-	# PlayerData properties are simple booleans, access directly
-	if PlayerData.completed_microscope_tutorial and not PlayerData.completed_glucose_tutorial:
-		_load_prologue_scene_02()
-
-func _load_prologue_scene_02() -> void:
-	"""Load the glucose identification game as an overlay"""
-	if prologue_scene_instance:
-		return  # Already loaded
-	
-	prologue_scene_instance = PROLOGUE_SCENE_02.instantiate()
-	add_child(prologue_scene_instance)
-	
-	# Position player for prologue
-	if is_instance_valid(player_instance):
-		player_instance.global_position = Vector2(200, 450)
-	
-	# Connect to prologue completion signal if available
-	if prologue_scene_instance.has_signal("prologue_completed"):
-		prologue_scene_instance.prologue_completed.connect(_on_prologue_completed)
-
-func _on_prologue_completed() -> void:
-	"""Called when the glucose prologue is completed"""
-	if prologue_scene_instance:
-		prologue_scene_instance.queue_free()
-		prologue_scene_instance = null
-	
-	# Mark as completed - PlayerData is guaranteed to have this property
-	if PlayerData:
-		PlayerData.completed_glucose_tutorial = true
 
 func _physics_process(_delta: float) -> void:
 	"""Update map chunks based on player position"""

@@ -59,22 +59,17 @@ func _input(event: InputEvent) -> void:
 		accept_event()
 
 func _transition_to_prologue() -> void:
-	"""Transition from opening to first prologue scene"""
+	"""Transition from opening to main scene which will load prologue"""
 	# Prevent multiple calls
 	if not can_skip:
 		return
 	can_skip = false
 	
-	# Transition to prologue using loading screen with microscope introduction
-	print("Opening animation complete, transitioning to prologue with loading screen...")
+	# Transition directly to main.tscn instead of prologue
+	# main.tscn will handle loading prologue scenes
+	print("Opening animation complete, transitioning to main scene...")
 	
-	# Load the game icon for loading screen
-	var microscope_image: Texture2D = load("res://assets/items/tools/microscope.webp")
-	var microscope_intro_text: String = "Microscope Tutorial\n\nLearn how to use the microscope\nAdjust focus, brightness and position"
+	# Mark that we should start with prologue
+	PlayerData.set("should_start_prologue", true)
 	
-	# Use SceneManager to load prologue scene with custom content
-	SceneManager.load_scene_with_progress(
-		"res://scenes/story/prologue/prologue_scene_01.tscn",
-		microscope_image,
-		microscope_intro_text
-	)
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
