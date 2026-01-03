@@ -146,7 +146,7 @@ func _show_victory_screen():
 		ui.show_victory()
 	
 	# Mark as completed
-	PlayerData.set("completed_glucose_tutorial", true)
+	PlayerData.completed_glucose_tutorial = true
 	
 	# Wait then emit completion signal
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout

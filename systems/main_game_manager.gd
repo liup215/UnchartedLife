@@ -30,9 +30,8 @@ func _ready():
 func _check_and_load_prologue():
 	"""Check if this is the first time entering main scene and load prologue if needed"""
 	# Check if coming from prologue_scene_01 (microscope) - if so, load glucose game
-	# You can use PlayerData or a flag to track this
-	# For now, we'll check if a specific flag is set
-	if PlayerData.has("completed_microscope_tutorial") and not PlayerData.has("completed_glucose_tutorial"):
+	# Load glucose game if microscope tutorial is completed but glucose tutorial is not
+	if PlayerData.completed_microscope_tutorial and not PlayerData.completed_glucose_tutorial:
 		_load_prologue_scene_02()
 
 func _load_prologue_scene_02():
@@ -58,7 +57,7 @@ func _on_prologue_completed():
 		prologue_scene_instance = null
 	
 	# Mark as completed
-	PlayerData.set("completed_glucose_tutorial", true)
+	PlayerData.completed_glucose_tutorial = true
 
 func _initialize_player_position():
 	# If loading from save, player position is already set by load_data

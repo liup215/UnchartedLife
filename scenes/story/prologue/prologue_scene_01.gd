@@ -280,5 +280,5 @@ func _on_continue_pressed() -> void:
 	"""Continue to next scene after learning microscope basics"""
 	print("Microscope tutorial complete, transitioning to main game...")
 	# Set flag that microscope tutorial is completed
-	PlayerData.set("completed_microscope_tutorial", true)
+	PlayerData.completed_microscope_tutorial = true
 	SceneManager.SwitchToScene("res://scenes/main.tscn")
