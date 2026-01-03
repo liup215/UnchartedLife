@@ -1,21 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://7rcsyrqgfrjk"]
+[gd_scene load_steps=3 format=3 uid="uid://7rcsyrqgfrjk"]
 
-[ext_resource type="Script" uid="uid://qhuvoa0s7ean" path="res://systems/main_game_manager.gd" id="1_choun"]
-[ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="2_ya4ey"]
-[ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="3_eb6dy"]
-[ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="8_muem4"]
-[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="9_dp3eg"]
-[ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="11_dlgpn"]
+[ext_resource type="PackedScene" uid="uid://cx6y7z8w9v0u1" path="res://scenes/game_scene.tscn" id="1_game_scene"]
+[ext_resource type="Resource" uid="uid://default_game_scene" path="res://data/game_scenes/default_game_scene.tres" id="2_game_scene_data"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_choun")
 
-[node name="Player" parent="." instance=ExtResource("2_ya4ey")]
-position = Vector2(631, 356)
-actor_data = ExtResource("3_eb6dy")
-
-[node name="HUD" parent="." instance=ExtResource("8_muem4")]
-
-[node name="SystemMenu" parent="." instance=ExtResource("9_dp3eg")]
-
-[node name="DialoguePanel" parent="." instance=ExtResource("11_dlgpn")]
+[node name="GameScene" parent="." instance=ExtResource("1_game_scene")]
+game_scene_data = ExtResource("2_game_scene_data")
