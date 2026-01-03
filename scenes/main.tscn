@@ -8,12 +8,12 @@
 [ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="5_dialogue"]
 [ext_resource type="PackedScene" uid="uid://dbscgytmkqyn7" path="res://features/player/player.tscn" id="6_player"]
 [ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="7_o6xl0"]
-[ext_resource type="Resource" path="res://data/game_scenes/prologue_scene_01.tres" id="8_prologue"]
+[ext_resource type="Resource" uid="uid://bft6qdj6wp4sc" path="res://data/game_scenes/prologue_scene_01.tres" id="8_prologue"]
 [ext_resource type="Resource" path="res://data/game_scenes/prologue_scene_02.tres" id="9_prologue02"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_manager")
-initial_game_scene = ExtResource("8_prologue")
+initial_game_scene = ExtResource("9_prologue02")
 all_game_scenes = Array[ExtResource("4_choun")]([ExtResource("8_prologue"), ExtResource("9_prologue02")])
 
 [node name="Player" parent="." instance=ExtResource("6_player")]
