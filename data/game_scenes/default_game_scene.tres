@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="GameSceneData" load_steps=3 format=3 uid="uid://dptyer7x4ait8"]
+
+[ext_resource type="Script" uid="uid://ca6qcqtup1qcu" path="res://data/definitions/system/game_scene_data.gd" id="1_scene_data"]
+[ext_resource type="Script" uid="uid://c12ceofxv17yy" path="res://data/definitions/system/spawnable_entity_data.gd" id="2_oqfg8"]
+
+[resource]
+script = ExtResource("1_scene_data")
+metadata/_custom_type_script = "uid://ca6qcqtup1qcu"

@@ -11,6 +11,9 @@ var current_slot: String = ""
 var completed_microscope_tutorial: bool = false
 var completed_glucose_tutorial: bool = false
 
+# Flag to indicate if prologue should start (set by opening animation)
+var should_start_prologue: bool = false
+
 
 func to_dict() -> Dictionary:
 	return {

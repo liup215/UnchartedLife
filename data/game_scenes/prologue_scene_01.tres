@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="GameSceneData" load_steps=4 format=3 uid="uid://bft6qdj6wp4sc"]
+
+[ext_resource type="Script" uid="uid://ca6qcqtup1qcu" path="res://data/definitions/system/game_scene_data.gd" id="1_game_scene_data"]
+[ext_resource type="Resource" path="res://data/maps/prologue_map_01.tres" id="2_map_data"]
+[ext_resource type="Script" uid="uid://c12ceofxv17yy" path="res://data/definitions/system/spawnable_entity_data.gd" id="3_ojk6a"]
+
+[resource]
+script = ExtResource("1_game_scene_data")
+scene_id = "prologue_scene_01"
+scene_name = "Prologue Scene 01"
+map_data = ExtResource("2_map_data")

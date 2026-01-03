@@ -14,6 +14,7 @@ var available_maps: Dictionary = {}
 # Current active map
 var current_map_id: String = ""
 var current_map_data: MapData = null
+var current_map_scene: Node = null
 
 # A dictionary to keep track of currently loaded chunks.
 # Key: Vector2i(x, y) coordinates of the chunk
@@ -83,23 +84,32 @@ func switch_to_map(map_id: String, spawn_position: Vector2 = Vector2.ZERO) -> bo
 	
 	# Unload current map chunks
 	_unload_all_chunks()
-	
+
 	# Update current map
 	current_map_id = map_id
 	current_map_data = available_maps[map_id]
-	
+
 	# Use provided spawn position or default
 	var target_spawn = spawn_position if spawn_position != Vector2.ZERO else current_map_data.default_spawn_position
-	
+
 	print("MapManager: Switched to map '%s' at position %s" % [map_id, target_spawn])
-	
-	# Load initial chunks if using chunk loading
-	if current_map_data.use_chunk_loading and map_parent:
-		update_chunks(target_spawn)
-	
-	# Emit signal for other systems to react (e.g., spawn vehicles, update UI)
+
+	# Load map content
+	if map_parent:
+		if current_map_data.use_chunk_loading:
+			# Load initial chunks if using chunk loading
+			update_chunks(target_spawn)
+			print("MapManager: Initialized chunk loading for map '%s'" % map_id)
+		elif not current_map_data.map_scene_path.is_empty():
+			# Load full map scene if not using chunks
+			_load_full_map_scene(current_map_data.map_scene_path)
+			print("MapManager: Loaded full map scene for map '%s'" % map_id)
+	else:
+		push_warning("MapManager: No map content to load for map '%s'" % map_id)
+
+# Emit signal for other systems to react (e.g., spawn vehicles, update UI)
 	EventBus.map_changed.emit(map_id, target_spawn)
-	
+
 	return true
 
 # Unload all currently loaded chunks
@@ -109,7 +119,32 @@ func _unload_all_chunks():
 		if is_instance_valid(chunk_instance):
 			chunk_instance.queue_free()
 	loaded_chunks.clear()
-	print("MapManager: Unloaded all chunks")
+	
+	if is_instance_valid(current_map_scene):
+		current_map_scene.queue_free()
+		current_map_scene = null
+		
+	print("MapManager: Unloaded all chunks and map scenes")
+
+func _load_full_map_scene(scene_path: String):
+	var map_scene_resource = load(scene_path)
+	if map_scene_resource:
+		var instance = map_scene_resource.instantiate()
+
+	# If the scene is a Control (UI), wrap it in a CanvasLayer so it renders properly on screen
+		if instance is Control:
+			var canvas_layer = CanvasLayer.new()
+			canvas_layer.name = "MapUILayer"
+			canvas_layer.add_child(instance)
+			current_map_scene = canvas_layer
+			print("MapManager: Loaded UI map scene wrapped in CanvasLayer")
+		else:
+			current_map_scene = instance
+
+		map_parent.add_child(current_map_scene)
+		print("MapManager: Loaded full map scene from ", scene_path)
+	else:
+		push_error("MapManager: Failed to load map scene from ", scene_path)
 
 func update_chunks(player_position: Vector2):
 	if not map_parent:
@@ -195,6 +230,7 @@ func load_data(data: Dictionary) -> void:
 func reset_for_new_game() -> void:
 	loaded_chunks.clear()
 	chunks_to_restore.clear()
+	current_map_scene = null
 	map_parent = null
 	current_map_id = DEFAULT_MAP_ID
 	current_map_data = available_maps.get(DEFAULT_MAP_ID)
