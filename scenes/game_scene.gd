@@ -242,8 +242,12 @@ func _on_prologue_completed() -> void:
 		prologue_scene_instance.queue_free()
 		prologue_scene_instance = null
 	
-	# Mark as completed
-	PlayerData.completed_glucose_tutorial = true
+	# Mark as completed with safe property setting
+	if PlayerData and PlayerData.has("completed_glucose_tutorial"):
+		PlayerData.set("completed_glucose_tutorial", true)
+	elif PlayerData:
+		# If property doesn't exist, we can't set it
+		push_warning("GameScene: PlayerData doesn't have 'completed_glucose_tutorial' property")
 
 func _physics_process(_delta: float) -> void:
 	"""Update map chunks based on player position"""

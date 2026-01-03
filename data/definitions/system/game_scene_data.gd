@@ -65,9 +65,11 @@ func from_dict(data: Dictionary) -> void:
 		map_data = load(data["map_data"])
 	
 	# Load player spawn
-	if data.has("player_spawn") and not data["player_spawn"].is_empty():
-		player_spawn = PlayerSpawnData.new()
-		player_spawn.from_dict(data["player_spawn"])
+	if data.has("player_spawn"):
+		var spawn_data = data["player_spawn"]
+		if spawn_data is Dictionary and not spawn_data.is_empty():
+			player_spawn = PlayerSpawnData.new()
+			player_spawn.from_dict(spawn_data)
 	
 	# Load spawnable entities
 	if data.has("spawnable_entities"):
