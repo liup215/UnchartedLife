@@ -1,8 +1,8 @@
 extends CanvasLayer
 
-@onready var save_game_button: Button = $Panel/VBoxContainer/SaveGameButton
-@onready var quit_to_menu_button: Button = $Panel/VBoxContainer/QuitToMenuButton
-@onready var quit_to_desktop_button: Button = $Panel/VBoxContainer/QuitToDesktopButton
+@onready var save_game_button: Button = $Panel/VBoxContainer/MarginContainer/TabContainer/Options/VBoxContainer/SaveGameButton
+@onready var quit_to_menu_button: Button = $Panel/VBoxContainer/MarginContainer/TabContainer/Options/VBoxContainer/QuitToMenuButton
+@onready var quit_to_desktop_button: Button = $Panel/VBoxContainer/MarginContainer/TabContainer/Options/VBoxContainer/QuitToDesktopButton
 
 func _ready():
 	save_game_button.pressed.connect(_on_save_game_pressed)

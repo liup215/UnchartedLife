@@ -281,23 +281,24 @@ func _update_display() -> void:
 	is_focused = distance_from_target <= FOCUS_TOLERANCE
 	
 	# Show continue button when properly focused
-	if continue_button and is_focused:
-		continue_button.visible = true
+	#if continue_button and is_focused:
+		#continue_button.visible = true
 
 func _on_continue_pressed() -> void:
-	"""Continue to next scene after learning microscope basics"""
-	print("Microscope tutorial complete")
-	# Set flag that microscope tutorial is completed
-	PlayerData.completed_microscope_tutorial = true
-	
-	# Emit signal to parent (main scene) instead of direct transition
-	# This allows main.tscn to manage the scene transitions
-	if has_signal("tutorial_completed"):
-		emit_signal("tutorial_completed")
-	
-	# Request scene transition via EventBus
-	print("Prologue 01: Requesting transition to '%s'" % next_scene_id)
-	EventBus.request_scene_transition.emit(next_scene_id, next_spawn_point)
-	
-	# Remove self from parent (main scene will handle next steps)
-	queue_free()
+	pass
+	#"""Continue to next scene after learning microscope basics"""
+	#print("Microscope tutorial complete")
+	## Set flag that microscope tutorial is completed
+	#PlayerData.completed_microscope_tutorial = true
+	#
+	## Emit signal to parent (main scene) instead of direct transition
+	## This allows main.tscn to manage the scene transitions
+	#if has_signal("tutorial_completed"):
+		#emit_signal("tutorial_completed")
+	#
+	## Request scene transition via EventBus
+	#print("Prologue 01: Requesting transition to '%s'" % next_scene_id)
+	#EventBus.request_scene_transition.emit(next_scene_id, next_spawn_point)
+	#
+	## Remove self from parent (main scene will handle next steps)
+	#queue_free()
