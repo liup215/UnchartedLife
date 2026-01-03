@@ -1,15 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://cx6y708xav0u1"]
+[gd_scene load_steps=2 format=3 uid="uid://cx6y708xav0u1"]
 
 [ext_resource type="Script" path="res://scenes/game_scene.gd" id="1_game_scene"]
-[ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="2_hud"]
-[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="3_system_menu"]
-[ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="4_dialogue"]
 
 [node name="GameScene" type="Node2D"]
 script = ExtResource("1_game_scene")
-
-[node name="HUD" parent="." instance=ExtResource("2_hud")]
-
-[node name="SystemMenu" parent="." instance=ExtResource("3_system_menu")]
-
-[node name="DialoguePanel" parent="." instance=ExtResource("4_dialogue")]

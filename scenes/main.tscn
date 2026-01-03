@@ -1,9 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://7rcsyrqgfrjk"]
+[gd_scene load_steps=7 format=3 uid="uid://7rcsyrqgfrjk"]
 
-[ext_resource type="PackedScene" uid="uid://cx6y7z8w9v0u1" path="res://scenes/game_scene.tscn" id="1_game_scene"]
-[ext_resource type="Resource" uid="uid://default_game_scene" path="res://data/game_scenes/default_game_scene.tres" id="2_game_scene_data"]
+[ext_resource type="Script" path="res://scenes/main_scene_controller.gd" id="1_controller"]
+[ext_resource type="PackedScene" uid="uid://cx6y708xav0u1" path="res://scenes/game_scene.tscn" id="2_game_scene"]
+[ext_resource type="Resource" uid="uid://default_game_scene" path="res://data/game_scenes/default_game_scene.tres" id="3_game_scene_data"]
+[ext_resource type="PackedScene" uid="uid://b1c2d3e4f5g6h" path="res://ui/hud/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" uid="uid://c1d2e3f4g5h6i" path="res://ui/system_menu/system_menu.tscn" id="5_system_menu"]
+[ext_resource type="PackedScene" uid="uid://drxngue33mlny" path="res://ui/dialogue/dialogue_panel.tscn" id="6_dialogue"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_controller")
 
-[node name="GameScene" parent="." instance=ExtResource("1_game_scene")]
-game_scene_data = ExtResource("2_game_scene_data")
+[node name="GameScene" parent="." instance=ExtResource("2_game_scene")]
+game_scene_data = ExtResource("3_game_scene_data")
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="SystemMenu" parent="." instance=ExtResource("5_system_menu")]
+
+[node name="DialoguePanel" parent="." instance=ExtResource("6_dialogue")]

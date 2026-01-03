@@ -11,11 +11,6 @@ var map_container: Node2D = null
 var player_instance: Node2D = null
 var spawned_entities: Dictionary = {}  # spawn_id -> entity instance
 
-# UI references (will be set by children or externally)
-@onready var hud: Control = null
-@onready var system_menu: Control = null
-@onready var dialogue_panel: Control = null
-
 # Prologue scene reference
 const PROLOGUE_SCENE_02 = preload("res://scenes/story/prologue/prologue_scene_02.tscn")
 var prologue_scene_instance: Node2D = null
@@ -48,10 +43,7 @@ func _setup_scene() -> void:
 	# 5. Setup audio
 	_setup_audio()
 	
-	# 6. Connect to UI elements if they exist
-	_setup_ui()
-	
-	# 7. Check and load prologue if needed
+	# 6. Check and load prologue if needed
 	_check_and_load_prologue()
 	
 	print("GameScene: Scene setup complete")
@@ -194,17 +186,6 @@ func _setup_audio() -> void:
 	if game_scene_data.ambient_sound and AudioManager.has_method("play_ambient"):
 		AudioManager.play_ambient(game_scene_data.ambient_sound)
 
-func _setup_ui() -> void:
-	"""Connect to UI elements"""
-	# Try to find UI elements as children
-	hud = get_node_or_null("HUD")
-	system_menu = get_node_or_null("SystemMenu")
-	dialogue_panel = get_node_or_null("DialoguePanel")
-	
-	# Setup system menu toggle
-	if system_menu:
-		print("GameScene: Found SystemMenu")
-
 func _check_and_load_prologue() -> void:
 	"""Check if this is the first time entering main scene and load prologue if needed"""
 	# Check PlayerData is available
@@ -248,15 +229,6 @@ func _physics_process(_delta: float) -> void:
 	"""Update map chunks based on player position"""
 	if is_instance_valid(player_instance):
 		MapManager.update_chunks(player_instance.global_position)
-
-func _unhandled_input(event: InputEvent) -> void:
-	"""Handle input for system menu"""
-	if event.is_action_pressed("ui_cancel"):
-		if system_menu:
-			if system_menu.visible:
-				system_menu.close_menu()
-			else:
-				system_menu.open_menu()
 
 # Public API for external access
 func get_player() -> Node2D:
