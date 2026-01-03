@@ -12,6 +12,11 @@ class_name GameSceneData
 
 # ============ STATIC DATA ============
 # Reference to MapData for map/level loading
+# MapData defines map configuration including:
+# - map_id: Unique identifier for the map
+# - chunk_scenes: Dictionary of Vector2i -> scene paths for chunk-based maps
+# - default_spawn_position: Where player spawns when entering the map
+# - use_chunk_loading: Whether to use chunk-based loading
 @export var map_data: MapData = null
 
 # ============ DYNAMIC DATA ============

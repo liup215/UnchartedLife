@@ -103,11 +103,16 @@ func _spawn_player() -> void:
 	# Set player position
 	# If loading from save, player position is already set by load_data
 	# Otherwise, use the spawn position from game_scene_data
-	if not SaveManager.is_loading_from_save():
-		player_instance.global_position = game_scene_data.player_spawn.spawn_position
-		print("GameScene: Set player position to spawn default: %s" % game_scene_data.player_spawn.spawn_position)
+	if SaveManager and SaveManager.has_method("is_loading_from_save"):
+		if not SaveManager.is_loading_from_save():
+			player_instance.global_position = game_scene_data.player_spawn.spawn_position
+			print("GameScene: Set player position to spawn default: %s" % game_scene_data.player_spawn.spawn_position)
+		else:
+			print("GameScene: Player position will be loaded from save file")
 	else:
-		print("GameScene: Player position will be loaded from save file")
+		# Fallback if SaveManager doesn't have the method
+		player_instance.global_position = game_scene_data.player_spawn.spawn_position
+		print("GameScene: Set player position to spawn default (SaveManager not available): %s" % game_scene_data.player_spawn.spawn_position)
 	
 	# If custom player data provided, use it
 	if game_scene_data.player_spawn.player_data:
@@ -183,10 +188,10 @@ func _apply_additional_config(entity_instance: Node, config: Dictionary) -> void
 
 func _setup_audio() -> void:
 	"""Setup background music and ambient sound"""
-	if game_scene_data.background_music:
+	if game_scene_data.background_music and AudioManager.has_method("play_music"):
 		AudioManager.play_music(game_scene_data.background_music)
 	
-	if game_scene_data.ambient_sound:
+	if game_scene_data.ambient_sound and AudioManager.has_method("play_ambient"):
 		AudioManager.play_ambient(game_scene_data.ambient_sound)
 
 func _setup_ui() -> void:
@@ -202,10 +207,16 @@ func _setup_ui() -> void:
 
 func _check_and_load_prologue() -> void:
 	"""Check if this is the first time entering main scene and load prologue if needed"""
+	# Check PlayerData is available
+	if not PlayerData:
+		push_warning("GameScene: PlayerData not available, skipping prologue check")
+		return
+	
 	# Check if coming from prologue_scene_01 (microscope) - if so, load glucose game
 	# Load glucose game if microscope tutorial is completed but glucose tutorial is not
-	if PlayerData.completed_microscope_tutorial and not PlayerData.completed_glucose_tutorial:
-		_load_prologue_scene_02()
+	if PlayerData.has("completed_microscope_tutorial") and PlayerData.has("completed_glucose_tutorial"):
+		if PlayerData.completed_microscope_tutorial and not PlayerData.completed_glucose_tutorial:
+			_load_prologue_scene_02()
 
 func _load_prologue_scene_02() -> void:
 	"""Load the glucose identification game as an overlay"""
