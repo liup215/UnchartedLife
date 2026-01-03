@@ -1,33 +1,8 @@
-[gd_resource type="Resource" script_class="GameSceneData" load_steps=8 format=3 uid="uid://default_game_scene"]
+[gd_resource type="Resource" script_class="GameSceneData" load_steps=3 format=3 uid="uid://dptyer7x4ait8"]
 
-[ext_resource type="Script" path="res://data/definitions/system/game_scene_data.gd" id="1_scene_data"]
-[ext_resource type="Script" path="res://data/definitions/system/map_data.gd" id="2_map_data"]
-[ext_resource type="Script" path="res://data/definitions/system/player_spawn_data.gd" id="3_player_spawn"]
-[ext_resource type="Resource" uid="uid://bdo2suynn7vlm" path="res://data/actors/player/player_data.tres" id="4_player_data"]
-
-[sub_resource type="Resource" id="MapData_default"]
-script = ExtResource("2_map_data")
-map_id = "main_world"
-map_name = "Main World"
-map_description = "The main game world"
-map_scene_path = ""
-chunk_scenes = {}
-default_spawn_position = Vector2(631, 356)
-use_chunk_loading = true
-
-[sub_resource type="Resource" id="PlayerSpawnData_default"]
-script = ExtResource("3_player_spawn")
-spawn_position = Vector2(631, 356)
-spawn_id = "default"
-player_data = ExtResource("4_player_data")
+[ext_resource type="Script" uid="uid://ca6qcqtup1qcu" path="res://data/definitions/system/game_scene_data.gd" id="1_scene_data"]
+[ext_resource type="Script" uid="uid://c12ceofxv17yy" path="res://data/definitions/system/spawnable_entity_data.gd" id="2_oqfg8"]
 
 [resource]
 script = ExtResource("1_scene_data")
-scene_id = "default_game_scene"
-scene_name = "Default Game Scene"
-map_data = SubResource("MapData_default")
-player_spawn = SubResource("PlayerSpawnData_default")
-spawnable_entities = Array[ExtResource("res://data/definitions/system/spawnable_entity_data.gd")]([])
-background_music = null
-ambient_sound = null
-scene_settings = {}
+metadata/_custom_type_script = "uid://ca6qcqtup1qcu"

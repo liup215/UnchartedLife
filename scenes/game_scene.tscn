@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cx6y708xav0u1"]
 
-[ext_resource type="Script" path="res://scenes/game_scene.gd" id="1_game_scene"]
-[ext_resource type="Resource" uid="uid://default_game_scene" path="res://data/game_scenes/default_game_scene.tres" id="2_default_data"]
+[ext_resource type="Script" uid="uid://c1orrwr0gvqum" path="res://scenes/game_scene.gd" id="1_game_scene"]
+[ext_resource type="Resource" uid="uid://dptyer7x4ait8" path="res://data/game_scenes/default_game_scene.tres" id="2_default_data"]
 
 [node name="GameScene" type="Node2D"]
 script = ExtResource("1_game_scene")
