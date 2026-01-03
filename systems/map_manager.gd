@@ -53,9 +53,8 @@ func _initialize_available_maps():
 	main_map.map_name = "Main World"
 	main_map.map_description = "The main game world"
 	main_map.use_chunk_loading = true
-	main_map.chunk_scenes = {
-		Vector2i(0, 0): "res://features/map/chunks/map_0_0.tscn"
-	}
+	# Chunk scenes are not loaded yet - will be populated when actual map chunks are ready
+	main_map.chunk_scenes = {}
 	main_map.default_spawn_position = Vector2(631, 356)
 	available_maps["main_world"] = main_map
 	
