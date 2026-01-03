@@ -27,7 +27,7 @@ func to_dict() -> Dictionary:
 		"entity_type": entity_type,
 		"scene_path": scene_path,
 		"spawn_position": {"x": spawn_position.x, "y": spawn_position.y},
-		"entity_resource": entity_resource.resource_path if entity_resource else "",
+		"entity_resource": entity_resource.resource_path if (entity_resource and "resource_path" in entity_resource) else "",
 		"spawn_id": spawn_id,
 		"additional_config": additional_config
 	}

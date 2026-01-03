@@ -103,16 +103,16 @@ func _spawn_player() -> void:
 	# Set player position
 	# If loading from save, player position is already set by load_data
 	# Otherwise, use the spawn position from game_scene_data
+	var should_use_spawn_position: bool = true
+	
 	if SaveManager and SaveManager.has_method("is_loading_from_save"):
-		if not SaveManager.is_loading_from_save():
-			player_instance.global_position = game_scene_data.player_spawn.spawn_position
-			print("GameScene: Set player position to spawn default: %s" % game_scene_data.player_spawn.spawn_position)
-		else:
-			print("GameScene: Player position will be loaded from save file")
-	else:
-		# Fallback if SaveManager doesn't have the method
+		should_use_spawn_position = not SaveManager.is_loading_from_save()
+	
+	if should_use_spawn_position:
 		player_instance.global_position = game_scene_data.player_spawn.spawn_position
-		print("GameScene: Set player position to spawn default (SaveManager not available): %s" % game_scene_data.player_spawn.spawn_position)
+		print("GameScene: Set player position to spawn default: %s" % game_scene_data.player_spawn.spawn_position)
+	else:
+		print("GameScene: Player position will be loaded from save file")
 	
 	# If custom player data provided, use it
 	if game_scene_data.player_spawn.player_data:
@@ -214,7 +214,10 @@ func _check_and_load_prologue() -> void:
 	
 	# Check if coming from prologue_scene_01 (microscope) - if so, load glucose game
 	# Load glucose game if microscope tutorial is completed but glucose tutorial is not
-	if PlayerData.has("completed_microscope_tutorial") and PlayerData.has("completed_glucose_tutorial"):
+	var has_microscope_prop: bool = PlayerData.has("completed_microscope_tutorial")
+	var has_glucose_prop: bool = PlayerData.has("completed_glucose_tutorial")
+	
+	if has_microscope_prop and has_glucose_prop:
 		var microscope_completed: bool = PlayerData.get("completed_microscope_tutorial", false)
 		var glucose_completed: bool = PlayerData.get("completed_glucose_tutorial", false)
 		if microscope_completed and not glucose_completed:

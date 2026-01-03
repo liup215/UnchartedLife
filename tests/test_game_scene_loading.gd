@@ -57,8 +57,5 @@ func _ready() -> void:
 		print("✗ Failed to load default_game_scene.tres")
 	
 	print("\n=== Test Complete ===")
-	
-	# Exit after test
-	await get_tree().create_timer(1.0).timeout
-	print("Exiting...")
-	get_tree().quit()
+	print("Tests finished. Please review output above.")
+	# Note: Not auto-exiting to allow for manual inspection or additional testing
