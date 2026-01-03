@@ -7,12 +7,18 @@ var player_name: String = "Player"
 var actor_data: ActorData = ActorData.new()
 var current_slot: String = ""
 
+# Tutorial completion flags
+var completed_microscope_tutorial: bool = false
+var completed_glucose_tutorial: bool = false
+
 
 func to_dict() -> Dictionary:
 	return {
 		"player_name": player_name,
 		"actor_data": actor_data.to_dict() if actor_data else {},
 		"current_slot": current_slot,
+		"completed_microscope_tutorial": completed_microscope_tutorial,
+		"completed_glucose_tutorial": completed_glucose_tutorial,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -27,6 +33,12 @@ func from_dict(data: Dictionary) -> void:
 	
 	if data.has("current_slot"):
 		current_slot = data["current_slot"]
+	
+	if data.has("completed_microscope_tutorial"):
+		completed_microscope_tutorial = data["completed_microscope_tutorial"]
+	
+	if data.has("completed_glucose_tutorial"):
+		completed_glucose_tutorial = data["completed_glucose_tutorial"]
 
 # SaveManager-compatible methods
 func save_data() -> Dictionary:

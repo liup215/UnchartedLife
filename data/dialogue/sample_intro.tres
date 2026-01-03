@@ -14,15 +14,6 @@ speaker_name_key = "NPC"
 text = "Hello, this is the first dialogue."
 text_key = "first_dialogure"
 portrait = ExtResource("3_47pyr")
-mood = ""
-voice_sfx = null
-auto_advance = false
-typing_speed = 0.03
-enable_tts = false
-tts_voice_id = ""
-tts_rate = 1.0
-tts_pitch = 1.0
-tts_volume = 1.0
 metadata/_custom_type_script = "uid://5w1msyl1gvxy"
 
 [sub_resource type="Resource" id="Resource_jr7x8"]
@@ -33,15 +24,6 @@ speaker_name_key = "Actor"
 text = "Hello, nice to meet you!"
 text_key = "hello"
 portrait = ExtResource("6")
-mood = ""
-voice_sfx = null
-auto_advance = false
-typing_speed = 0.03
-enable_tts = false
-tts_voice_id = ""
-tts_rate = 1.0
-tts_pitch = 1.0
-tts_volume = 1.0
 metadata/_custom_type_script = "uid://5w1msyl1gvxy"
 
 [resource]
