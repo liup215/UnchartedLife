@@ -26,7 +26,8 @@ The Event-Condition-Action (ECA) system is a data-driven framework for defining 
 - **Properties**:
   - `speaker_name`: String - Name of the speaker
   - `dialog_text`: String - The text to display
-- **Behavior**: Emits `EventBus.dialogue_event` signal with payload
+  - `portrait`: Texture2D (optional) - Speaker portrait image
+- **Behavior**: Creates a DialogueData structure and uses DialogueManager to display the message through the existing dialogue UI system
 
 #### ActionSpawnActor
 - **Location**: `systems/eca/actions/action_spawn_actor.gd`

@@ -77,9 +77,10 @@
 │ ConditionHasItem      │   │ ActionShowDialog      │
 │ - item_id: String     │   │ - speaker_name        │
 │ - required_count: int │   │ - dialog_text         │
-│                       │   │                       │
-│ Checks player's       │   │ Emits EventBus        │
-│ inventory for items   │   │ dialogue_event        │
+│                       │   │ - portrait (optional) │
+│ Checks player's       │   │                       │
+│ inventory for items   │   │ Uses DialogueManager  │
+│                       │   │ to display message    │
 └───────────────────────┘   └───────────────────────┘
                             ┌───────────────────────┐
                             │ ActionSpawnActor      │
@@ -161,7 +162,7 @@ interaction_events = {
 ## Integration Points
 
 ### EventBus
-- ActionShowDialog emits `dialogue_event` signal
+- ActionShowDialog uses DialogueManager which emits `dialogue_started` and `dialogue_line` signals
 - Custom actions can emit any EventBus signal
 
 ### Inventory System

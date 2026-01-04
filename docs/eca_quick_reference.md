@@ -49,8 +49,9 @@ GameSceneData
 ```gdscript
 speaker_name: String = "NPC"
 dialog_text: String = "Hello, adventurer!"
+portrait: Texture2D = null (optional)
 ```
-→ Emits EventBus.dialogue_event signal
+→ Uses DialogueManager to display message through dialogue UI
 
 #### ActionSpawnActor
 ```gdscript

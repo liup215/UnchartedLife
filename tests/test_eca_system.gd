@@ -88,22 +88,22 @@ func test_action_show_dialog() -> void:
 	else:
 		fail_test("ActionShowDialog failed to instantiate")
 	
-	# Connect to EventBus to verify signal emission
+	# Connect to DialogueManager to verify dialogue is started
 	var signal_received = false
-	var callback = func(event_name: String, payload: Dictionary):
-		if event_name == "show_dialog" and payload.get("speaker") == "Test Speaker":
+	var callback = func(dialogue: DialogueData, npc_id: String):
+		if npc_id == "Test Speaker":
 			signal_received = true
 	
-	EventBus.dialogue_event.connect(callback)
+	EventBus.dialogue_started.connect(callback)
 	action.execute(self)
 	await get_tree().create_timer(0.1).timeout  # Wait for signal processing
 	
 	if signal_received:
-		pass_test("ActionShowDialog emitted dialogue_event signal")
+		pass_test("ActionShowDialog started dialogue via DialogueManager")
 	else:
-		fail_test("ActionShowDialog did not emit expected signal")
+		fail_test("ActionShowDialog did not start dialogue")
 	
-	EventBus.dialogue_event.disconnect(callback)
+	EventBus.dialogue_started.disconnect(callback)
 
 func test_action_spawn_actor() -> void:
 	print("\n--- Test: ActionSpawnActor ---")
