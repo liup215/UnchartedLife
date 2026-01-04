@@ -37,14 +37,12 @@ func is_met(context: Node) -> bool:
 	
 	for container_name in containers.keys():
 		var container: InventoryData = containers[container_name]
-		if container and container.items:
-			# Check all items in this container
-			for item in container.items:
-				if item and item.item_name == item_id:
-					# Find the count for this item
-					var item_index = container.items.find(item)
-					if item_index >= 0 and item_index < container.item_counts.size():
-						total_count += container.item_counts[item_index]
+		if container and container.slots:
+			# Check all slots in this container
+			for slot_key in container.slots.keys():
+				var slot = container.slots[slot_key]
+				if slot and slot.item and slot.item.item_name == item_id:
+					total_count += slot.quantity
 	
 	# Check if we have enough
 	var has_enough = total_count >= required_count
