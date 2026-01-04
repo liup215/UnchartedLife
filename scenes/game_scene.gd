@@ -35,6 +35,12 @@ func _setup_scene() -> void:
 	# 4. Setup audio
 	_setup_audio()
 	
+	# 5. Execute on_start events (ECA system)
+	_execute_on_start_events()
+	
+	# 6. Bind interaction triggers (ECA system)
+	_bind_triggers()
+	
 	print("GameScene: Scene setup complete")
 
 func _setup_map_container() -> void:
@@ -167,3 +173,70 @@ func load_data(data: Dictionary) -> void:
 			var entity = spawned_entities.get(spawn_id)
 			if is_instance_valid(entity) and entity.has_method("load_data"):
 				entity.load_data(entity_states[spawn_id])
+
+# ============ ECA SYSTEM METHODS ============
+
+func _execute_on_start_events() -> void:
+	"""Execute all on_start events when the scene loads"""
+	if not game_scene_data or game_scene_data.on_start_events.is_empty():
+		return
+	
+	print("GameScene: Executing %d on_start events" % game_scene_data.on_start_events.size())
+	
+	for event in game_scene_data.on_start_events:
+		if event:
+			event.try_execute(self)
+
+func _bind_triggers() -> void:
+	"""Bind Area2D triggers to interaction events"""
+	if not game_scene_data or game_scene_data.interaction_events.is_empty():
+		return
+	
+	print("GameScene: Binding %d interaction triggers" % game_scene_data.interaction_events.size())
+	
+	for area_name in game_scene_data.interaction_events.keys():
+		var event_data: GameEventData = game_scene_data.interaction_events[area_name]
+		if not event_data:
+			continue
+		
+		# Find the Area2D node in the scene
+		var area: Area2D = _find_area2d(area_name)
+		if not area:
+			push_warning("GameScene: Area2D '%s' not found for interaction event" % area_name)
+			continue
+		
+		# Connect the body_entered signal to trigger the event
+		if not area.body_entered.is_connected(_on_trigger_area_entered):
+			area.body_entered.connect(_on_trigger_area_entered.bind(event_data))
+			print("GameScene: Bound trigger '%s' to event '%s'" % [area_name, event_data.event_id])
+
+func _find_area2d(area_name: String) -> Area2D:
+	"""Find an Area2D node by name in the scene hierarchy"""
+	# Try direct child lookup
+	var area: Node = get_node_or_null(area_name)
+	if area and area is Area2D:
+		return area as Area2D
+	
+	# Try recursive search
+	return _recursive_find_area2d(self, area_name)
+
+func _recursive_find_area2d(node: Node, area_name: String) -> Area2D:
+	"""Recursively search for Area2D by name"""
+	if node.name == area_name and node is Area2D:
+		return node as Area2D
+	
+	for child in node.get_children():
+		var result = _recursive_find_area2d(child, area_name)
+		if result:
+			return result
+	
+	return null
+
+func _on_trigger_area_entered(body: Node, event_data: GameEventData) -> void:
+	"""Handle trigger area entered by checking if it's the player and executing the event"""
+	# Check if the body that entered is the player
+	if not body.is_in_group("player"):
+		return
+	
+	print("GameScene: Player entered trigger area, executing event '%s'" % event_data.event_id)
+	event_data.try_execute(self)

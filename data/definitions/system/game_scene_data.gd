@@ -38,6 +38,14 @@ class_name GameSceneData
 # Optional scene-specific settings
 @export var scene_settings: Dictionary = {}
 
+# ============ ECA SYSTEM ============
+# Events triggered when the scene starts (executed in order)
+@export var on_start_events: Array[GameEventData] = []
+
+# Interaction events mapped to Area2D node names
+# Key: Area2D name in scene, Value: GameEventData to execute on body_entered
+@export var interaction_events: Dictionary = {}
+
 # Convert to dictionary for saving
 func to_dict() -> Dictionary:
 	var entities_array: Array = []
