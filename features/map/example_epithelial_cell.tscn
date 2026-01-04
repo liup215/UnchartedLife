@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4j5k6l7m8n9p0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(16, 32)
+
+[node name="EpithelialCell" type="Sprite2D"]
+modulate = Color(0.8, 0.6, 0.9, 1)
+texture = null
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_wall")
