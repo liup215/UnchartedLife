@@ -240,4 +240,3 @@ func _on_trigger_area_entered(body: Node, event_data: GameEventData) -> void:
 	
 	print("GameScene: Player entered trigger area, executing event '%s'" % event_data.event_id)
 	event_data.try_execute(self)
-
