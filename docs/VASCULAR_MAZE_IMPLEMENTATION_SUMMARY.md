@@ -187,8 +187,8 @@ func _ready() -> void:
    - 添加 Marker2D 子节点 / Add Marker2D child for spawn
 
 2. **准备支持场景 / Prepare Support Scenes:**
-   - 墙壁场景 / Wall scene: `example_epithelial_cell.tscn`
-   - 瓣膜场景 / Valve scene: `example_valve.tscn`
+   - 墙壁场景 / Wall scene: `tests/vascular_epithelial_cell.tscn`
+   - 瓣膜场景 / Valve scene: `tests/vascular_valve.tscn`
 
 3. **配置检查器 / Configure Inspector:**
    - 分配 wall_scene 和 valve_scene / Assign wall_scene and valve_scene
@@ -213,15 +213,15 @@ func _ready() -> void:
    - Godot UID 文件 / Godot UID file
 
 ### 示例场景 / Example Scenes
-3. **example_vascular_maze.tscn**
+3. **tests/vascular_maze_test.tscn**
    - 完整示例场景 / Complete example scene
    - 包含生成器和出生点 / Includes generator and spawn
 
-4. **example_epithelial_cell.tscn**
+4. **tests/vascular_epithelial_cell.tscn**
    - 基础墙壁场景 / Basic wall scene
    - Sprite2D + StaticBody2D + CollisionShape2D
 
-5. **example_valve.tscn**
+5. **tests/vascular_valve.tscn**
    - 基础瓣膜场景 / Basic valve scene
    - Area2D + Sprite2D + CollisionShape2D
 

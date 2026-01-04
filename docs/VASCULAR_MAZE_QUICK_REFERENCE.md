@@ -161,9 +161,9 @@ Generator automatically creates maze structure at runtime.
 ## Example Scene Files
 
 All located in `features/map/`:
-- `example_vascular_maze.tscn` - Complete example setup
+- `tests/vascular_maze_test.tscn` - Complete example setup
 - `example_epithelial_cell.tscn` - Basic wall scene
-- `example_valve.tscn` - Basic valve scene
+- `tests/vascular_valve.tscn` - Basic valve scene
 
 ## Player Requirements
 
