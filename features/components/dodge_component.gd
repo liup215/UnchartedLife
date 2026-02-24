@@ -206,14 +206,9 @@ func _create_afterimage():
 	tween.tween_callback(afterimage.queue_free)
 
 func get_last_direction() -> Vector2:
-	"""Get the last movement direction from actor"""
+	# Delegates to the actor's method; falls back to Vector2.RIGHT if unavailable
 	if actor and actor.has_method("get_last_direction"):
 		return actor.get_last_direction()
-	elif actor and actor.get("last_direction"):
-		return actor.last_direction
-	elif actor and actor.get("velocity"):
-		if actor.velocity.length() > 0:
-			return actor.velocity.normalized()
 	return Vector2.RIGHT
 
 func is_in_dodge() -> bool:
