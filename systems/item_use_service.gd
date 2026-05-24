@@ -289,12 +289,7 @@ func _equip_weapon(actor: Actor, item: ItemData) -> bool:
 			item_use_failed.emit(actor, item, "Weapon slots are full")
 			return false
 
-	var weapon_scene := preload("res://features/components/weapon_component.tscn")
-	if not weapon_scene:
-		push_warning("Weapon component scene missing")
-		return false
-
-	var weapon_instance: WeaponComponent = weapon_scene.instantiate()
+	var weapon_instance := WeaponComponent.new()
 	weapon_instance.item_data = item
 	weapon_instance.setup_weapon()
 	actor.actor_combat_component.add_child(weapon_instance)

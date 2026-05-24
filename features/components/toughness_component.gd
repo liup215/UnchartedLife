@@ -55,7 +55,7 @@ func apply_toughness_damage(damage: float, stagger_power: float = 0.0):
 	current_toughness -= toughness_damage
 	toughness_changed.emit(current_toughness, max_toughness)
 	
-	print("[TOUGHNESS] Damage: ", toughness_damage, " Current: ", current_toughness, "/", max_toughness)
+	Logger.debug("toughness", "Damage: %s Current: %s/%s" % [toughness_damage, current_toughness, max_toughness])
 	
 	# Check if toughness is broken
 	if current_toughness <= stagger_threshold:
@@ -72,7 +72,7 @@ func _trigger_stagger():
 	toughness_broken.emit()
 	stagger_started.emit()
 	
-	print("[TOUGHNESS] Toughness broken! Entering stagger state for ", stagger_duration, "s")
+	Logger.debug("toughness", "Toughness broken! Entering stagger state for %ss" % stagger_duration)
 	
 	# Create timer for stagger duration
 	await get_tree().create_timer(stagger_duration).timeout
@@ -91,7 +91,7 @@ func _end_stagger():
 	stagger_ended.emit()
 	toughness_changed.emit(current_toughness, max_toughness)
 	
-	print("[TOUGHNESS] Stagger ended, toughness restored to ", current_toughness)
+	Logger.debug("toughness", "Stagger ended, toughness restored to %s" % current_toughness)
 
 ## Force reset toughness to max
 func reset_toughness():

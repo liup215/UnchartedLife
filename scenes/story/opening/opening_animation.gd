@@ -35,7 +35,7 @@ func _start_opening_animation() -> void:
 		animation_player.play("opening")
 	else:
 		# If no animation exists, wait a few seconds then transition
-		print("Warning: No 'opening' animation found, using default timing")
+		Logger.warn("story", "No 'opening' animation found, using default timing")
 		await get_tree().create_timer(5.0).timeout
 		_transition_to_prologue()
 
@@ -67,9 +67,9 @@ func _transition_to_prologue() -> void:
 	
 	# Transition directly to main.tscn instead of prologue
 	# main.tscn will handle loading prologue scenes
-	print("Opening animation complete, transitioning to main scene...")
+	Logger.info("story", "Opening animation complete, transitioning to main scene...")
 	
 	# Mark that we should start with prologue
 	PlayerData.should_start_prologue = true
 	
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().change_scene_to_file(ScenePaths.MAIN_SCENE)

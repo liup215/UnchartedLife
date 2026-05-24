@@ -7,7 +7,9 @@ extends Node2D
 signal prologue_completed()
 
 # Preload scenes
-const MOLECULE_SCENE = preload("res://features/interactive/molecule/molecule.tscn")
+@export var molecule_scene: PackedScene
+
+# ... (rest of file unchanged except replacing MOLECULE_SCENE usage)
 
 # Constants
 const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before completing/restarting
@@ -70,7 +72,11 @@ func _spawn_molecules():
 		_spawn_molecule(mol_data["type"], mol_data["name"])
 
 func _spawn_molecule(type: Molecule.MoleculeType, name: String):
-	var molecule = MOLECULE_SCENE.instantiate()
+	if not molecule_scene:
+		push_error("PrologueScene02: molecule_scene is not assigned")
+		return
+	
+	var molecule = molecule_scene.instantiate()
 	
 	# Set molecule properties
 	molecule.molecule_type = type
@@ -138,9 +144,9 @@ func _on_molecule_collected(type: Molecule.MoleculeType, is_glucose: bool):
 		ui.on_molecule_collected(type, is_glucose)
 
 func _show_victory_screen():
-	print("=== VICTORY ===")
-	print("Congratulations! You've healed the cell!")
-	print("You successfully identified glucose and restored the cell to health.")
+	Logger.info("story", "=== VICTORY ===")
+	Logger.info("story", "Congratulations! You've healed the cell!")
+	Logger.info("story", "You successfully identified glucose and restored the cell to health.")
 	
 	if ui:
 		ui.show_victory()
@@ -153,8 +159,8 @@ func _show_victory_screen():
 	prologue_completed.emit()
 
 func _show_game_over_screen(reason: String):
-	print("=== GAME OVER ===")
-	print(reason)
+	Logger.info("story", "=== GAME OVER ===")
+	Logger.info("story", "%s" % reason)
 	
 	if ui:
 		ui.show_game_over(reason)

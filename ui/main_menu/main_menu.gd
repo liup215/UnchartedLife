@@ -75,14 +75,14 @@ func _process(delta):
 func CheckStartupSuccess():
 	# Check Safe Mode (Stub)
 	# Report Startup Success (Stub)
-	print("Startup checks completed successfully.")
+	Logger.info("ui", "Startup checks completed successfully.")
 	
 	# Check Performance (Stub)
 	WarnAboutLowPerformance()
 
 func FetchNews():
 	# Placeholder for fetching news
-	print("Fetching news...")
+	Logger.info("ui", "Fetching news...")
 	# In a real implementation, this would make an HTTP request
 	# await get_tree().create_timer(1.0).timeout
 	# print("News fetched.")
@@ -91,7 +91,7 @@ func FetchNews():
 
 func CheckSystemInfo():
 	var rendering_device = RenderingServer.get_video_adapter_name()
-	print("Graphics Adapter: ", rendering_device)
+	Logger.info("ui", "Graphics Adapter: " + str(rendering_device))
 	# Logic to warn about specific drivers could go here
 
 func CheckStoreStatus():
@@ -101,7 +101,7 @@ func CheckStoreStatus():
 func WarnAboutLowPerformance():
 	var fps = Engine.get_frames_per_second()
 	if fps < 30 and fps > 0:
-		print("Warning: Low performance detected in menu.")
+		Logger.warn("ui", "Low performance detected in menu.")
 
 # --- Button Callbacks ---
 
@@ -111,14 +111,14 @@ func _on_new_game_pressed():
 	if new_game_settings:
 		new_game_settings.OpenFromMainMenu(self)
 	else:
-		print("NewGameSettings node not found.")
+		Logger.error("ui", "NewGameSettings node not found.")
 
 
 func _on_new_game_confirmed(settings):
 	# Called when NewGameSettings emits game_started
 	OnEnteringGame(true)
 	# Load the opening animation scene for new games
-	get_tree().change_scene_to_file("res://scenes/story/opening/opening_animation.tscn")
+	get_tree().change_scene_to_file(ScenePaths.OPENING_ANIMATION)
 
 func _on_continue_pressed():
 	var latest_slot = SaveManager.get_latest_slot_id()
@@ -126,20 +126,20 @@ func _on_continue_pressed():
 		PlayerData.current_slot = latest_slot
 		if SaveManager.load_game(latest_slot):
 			OnEnteringGame(false)
-			get_tree().change_scene_to_file("res://scenes/main.tscn")
+			get_tree().change_scene_to_file(ScenePaths.MAIN_SCENE)
 		else:
-			print("Error loading latest save file.")
+			Logger.error("save", "Error loading latest save file.")
 	else:
-		print("No save file found to continue.")
+		Logger.info("ui", "No save file found to continue.")
 
 func _on_load_game_pressed():
-	get_tree().change_scene_to_file("res://ui/load_game/load_game_menu.tscn")
+	get_tree().change_scene_to_file(ScenePaths.LOAD_GAME_MENU)
 
 func _on_options_pressed():
-	print("Options button pressed")
+	Logger.debug("ui", "Options button pressed")
 
 func _on_credits_pressed():
-	print("Credits button pressed")
+	Logger.debug("ui", "Credits button pressed")
 
 func _on_quit_pressed():
 	SceneManager.quit_game()
@@ -148,4 +148,4 @@ func OnEnteringGame(is_new_game: bool):
 	# Disable cheats (Stub)
 	# Clear last save time (Stub)
 	# Report achievements (Stub)
-	print("Entering game. New game: ", is_new_game)
+	Logger.info("ui", "Entering game. New game: " + str(is_new_game))

@@ -5,6 +5,8 @@ extends Control
 
 @onready var grid: GridContainer = $ScrollContainer/GridContainer
 
+@export var item_slot_scene: PackedScene
+
 func _ready():
 	update_inventory()
 
@@ -13,12 +15,16 @@ func update_inventory():
 	for child in grid.get_children():
 		grid.remove_child(child)
 		child.queue_free()
+	
+	if not item_slot_scene:
+		push_error("BackpackUI: item_slot_scene is not assigned")
+		return
+	
 	var manager = get_node("/root/InventoryManager")
 	if not manager or not manager.inventory:
 		return
 	var slots_dict = manager.get_inventory_slots()
 	for slot in slots_dict.values():
-		var item_slot_scene = preload("res://ui/backpack/item_slot.tscn")
 		var item_slot = item_slot_scene.instantiate()
 		grid.add_child(item_slot)
 		item_slot.set_slot_data(slot)

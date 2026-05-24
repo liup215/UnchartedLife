@@ -4,7 +4,7 @@ extends Node
 ## Global autoload for managing scene transitions and loading screens
 ## Handles both simple scene changes and transitions with loading screen display
 
-const LOADING_SCREEN_SCENE: String = "res://ui/loading_screen/loading_screen.tscn"
+const LOADING_SCREEN_SCENE: String = ScenePaths.LOADING_SCREEN
 
 var QuitOrQuitting: bool = false
 var loading_screen_instance: Control = null

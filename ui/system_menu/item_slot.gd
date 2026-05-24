@@ -31,16 +31,16 @@ func setup(item: ItemData, qty: int, container: String = ""):
 	
 	_do_setup()
 
+@export var default_item_icon: Texture2D
+
 func _do_setup():
 	if item_data:
-		# Item slot
-		item_icon.texture = item_data.icon if item_data.icon else preload("res://assets/charactor/actor01.png")
+		item_icon.texture = item_data.icon if item_data.icon else default_item_icon
 		if quantity > 1:
 			quantity_label.text = str(quantity)
 		else:
 			quantity_label.text = ""
 		modulate = Color(1, 1, 1, 1)
-		# Enable tooltip for items
 		tooltip_text = item_data.item_name
 		
 		# Show use button for usable items

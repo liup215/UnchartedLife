@@ -45,7 +45,7 @@ func start_heavy_charge():
 	if not is_charging_heavy:
 		is_charging_heavy = true
 		charge_start_time = Time.get_ticks_msec() / 1000.0
-		print("[CHARGE] Started heavy attack charging from level %d (%.1f%%)" % [current_charge_level, current_charge_progress])
+		Logger.debug("charge", "Started heavy attack charging from level %d (%.1f%%)" % [current_charge_level, current_charge_progress])
 
 ## Stop charging and return the current charge level as a float (includes partial progress)
 ## Returns: effective charge level (e.g., 2.5 means level 2 with 50% progress to level 3)
@@ -53,7 +53,7 @@ func stop_heavy_charge() -> float:
 	is_charging_heavy = false
 	var progress_ratio = current_charge_progress / progress_per_level if progress_per_level > 0 else 0.0
 	var effective_charge = float(current_charge_level) + progress_ratio
-	print("[CHARGE] Released heavy attack with charge level: %.2f (level %d, %.1f%% progress)" % [effective_charge, current_charge_level, current_charge_progress])
+	Logger.debug("charge", "Released heavy attack with charge level: %.2f (level %d, %.1f%% progress)" % [effective_charge, current_charge_level, current_charge_progress])
 	return effective_charge
 
 ## Update charge based on delta time
@@ -75,7 +75,7 @@ func _update_heavy_charge(delta: float):
 		current_charge_progress -= progress_per_level
 		current_charge_level += 1
 		charge_level_up.emit(current_charge_level)
-		print("[CHARGE] Level up! Now at level %d" % current_charge_level)
+		Logger.debug("charge", "Level up! Now at level %d" % current_charge_level)
 		
 		if current_charge_level >= max_charge_level:
 			# Cap progress at max for the max level
@@ -100,7 +100,7 @@ func add_light_attack_charge(progress_amount: float = 20.0):
 		current_charge_progress -= progress_per_level
 		current_charge_level += 1
 		charge_level_up.emit(current_charge_level)
-		print("[CHARGE] Light attack level up! Now at level %d" % current_charge_level)
+		Logger.debug("charge", "Light attack level up! Now at level %d" % current_charge_level)
 		
 		if current_charge_level >= max_charge_level:
 			current_charge_progress = min(current_charge_progress, progress_per_level)
@@ -108,7 +108,7 @@ func add_light_attack_charge(progress_amount: float = 20.0):
 			break
 	
 	charge_changed.emit(current_charge_level, current_charge_progress, max_charge_level)
-	print("[CHARGE] Light attack charge accumulated: level %d -> %d (%.1f%% progress)" % [old_level, current_charge_level, current_charge_progress])
+	Logger.debug("charge", "Light attack charge accumulated: level %d -> %d (%.1f%% progress)" % [old_level, current_charge_level, current_charge_progress])
 
 ## Reset charge to zero (after heavy attack release)
 func reset_charge():
@@ -116,7 +116,7 @@ func reset_charge():
 		current_charge_level = 0
 		current_charge_progress = 0.0
 		charge_changed.emit(current_charge_level, current_charge_progress, max_charge_level)
-		print("[CHARGE] Charge reset to 0")
+		Logger.debug("charge", "Charge reset to 0")
 
 ## Get current charge level
 func get_current_charge_level() -> int:

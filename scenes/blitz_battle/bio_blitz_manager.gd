@@ -2,7 +2,7 @@ class_name BioBlitzManager
 extends Control
 
 # Config
-const QuestionDataScript = preload("res://data/definitions/bio_blitz/question_data.gd")
+# QuestionData is available as a global class_name, no preload needed
 
 @export var question_pool: Array[Resource] = [] # Type hint: Array[QuestionData]
 @export var question_bank_path: String = ""
@@ -62,10 +62,10 @@ func _ready() -> void:
 
 	# Play Music
 	if battle_music:
-		print("BioBlitzManager: Playing battle music")
+		Logger.info("bioblitz", "Playing battle music")
 		AudioManager.play_music(battle_music)
 	else:
-		print("BioBlitzManager: No battle music assigned")
+		Logger.warn("bioblitz", "No battle music assigned")
 
 	# Load questions
 	if question_bank_path.ends_with(".json"):
@@ -93,7 +93,7 @@ func display_random_question() -> void:
 		current_question = question_deck.pop_back()
 		display_question(current_question)
 	else:
-		print("No questions in pool!")
+		Logger.warn("bioblitz", "No questions in pool!")
 		question_label.text = "No questions loaded!"
 		# Auto-complete if no questions (for testing)
 		EventBus.quiz_completed.emit(true)
@@ -159,7 +159,7 @@ func handle_wrong_answer() -> void:
 
 func _on_exit_pressed() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://features/bio_blitz/bio_blitz_selection.tscn")
+	get_tree().change_scene_to_file(ScenePaths.BIO_BLITZ_SELECTION)
 
 func _on_boss_died() -> void:
 	victory_label.text = "Victory!"
@@ -189,12 +189,12 @@ func load_questions_from_dir(path: String) -> void:
 					load_questions_from_json(path + "/" + file_name)
 			file_name = dir.get_next()
 	else:
-		print("An error occurred when trying to access the path: " + path)
+		Logger.error("bioblitz", "An error occurred when trying to access the path: %s" % path)
 
 func load_questions_from_json(file_path: String) -> void:
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
-		print("Failed to open file: " + file_path)
+		Logger.error("bioblitz", "Failed to open file: %s" % file_path)
 		return
 
 	var content = file.get_as_text()
@@ -205,7 +205,7 @@ func load_questions_from_json(file_path: String) -> void:
 		var data = json.data
 		if data is Array:
 			for item in data:
-				var q_data = QuestionDataScript.new()
+				var q_data = QuestionData.new()
 				q_data.question_text = item.get("text", "Unknown Question")
 
 				# Ensure options are strings

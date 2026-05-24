@@ -1,7 +1,7 @@
 # player.gd
 # The main script for the player character.
 # It extends the base Actor class.
-extends "res://features/actor/actor.gd"
+extends Actor
 
 # Player states
 enum PlayerState {
@@ -156,7 +156,7 @@ func _handle_vehicle_interaction():
 					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
 				elif nearby_vehicle.vehicle_data:
 					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
-				print("Entered vehicle: ", vehicle_name)
+				Logger.debug("player", "Entered vehicle: %s" % vehicle_name)
 	elif current_state == PlayerState.IN_VEHICLE:
 		# Try to exit current vehicle
 		if current_vehicle and current_vehicle.has_method("exit_vehicle"):
@@ -166,7 +166,7 @@ func _handle_vehicle_interaction():
 			if result:
 				current_vehicle = null
 				current_state = PlayerState.ON_FOOT
-				print("Exited vehicle")
+				Logger.debug("player", "Exited vehicle")
 
 func _process_basal_metabolism(delta: float):
 
@@ -195,7 +195,7 @@ func show_vehicle_interaction(vehicle: Node2D):
 	nearby_vehicle = vehicle
 	interaction_ui_visible = true
 	# TODO: Show UI prompt "Press E to enter vehicle"
-	print("Vehicle nearby: ", vehicle.get_interaction_text())
+	Logger.debug("player", "Vehicle nearby: %s" % vehicle.get_interaction_text())
 
 func hide_vehicle_interaction():
 	nearby_vehicle = null
@@ -287,15 +287,15 @@ func _handle_combat_input():
 	
 	# Heavy attack - charge on hold, release on button up
 	if Input.is_action_just_pressed("heavy_attack"):
-		print("Starting heavy attack charge...")
+		Logger.debug("player", "Starting heavy attack charge")
 		actor_combat_component.start_heavy_attack_charge()
 	elif Input.is_action_just_released("heavy_attack"):
-		print("Releasing heavy attack...")
+		Logger.debug("player", "Releasing heavy attack")
 		actor_combat_component.release_heavy_attack()
 	
-	# Light attack - Actor武器发射（如手枪/步枪等）
+	# Light attack - Actor weapon fire (pistol/rifle etc)
 	if Input.is_action_just_pressed("light_attack"):
-		print("Firing light attack...")
+		Logger.debug("player", "Firing light attack")
 		actor_combat_component.perform_light_attack()
 
 # --- Dodge Callbacks ---
@@ -307,24 +307,24 @@ func _on_dodge_started():
 	
 	# Emit global event
 	EventBus.player_dodge_started.emit(self)
-	print("Dodge started! Invincible!")
+	Logger.debug("player", "Dodge started")
 
 func _on_dodge_ended():
 	"""Called when dodge ends"""
-	print("Dodge ended")
+	Logger.debug("player", "Dodge ended")
 
 func _on_invincibility_ended():
 	"""Called when invincibility ends (called by DodgeComponent)"""
 	# Remove invincibility from health component
 	if attribute_component and attribute_component.health_component:
 		attribute_component.health_component.set_invincible(false)
-	print("Invincibility ended")
+	Logger.debug("player", "Invincibility ended")
 	# Emit global event
 	EventBus.player_dodge_ended.emit(self)
 
 func _on_dodge_failed(reason: String):
 	"""Called when dodge fails"""
-	print("Dodge failed: ", reason)
+	Logger.warn("player", "Dodge failed: %s" % reason)
 	# Emit global event
 	EventBus.player_dodge_failed.emit(self, reason)
 

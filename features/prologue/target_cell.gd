@@ -78,7 +78,7 @@ func heal(amount: int):
 func take_damage(amount: int):
 	# In this game, "damage" heals the cell instead!
 	heal(amount)
-	print("Cell hit! Healing for %d HP" % amount)
+	Logger.debug("prologue", "Cell hit! Healing for %d HP" % amount)
 
 func _update_health_display():
 	var health_percentage = float(current_health) / float(max_health)
@@ -120,7 +120,7 @@ func _flash_heal():
 func _die():
 	is_dead = true
 	cell_died.emit()
-	print("Cell has died! Game Over.")
+	Logger.info("prologue", "Cell has died! Game Over.")
 	
 	# Death animation
 	var tween = create_tween()
@@ -128,7 +128,7 @@ func _die():
 	tween.tween_callback(queue_free)
 
 func _victory():
-	print("Cell healed to victory health! You win!")
+	Logger.info("prologue", "Cell healed to victory health! You win!")
 	cell_healed.emit()
 	
 	# Victory animation

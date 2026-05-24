@@ -167,9 +167,9 @@ func play_combat_animation(anim_name: String):
 	
 	if visuals.sprite_frames.has_animation(anim_name):
 		visuals.play(anim_name)
-		print("[ACTOR] Playing combat animation: ", anim_name)
+		Logger.debug("actor", "Playing combat animation: %s" % anim_name)
 	else:
-		print("[ACTOR] Combat animation not found: ", anim_name)
+		Logger.debug("actor", "Combat animation not found: %s" % anim_name)
 
 # --- Public API ---
 
@@ -210,7 +210,7 @@ func _on_death():
 
 ## Called when actor enters stagger state
 func _on_stagger_started():
-	print("[ACTOR] ", actor_data.actor_name if actor_data else "Actor", " entered stagger state!")
+	Logger.debug("actor", "[ACTOR] %s entered stagger state!" % (actor_data.actor_name if actor_data else "Actor"))
 	
 	# Play stagger animation if available
 	if visuals and visuals.sprite_frames:
@@ -226,7 +226,7 @@ func _on_stagger_started():
 
 ## Called when actor exits stagger state
 func _on_stagger_ended():
-	print("[ACTOR] ", actor_data.actor_name if actor_data else "Actor", " recovered from stagger!")
+	Logger.debug("actor", "[ACTOR] %s recovered from stagger!" % (actor_data.actor_name if actor_data else "Actor"))
 	
 	# Restore normal color
 	if visuals:

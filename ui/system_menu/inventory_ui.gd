@@ -7,7 +7,8 @@ extends Control
 @onready var item_description: Label = $HBoxContainer/RightPanel/VBoxContainer/ItemDescription
 @onready var item_quantity: Label = $HBoxContainer/RightPanel/VBoxContainer/ItemQuantity
 
-const ITEM_SLOT_SCENE = preload("res://ui/system_menu/item_slot.tscn")
+@export var item_slot_scene: PackedScene
+@export var default_item_icon: Texture2D
 
 var player_inventory_component: InventoryComponent
 var current_container_name: String = ""
@@ -113,10 +114,14 @@ func update_container_display(container_name: String):
 		capacity_label.text = "Capacity: %d / %d" % [used_slots, capacity]
 	
 	# Create item slots
+	if not item_slot_scene:
+		push_error("InventoryUI: item_slot_scene is not assigned")
+		return
+	
 	for slot_key in container_data.slots:
 		var slot_data = container_data.slots[slot_key]
 		if slot_data is InventoryData.InventorySlotData:
-			var item_slot = ITEM_SLOT_SCENE.instantiate()
+			var item_slot = item_slot_scene.instantiate()
 			item_slot.setup(slot_data.item, slot_data.quantity, container_name)
 			item_slot.connect("slot_clicked", Callable(self, "_on_item_slot_clicked").bind(container_name))
 			grid_container.add_child(item_slot)
@@ -126,7 +131,7 @@ func update_container_display(container_name: String):
 	if not container_data.is_unlimited:
 		var empty_slots = capacity - container_data.slots.size()
 		for i in range(empty_slots):
-			var empty_slot = ITEM_SLOT_SCENE.instantiate()
+			var empty_slot = item_slot_scene.instantiate()
 			empty_slot.setup(null, 0, container_name)  # Empty slot
 			grid_container.add_child(empty_slot)
 			item_slots[container_name].append(empty_slot)
@@ -141,13 +146,13 @@ func _on_item_slot_clicked(item: ItemData, quantity: int, _container_name: Strin
 	if item == null:
 		# Show default message when no item is selected
 		item_name_label.text = "Select an item to view details"
-		item_icon.texture = preload("res://assets/charactor/actor01.png")
+		item_icon.texture = default_item_icon
 		item_description.text = "Click on an item in your inventory to see its details here."
 		item_quantity.text = "Quantity: 0"
 		return
 	
 	# Show item details
 	item_name_label.text = item.item_name
-	item_icon.texture = item.icon if item.icon else preload("res://assets/charactor/actor01.png")
+	item_icon.texture = item.icon if item.icon else default_item_icon
 	item_description.text = item.description
 	item_quantity.text = "Quantity: %d" % quantity

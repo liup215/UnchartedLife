@@ -5,6 +5,7 @@ extends Resource
 
 class_name ActorData
 
+# This import is handled via class_name in the target script
 # const AnimationData = preload("res://data/components/animation_data.gd")
 
 # --- Player Character Stats ---

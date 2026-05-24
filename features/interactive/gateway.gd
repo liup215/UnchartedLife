@@ -14,10 +14,10 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if _check_conditions():
-			print("Gateway: Requesting transition to '%s' at '%s'" % [target_scene_id, target_spawn_id])
+			Logger.info("interactive", "Gateway: Requesting transition to '%s' at '%s'" % [target_scene_id, target_spawn_id])
 			EventBus.request_scene_transition.emit(target_scene_id, target_spawn_id)
 		else:
-			print("Gateway: Conditions not met")
+			Logger.warn("interactive", "Gateway: Conditions not met")
 			# TODO: Show UI feedback
 
 func _check_conditions() -> bool:

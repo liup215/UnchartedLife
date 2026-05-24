@@ -23,12 +23,12 @@ func _on_interacted(actor):
 	
 	if inventory:
 		if inventory.add_item(item_data):
-			print("Picked up: " + item_data.item_name)
+			Logger.info("interactive", "Picked up: %s" % item_data.item_name)
 			queue_free()
 		else:
-			print("Inventory full!")
+			Logger.warn("interactive", "Inventory full!")
 	else:
-		print("Actor has no inventory!")
+		Logger.error("interactive", "Actor has no inventory!")
 
 func _find_inventory_component(node: Node) -> InventoryComponent:
 	# Check if the node itself is the component (unlikely but possible)

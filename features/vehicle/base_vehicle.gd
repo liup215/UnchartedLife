@@ -49,7 +49,7 @@ func _ready():
 		vehicle_combat_component.set_actor_data(vehicle_data)
 		# for weapon in vehicle_data.weapons:
 		# 	if weapon is WeaponData:
-		# 		var weapon_comp = preload("res://features/components/weapon_component.tscn").instantiate()
+		# var weapon_comp = WeaponComponent.new()
 		# 		weapon_comp.weapon_data = weapon
 		# 		weapon_comp.setup_weapon()
 		# 		# add a random position offset to the weapon

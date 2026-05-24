@@ -15,13 +15,13 @@ func _on_save_game_pressed():
 	SaveManager.save_game(PlayerData.current_slot)
 	# Optionally, give feedback to the player
 	# e.g., show a "Game Saved!" label for a second.
-	print("Game saved to slot: %s" % PlayerData.current_slot)
+	Logger.info("save", "Game saved to slot: %s" % PlayerData.current_slot)
 	close_menu()
 
 func _on_quit_to_menu_pressed():
 	# IMPORTANT: Unpause the game before changing scenes
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file(ScenePaths.MAIN_MENU)
 
 func _on_quit_to_desktop_pressed():
 	# IMPORTANT: Unpause the game before quitting

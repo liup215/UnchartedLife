@@ -35,4 +35,4 @@ func execute(context: Node) -> void:
 	# Start the dialogue through DialogueManager
 	DialogueManager.start_dialogue(dialogue_data, speaker_name)
 	
-	print("ActionShowDialog: Showing dialog from '%s': %s" % [speaker_name, dialog_text])
+	Logger.debug("eca", "ActionShowDialog: Showing dialog from '%s': %s" % [speaker_name, dialog_text])

@@ -46,7 +46,7 @@ func _physics_process(delta):
 	position += direction * speed * delta
 
 func _on_body_entered(body):
-	print("Bullet hit: ", body.name)
+	Logger.debug("combat", "Bullet hit: %s" % body.name)
 	
 	# Notify shooter's combat component about the hit (for comprehensive damage calculation)
 	if shooter and shooter.has_node("ActorCombatComponent"):

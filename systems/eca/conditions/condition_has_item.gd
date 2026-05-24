@@ -48,9 +48,9 @@ func is_met(context: Node) -> bool:
 	var has_enough = total_count >= required_count
 	
 	if has_enough:
-		print("ConditionHasItem: Player has %d of '%s' (required: %d)" % [total_count, item_id, required_count])
+		Logger.debug("eca", "ConditionHasItem: Player has %d of '%s' (required: %d)" % [total_count, item_id, required_count])
 	else:
-		print("ConditionHasItem: Player has only %d of '%s' (required: %d)" % [total_count, item_id, required_count])
+		Logger.debug("eca", "ConditionHasItem: Player has only %d of '%s' (required: %d)" % [total_count, item_id, required_count])
 	
 	return has_enough
 

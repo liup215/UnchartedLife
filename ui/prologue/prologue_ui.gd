@@ -95,4 +95,4 @@ func _on_restart_pressed():
 
 func _on_menu_pressed():
 	# Return to main menu
-	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file(ScenePaths.MAIN_MENU)

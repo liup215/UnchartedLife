@@ -61,7 +61,7 @@ func choose(index: int) -> void:
 	EventBus.dialogue_choice_made.emit(choice, _current_npc_id)
 	_waiting_for_choice = false
 	if not choice.next_dialogue_id.is_empty():
-		var next = _library.get(choice.next_dialogue_id, null)
+		var next: DialogueData = _library.get(choice.next_dialogue_id, null)
 		if next:
 			start_dialogue(next, _current_npc_id, _context)
 			return
