@@ -1,7 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://ujuhqrlww3mr"]
+[gd_scene load_steps=6 format=3 uid="uid://ujuhqrlww3mr"]
 
 [ext_resource type="Script" uid="uid://i1tgu8iks346" path="res://ui/character_creation/character_creation.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://7rcsyrqgfrjk" path="res://scenes/main.tscn" id="2_7ht17"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
+[ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="4_bg_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_char"]
+shader = ExtResource("4_bg_shader")
+shader_parameter/glow_intensity = 0.4
+shader_parameter/speed = 0.15
 
 [node name="CharacterCreation" type="Control"]
 layout_mode = 3
@@ -10,6 +17,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_theme")
 script = ExtResource("1_script")
 main_game_scene = ExtResource("2_7ht17")
 
@@ -20,7 +28,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.02, 0.03, 0.05, 1)
+
+[node name="BackgroundEffect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_char")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -36,15 +53,17 @@ theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Enter Your Name"
 
 [node name="NameEdit" type="LineEdit" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(300, 45)
 layout_mode = 2
 placeholder_text = "Hero"
 alignment = 1
 
 [node name="StartGameButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(240, 50)
 text = "Start Game"

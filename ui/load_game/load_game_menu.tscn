@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5m4n3p2q1r0s"]
+[gd_scene load_steps=4 format=3 uid="uid://c5m4n3p2q1r0s"]
 
 [ext_resource type="Script" path="res://ui/load_game/load_game_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="2_theme"]
+[ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="3_bg_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_load"]
+shader = ExtResource("3_bg_shader")
+shader_parameter/glow_intensity = 0.3
+shader_parameter/speed = 0.1
 
 [node name="LoadGameMenu" type="Control"]
 layout_mode = 3
@@ -9,6 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_script")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -18,7 +26,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.02, 0.03, 0.05, 1)
+
+[node name="BackgroundEffect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_load")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -38,7 +55,8 @@ theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Load Game"
 horizontal_alignment = 1
 

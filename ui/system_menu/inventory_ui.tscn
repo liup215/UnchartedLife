@@ -1,10 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5v3khc42d5el"]
+[gd_scene load_steps=3 format=3 uid="uid://c5v3khc42d5el"]
 
 [ext_resource type="Script" uid="uid://c5jn0lcccle86" path="res://ui/system_menu/inventory_ui.gd" id="1_inventory_script"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="2_theme"]
 
 [node name="InventoryUI" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+theme = ExtResource("2_theme")
 script = ExtResource("1_inventory_script")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
@@ -26,7 +28,8 @@ size_flags_vertical = 3
 
 [node name="TitleLabel" type="Label" parent="HBoxContainer/LeftPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Inventory"
 horizontal_alignment = 1
 
@@ -47,7 +50,8 @@ layout_mode = 2
 
 [node name="ItemNameLabel" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Select an item to view details"
 
 [node name="ItemIcon" type="TextureRect" parent="HBoxContainer/RightPanel/VBoxContainer"]
@@ -59,10 +63,12 @@ stretch_mode = 5
 
 [node name="ItemDescription" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 0.9)
 text = "Item description will appear here."
 autowrap_mode = 3
 
 [node name="ItemQuantity" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.5, 0.55, 0.6, 0.8)
 text = "Quantity: 0"

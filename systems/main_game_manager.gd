@@ -180,11 +180,3 @@ func _hide_loading_screen():
 	"""Hide the loading screen"""
 	if loading_screen_instance and loading_screen_instance.has_method("hide_loading_screen"):
 		loading_screen_instance.hide_loading_screen()
-
-func _unhandled_input(event):
-	# Using the built-in "ui_cancel" action, which is mapped to Escape by default.
-	if event.is_action_pressed("ui_cancel"):
-		if system_menu.visible:
-			system_menu.close_menu()
-		else:
-			system_menu.open_menu()

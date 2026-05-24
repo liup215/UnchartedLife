@@ -1,14 +1,26 @@
-[gd_scene load_steps=6 format=3 uid="uid://c1d2e3f4g5h6i"]
+[gd_scene load_steps=8 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" uid="uid://utidfl0kj3if" path="res://ui/system_menu/system_menu.gd" id="1_menu_script"]
 [ext_resource type="PackedScene" uid="uid://dy2610pxsf1i8" path="res://ui/system_menu/charactor_menu.tscn" id="2_3d1e2"]
 [ext_resource type="PackedScene" uid="uid://c5v3khc42d5el" path="res://ui/system_menu/inventory_ui.tscn" id="3_inventory_ui"]
 [ext_resource type="PackedScene" uid="uid://bddi1h8lxrwxd" path="res://ui/system_menu/equipment_ui.tscn" id="4_equipment_ui"]
 [ext_resource type="PackedScene" uid="uid://cutjmmcfu7du4" path="res://scenes/story/prologue/prologue_scene_01.tscn" id="5_2rxmw"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="6_theme"]
+[ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="7_bg_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg_sys"]
+shader = ExtResource("7_bg_shader")
+shader_parameter/bg_color_1 = Color(0.02, 0.03, 0.05, 1.0)
+shader_parameter/bg_color_2 = Color(0.05, 0.07, 0.12, 1.0)
+shader_parameter/glow_color = Color(0.1, 0.5, 0.45, 0.02)
+shader_parameter/glow_intensity = 0.3
+shader_parameter/speed = 0.1
+shader_parameter/scale = 10.0
 
 [node name="SystemMenu" type="CanvasLayer"]
 process_mode = 3
 visible = false
+theme = ExtResource("6_theme")
 script = ExtResource("1_menu_script")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -17,7 +29,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.501961)
+color = Color(0.02, 0.03, 0.05, 0.85)
+
+[node name="BackgroundEffect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_bg_sys")
 
 [node name="Panel" type="PanelContainer" parent="."]
 anchors_preset = 15
@@ -25,6 +45,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
@@ -99,9 +120,15 @@ layout_mode = 2
 metadata/_tab_index = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Options"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+theme_override_constants/separation = 20
 
 [node name="SaveGameButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Options/VBoxContainer"]
 layout_mode = 2

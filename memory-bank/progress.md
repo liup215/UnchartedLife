@@ -93,7 +93,42 @@ The project has completed several major development phases, establishing a robus
 
 ## Current Phase: Phase 10 - Combat System & Educational Content (In Progress) 🚧
 
-### Recent Updates (December 2025):
+### Recent Updates (May 2026):
+
+#### UI Theme System (Complete) ✅
+1. **Custom Theme Resource (`ui/themes/biocell_theme.tres`)**:
+   - Applied globally via `project.godot` (`[gui] theme/custom`)
+   - Consistent 生物学主题 visual identity across all UI scenes
+
+2. **Shader Effects**:
+   - `ui/themes/shaders/background_pulse.gdshader` - Animated background effects for main menu and loading screens
+
+3. **Scene Styling Updates (16 files)**:
+   - **Main Menu**: Themed buttons (240x50), teal title (#2DD4BF), shader background, improved spacing
+   - **HUD**: Themed health/energy bars and labels
+   - **System Menu**: Inventory, equipment, character menu with consistent styling
+   - **Dialogue Panel**: Themed typewriter text and choice buttons
+   - **Loading Screen**: Themed progress bar with animated background
+   - **Prologue UI**: Themed microscope controls
+   - **Character Creation**: Themed input fields and buttons
+   - **Load Game Menu**: Themed save slot display
+
+4. **Input System Cleanup**:
+   - Removed `_unhandled_input()` ESC toggle from `main_game_manager.gd`
+   - System menu handling moved to dedicated input system
+
+5. **Untracked**: `build/ui/themes/` (build artifacts - not committed)
+
+#### Prologue Scene Improvements (Complete) ✅
+1. **Microscope Focus Mechanics**:
+   - Focus tolerance: 0.2 → 0.15 (harder to achieve perfect focus)
+   - Fine adjustment step: 0.1 → 0.05 (more precision)
+   - Added `snappedf()` to align fine adjustments to step grid
+   - Improved randomization ensuring fine adjustment is always required
+
+2. **Visual Feedback**:
+   - Distance label color: green (focused), yellow (close within visibility range), white (far)
+   - Specimen offset inversely scales with magnification (higher zoom = smaller offset, keeping specimen in viewport)
 
 #### Combat System Enhancement (Complete) ✅
 1. **Combo & Heavy Attack System:**

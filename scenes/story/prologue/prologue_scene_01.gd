@@ -16,10 +16,10 @@ signal tutorial_completed
 const DISTANCE_MIN: float = 0.0
 const DISTANCE_MAX: float = 100.0
 var target_distance: float = 51.0  # Perfect focus distance (randomized)
-const FOCUS_TOLERANCE: float = 0.2  # Distance range for acceptable focus (narrowed)
+const FOCUS_TOLERANCE: float = 0.15  # Distance range for acceptable focus
 const COARSE_ADJUSTMENT: float = 5.0
-const FINE_ADJUSTMENT: float = 0.1
-const VISIBILITY_RANGE: float = 4.0  # Range where image starts to become visible
+const FINE_ADJUSTMENT: float = 0.05
+const VISIBILITY_RANGE: float = 4.0  # Base range where image starts to become visible
 
 # Magnification levels
 const EYEPIECE_MAGS: Array[int] = [5, 10, 15]
@@ -71,21 +71,21 @@ var specimen_offset: Vector2 = Vector2.ZERO  # Specimen position offset from cen
 func _randomize_target_distance() -> void:
 	"""Generate a target distance that cannot be reached by coarse adjustment alone"""
 	# Coarse steps are multiples of 5.0 (0, 5, 10, etc.)
-	
+
 	# Pick a random coarse step base (avoiding extremes)
-	var min_step = int(DISTANCE_MIN / COARSE_ADJUSTMENT) + 1
-	var max_step = int(DISTANCE_MAX / COARSE_ADJUSTMENT) - 2
-	var coarse_base = randi_range(min_step, max_step) * COARSE_ADJUSTMENT
-	
+	var min_step: int = int(DISTANCE_MIN / COARSE_ADJUSTMENT) + 1
+	var max_step: int = int(DISTANCE_MAX / COARSE_ADJUSTMENT) - 2
+	var coarse_base: float = randi_range(min_step, max_step) * COARSE_ADJUSTMENT
+
 	# Add an offset that requires fine adjustment
-	# Offset must be > FOCUS_TOLERANCE and < COARSE_ADJUSTMENT - FOCUS_TOLERANCE
-	# This ensures even the closest coarse step is outside the focus tolerance
-	var min_offset = FOCUS_TOLERANCE + 0.2
-	var max_offset = COARSE_ADJUSTMENT - (FOCUS_TOLERANCE + 0.2)
-	var offset = randf_range(min_offset, max_offset)
-	
+	# Ensure the closest coarse step is always outside focus tolerance,
+	# but also guarantee the target is reachable with fine steps (FINE_ADJUSTMENT)
+	var min_offset: float = max(FOCUS_TOLERANCE + FINE_ADJUSTMENT, FINE_ADJUSTMENT * 2.0)
+	var max_offset: float = COARSE_ADJUSTMENT - min_offset
+	var offset: float = snappedf(randf_range(min_offset, max_offset), FINE_ADJUSTMENT)
+
 	target_distance = coarse_base + offset
-	GameLogger.debug("story", "New target distance: %s" % target_distance)
+	GameLogger.debug("story", "New target distance: %.2f" % target_distance)
 
 func _ready() -> void:
 	_setup_controls()
@@ -134,9 +134,16 @@ func _reset_distance() -> void:
 	current_distance = 0.0
 	_randomize_target_distance()
 	
+	# Calculate effective max offset based on current magnification
+	# Higher magnification = smaller offset range so specimen stays in view
+	var total_mag: int = EYEPIECE_MAGS[current_eyepiece_index] * OBJECTIVE_MAGS[current_objective_index]
+	var min_mag: float = float(EYEPIECE_MAGS[0] * OBJECTIVE_MAGS[0])
+	var scale_factor: float = float(total_mag) / min_mag
+	var effective_max_radius: float = MAX_OFFSET_RADIUS / max(1.0, sqrt(scale_factor))
+
 	# Randomize specimen position within radius when magnification changes
-	var random_angle = randf() * TAU  # Random angle in radians (0 to 2π)
-	var random_distance = randf() * (MAX_OFFSET_RADIUS * 2.0)  # Random distance within extended radius
+	var random_angle: float = randf() * TAU  # Random angle in radians (0 to 2π)
+	var random_distance: float = randf() * effective_max_radius
 	specimen_offset = Vector2(
 		cos(random_angle) * random_distance,
 		sin(random_angle) * random_distance
@@ -182,12 +189,12 @@ func _on_coarse_focus_down_pressed() -> void:
 
 func _on_fine_focus_up_pressed() -> void:
 	"""Adjust focus using fine knob (increase distance)"""
-	current_distance = clamp(current_distance + FINE_ADJUSTMENT, DISTANCE_MIN, DISTANCE_MAX)
+	current_distance = snappedf(clamp(current_distance + FINE_ADJUSTMENT, DISTANCE_MIN, DISTANCE_MAX), FINE_ADJUSTMENT)
 	_update_display()
 
 func _on_fine_focus_down_pressed() -> void:
 	"""Adjust focus using fine knob (decrease distance)"""
-	current_distance = clamp(current_distance - FINE_ADJUSTMENT, DISTANCE_MIN, DISTANCE_MAX)
+	current_distance = snappedf(clamp(current_distance - FINE_ADJUSTMENT, DISTANCE_MIN, DISTANCE_MAX), FINE_ADJUSTMENT)
 	_update_display()
 
 func _on_brightness_changed(value: float) -> void:
@@ -279,7 +286,16 @@ func _update_display() -> void:
 	
 	# Check if properly focused
 	is_focused = distance_from_target <= FOCUS_TOLERANCE
-	
+
+	# Visual feedback: distance label changes color when approaching focus
+	if distance_label:
+		if is_focused:
+			distance_label.modulate = Color(0.2, 1.0, 0.2)  # Green when focused
+		elif distance_from_target <= VISIBILITY_RANGE * 0.5:
+			distance_label.modulate = Color(1.0, 1.0, 0.2)  # Yellow when close
+		else:
+			distance_label.modulate = Color(1.0, 1.0, 1.0)  # White when far
+
 	# Show continue button when properly focused
 	#if continue_button and is_focused:
 		#continue_button.visible = true

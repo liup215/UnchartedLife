@@ -14,8 +14,24 @@
 
 ## Recent Achievements
 
+### May 2026 Updates
+- **UI Theme System (Current Changes)**:
+  - Created `ui/themes/biocell_theme.tres` - Custom Godot Theme resource for consistent visual style
+  - Added shader-based background effects (`background_pulse.gdshader`) for animated UI backgrounds
+  - Applied theme to all major UI scenes: main menu, HUD, system menu, inventory, equipment, character menu, dialogue panel, loading screen, prologue UI, load game menu
+  - Theme configured in `project.godot` under `[gui] theme/custom`
+  - UI scenes updated with theme-consistent styling: custom button sizes, font colors, spacing, shadows
+  - `main_game_manager.gd`: Removed `_unhandled_input()` for ESC key (system menu toggle moved to input handling system)
+
+- **Prologue Scene Improvements**:
+  - Microscope focus difficulty tuning: reduced `FOCUS_TOLERANCE` from 0.2 to 0.15, `FINE_ADJUSTMENT` from 0.1 to 0.05
+  - Added `snappedf()` for precise fine adjustments aligned to step size
+  - Specimen offset now scales inversely with magnification (higher mag = smaller offset range, keeping specimen in view)
+  - Visual feedback on distance label: green when focused, yellow when close, white when far
+  - Improved target distance randomization ensuring fine adjustment is always required
+
 ### December 2025 Updates
-- **Text-to-Speech (TTS) for Dialogue System (Current PR)**:
+- **Text-to-Speech (TTS) for Dialogue System**:
   - TTSManager autoload singleton using Godot's built-in DisplayServer TTS API
   - Per-line TTS configuration (enable_tts, voice_id, rate, pitch, volume)
   - DialoguePanel integration with automatic TTS playback and lifecycle management

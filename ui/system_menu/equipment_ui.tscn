@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://bddi1h8lxrwxd"]
+[gd_scene load_steps=4 format=3 uid="uid://bddi1h8lxrwxd"]
 
 [ext_resource type="Script" uid="uid://dssuv275gwgcn" path="res://ui/system_menu/equipment_ui.gd" id="1_equipment_script"]
 [ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_5nu8l"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
 
 [node name="EquipmentUI" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+theme = ExtResource("3_theme")
 script = ExtResource("1_equipment_script")
 placeholder_icon = ExtResource("2_5nu8l")
 
@@ -28,7 +30,8 @@ size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="HBoxContainer/LeftPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Equipment"
 horizontal_alignment = 1
 
@@ -41,22 +44,27 @@ size_flags_vertical = 3
 
 [node name="WeaponButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Weapon: (Empty)"
 
 [node name="ArmorButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Armor: (Empty)"
 
 [node name="GlovesButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Gloves: (Empty)"
 
 [node name="HelmetButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Helmet: (Empty)"
 
 [node name="BootsButton" type="Button" parent="HBoxContainer/LeftPanel/Slots"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Boots: (Empty)"
 
 [node name="RightPanel" type="PanelContainer" parent="HBoxContainer"]
@@ -69,7 +77,8 @@ layout_mode = 2
 
 [node name="NameLabel" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "Select a weapon to view details"
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer/RightPanel/VBoxContainer"]
@@ -80,9 +89,11 @@ stretch_mode = 5
 
 [node name="StatsLabel" type="Label" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 0.9)
 autowrap_mode = 3
 
 [node name="UnequipButton" type="Button" parent="HBoxContainer/RightPanel/VBoxContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
 text = "Unequip"
 disabled = true

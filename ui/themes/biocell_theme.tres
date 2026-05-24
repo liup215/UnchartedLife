@@ -1,0 +1,107 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="StyleBox" path="res://ui/themes/styles/button_normal.tres" id="btn_normal"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/button_hover.tres" id="btn_hover"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/button_pressed.tres" id="btn_pressed"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/button_disabled.tres" id="btn_disabled"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/panel_base.tres" id="panel_base"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/panel_menu.tres" id="panel_menu"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/progress_bar_bg.tres" id="progress_bg"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/progress_bar_fill.tres" id="progress_fill"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/tab_selected.tres" id="tab_sel"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/tab_unselected.tres" id="tab_unsel"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/item_slot_normal.tres" id="item_slot_norm"]
+[ext_resource type="StyleBox" path="res://ui/themes/styles/item_slot_hover.tres" id="item_slot_hov"]
+
+[resource]
+default_font_size = 20
+
+Button/colors/font_color = Color(0.95, 0.9, 0.8, 1)
+Button/colors/font_disabled_color = Color(0.5, 0.5, 0.5, 0.5)
+Button/colors/font_focus_color = Color(0.96, 0.62, 0.07, 1)
+Button/colors/font_hover_color = Color(0.96, 0.62, 0.07, 1)
+Button/colors/font_hover_pressed_color = Color(0.8, 0.5, 0.05, 1)
+Button/colors/font_pressed_color = Color(0.96, 0.62, 0.07, 1)
+Button/styles/disabled = ExtResource("btn_disabled")
+Button/styles/focus = ExtResource("btn_hover")
+Button/styles/hover = ExtResource("btn_hover")
+Button/styles/normal = ExtResource("btn_normal")
+Button/styles/pressed = ExtResource("btn_pressed")
+Button/font_sizes/font_size = 20
+
+Label/colors/font_color = Color(0.886275, 0.909804, 0.941176, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 0.5)
+Label/constants/outline_size = 1
+Label/font_sizes/font_size = 20
+
+LineEdit/colors/font_color = Color(0.886275, 0.909804, 0.941176, 1)
+LineEdit/colors/font_placeholder_color = Color(0.5, 0.55, 0.6, 0.6)
+LineEdit/styles/normal = ExtResource("panel_base")
+LineEdit/styles/focus = ExtResource("panel_menu")
+LineEdit/font_sizes/font_size = 20
+
+Panel/styles/panel = ExtResource("panel_base")
+PanelContainer/styles/panel = ExtResource("panel_base")
+
+ProgressBar/colors/font_color = Color(0.886275, 0.909804, 0.941176, 1)
+ProgressBar/styles/background = ExtResource("progress_bg")
+ProgressBar/styles/fill = ExtResource("progress_fill")
+ProgressBar/font_sizes/font_size = 18
+
+TabContainer/colors/font_hovered_color = Color(0.96, 0.62, 0.07, 0.8)
+TabContainer/colors/font_selected_color = Color(0.96, 0.62, 0.07, 1)
+TabContainer/colors/font_unselected_color = Color(0.5, 0.55, 0.6, 0.8)
+TabContainer/styles/panel = ExtResource("panel_base")
+TabContainer/styles/tab_selected = ExtResource("tab_sel")
+TabContainer/styles/tab_unselected = ExtResource("tab_unsel")
+TabContainer/styles/tab_disabled = ExtResource("tab_unsel")
+TabContainer/styles/tab_hovered = ExtResource("tab_sel")
+TabContainer/font_sizes/font_size = 20
+
+TabBar/colors/font_hovered_color = Color(0.96, 0.62, 0.07, 0.8)
+TabBar/colors/font_selected_color = Color(0.96, 0.62, 0.07, 1)
+TabBar/colors/font_unselected_color = Color(0.5, 0.55, 0.6, 0.8)
+TabBar/styles/tab_selected = ExtResource("tab_sel")
+TabBar/styles/tab_unselected = ExtResource("tab_unsel")
+TabBar/styles/tab_disabled = ExtResource("tab_unsel")
+TabBar/styles/tab_hovered = ExtResource("tab_sel")
+TabBar/font_sizes/font_size = 20
+
+MarginContainer/constants/margin_bottom = 10
+MarginContainer/constants/margin_left = 10
+MarginContainer/constants/margin_right = 10
+MarginContainer/constants/margin_top = 10
+
+VBoxContainer/constants/separation = 10
+HBoxContainer/constants/separation = 10
+
+GridContainer/constants/h_separation = 8
+GridContainer/constants/v_separation = 8
+
+RichTextLabel/colors/default_color = Color(0.886275, 0.909804, 0.941176, 1)
+RichTextLabel/colors/font_selected_color = Color(0.96, 0.62, 0.07, 1)
+RichTextLabel/font_sizes/normal_font_size = 20
+RichTextLabel/font_sizes/bold_font_size = 22
+RichTextLabel/font_sizes/italics_font_size = 20
+
+CheckBox/colors/font_color = Color(0.886275, 0.909804, 0.941176, 1)
+CheckBox/colors/font_hover_color = Color(0.96, 0.62, 0.07, 1)
+CheckBox/colors/font_pressed_color = Color(0.8, 0.5, 0.05, 1)
+CheckBox/constants/check_vadjust = 0
+CheckBox/styles/normal = ExtResource("panel_base")
+CheckBox/styles/pressed = ExtResource("panel_menu")
+CheckBox/styles/hover = ExtResource("panel_menu")
+CheckBox/font_sizes/font_size = 20
+
+OptionButton/colors/font_color = Color(0.886275, 0.909804, 0.941176, 1)
+OptionButton/colors/font_hover_color = Color(0.96, 0.62, 0.07, 1)
+OptionButton/styles/normal = ExtResource("btn_normal")
+OptionButton/styles/hover = ExtResource("btn_hover")
+OptionButton/styles/pressed = ExtResource("btn_pressed")
+OptionButton/font_sizes/font_size = 20
+
+ScrollContainer/styles/bg = ExtResource("panel_base")
+
+ItemSlot/base_type = "PanelContainer"
+ItemSlot/styles/panel = ExtResource("item_slot_norm")
+ItemSlot/font_sizes/font_size = 16

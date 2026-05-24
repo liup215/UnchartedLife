@@ -187,7 +187,17 @@ func set_map_parent(parent: Node):
 - **Main Menu:** New game, continue, load game, options
 - **New Game Settings:** Difficulty and seed configuration
 
-### 9.3. Menu System Patterns (Updated December 2025)
+### 9.3. Theme System (Updated May 2026)
+- **Custom Theme Resource**: `ui/themes/biocell_theme.tres` applied globally via `project.godot`
+- **Shader Effects**: Background pulse shader for animated UI backgrounds
+- **Consistent Styling**: All UI scenes use theme overrides for:
+  - Button sizes (custom_minimum_size: 240x50)
+  - Font colors (teal accent: #2DD4BF)
+  - Shadow effects (offset 2px, 50% opacity)
+  - Spacing adjustments (VBoxContainer separation: 20px)
+- **Scene Updates**: Main menu, HUD, system menu, inventory, equipment, character menu, dialogue, loading screen, prologue UI, load game menu all themed
+
+### 9.4. Menu System Patterns (Updated December 2025)
 - **Visibility Management:** Hide specific containers, not entire parent nodes
 - **Signal-Based Flow:** Connect signals in _ready(), emit on actions
 - **State Preservation:** Background and labels remain visible during transitions
@@ -343,21 +353,36 @@ func _on_body_entered(body: Node2D):
         body.global_position = target_spawn_position
 ```
 
-## 12. Future Technical Enhancements
+## 12. Prologue Scene System
 
-### 10.1. Advanced Biology Simulations
+### 12.1. Microscope Simulation (`prologue_scene_01.gd`)
+- **Focus Mechanics**: Coarse (5.0/step) and fine (0.05/step) adjustment knobs
+- **Target Distance**: Randomized to require both coarse + fine adjustments
+- **Tolerance**: 0.15 distance units for "in focus" state
+- **Magnification System**: 3 eyepieces (5x, 10x, 15x) × 3 objectives (10x, 20x, 40x) = 9 total magnifications
+- **Specimen Tracking**: Offset position randomized within radius inversely scaled by magnification
+- **Visual Feedback**: Distance label color changes (white→yellow→green) based on focus proximity
+
+### 12.2. Demo Mode Support
+- Automated distance cycling for presentation
+- Automatic specimen switching at demo boundaries
+- Timer callback: `_on_demo_timer_timeout()`
+
+## 13. Future Technical Enhancements
+
+### 13.1. Advanced Biology Simulations
 - Gene expression visualization
 - Ecosystem simulation engine
 - Cellular process animations
 - Virtual microscope system
 
-### 10.2. Educational Features
+### 13.2. Educational Features
 - Progress tracking dashboard
 - Teacher analytics portal
 - Custom content creation tools
 - Community question bank
 
-### 10.3. Performance & Polish
+### 13.3. Performance & Polish
 - Shader effects for biological processes
 - Advanced particle systems
 - Audio feedback for learning moments
@@ -385,3 +410,4 @@ func _on_body_entered(body: Node2D):
 18. **Map Data Resources:** Define maps using MapData resources
 19. **Vehicle Binding:** Assign vehicles to maps via assigned_map_id
 20. **Map Transitions:** Use EventBus.map_changed for system coordination
+21. **UI Theme Consistency:** Apply biocell_theme.tres to all UI scenes for visual coherence

@@ -1,7 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://loading_screen_main"]
+[gd_scene load_steps=5 format=3 uid="uid://loading_screen_main"]
 
 [ext_resource type="Script" path="res://ui/loading_screen/loading_screen.gd" id="1_loading"]
 [ext_resource type="Texture2D" uid="uid://b0a3wuusv8qjh" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
+[ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="4_bg_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_loading"]
+shader = ExtResource("4_bg_shader")
+shader_parameter/glow_intensity = 0.8
+shader_parameter/speed = 0.3
 
 [node name="LoadingScreen" type="Control"]
 layout_mode = 3
@@ -10,6 +17,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_theme")
 script = ExtResource("1_loading")
 loading_image = ExtResource("2_icon")
 loading_text = "加载中... / Loading..."
@@ -21,7 +29,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.15, 1)
+color = Color(0.02, 0.03, 0.05, 1)
+
+[node name="BackgroundEffect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_loading")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -45,6 +62,7 @@ stretch_mode = 5
 [node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
 text = "加载中... / Loading..."
 horizontal_alignment = 1
 

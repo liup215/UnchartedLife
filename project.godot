@@ -33,6 +33,10 @@ QuestManager="*res://systems/quest_manager.gd"
 DialogueManager="*res://systems/dialogue_manager.gd"
 TTSManager="*res://systems/tts_manager.gd"
 
+[gui]
+
+theme/custom="res://ui/themes/biocell_theme.tres"
+
 [display]
 
 window/size/viewport_width=1920
