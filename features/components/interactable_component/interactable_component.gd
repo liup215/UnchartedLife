@@ -21,7 +21,7 @@ func _on_body_entered(body):
 	# You might want to adjust this check based on your project's structure
 	if body.is_in_group("player") or body.name == "Player": 
 		current_actor = body
-		Logger.debug("interact", "Interaction prompt: %s" % prompt_message) # Temporary debug feedback
+		GameLogger.debug("interact", "Interaction prompt: %s" % prompt_message) # Temporary debug feedback
 
 func _on_body_exited(body):
 	if body == current_actor:

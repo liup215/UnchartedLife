@@ -99,8 +99,8 @@ func _on_player_ready(player_node: Actor):
 		_on_player_glucose_changed(attribute_component.metabolism_component.get_current_glucose(), attribute_component.metabolism_component.get_max_glucose())
 	
 	# Set initial health value
-	Logger.debug("ui", "Player HUD: Initializing health display")
-	Logger.debug("ui", "Player node: %s" % str(player_node))
+	GameLogger.debug("ui", "Player HUD: Initializing health display")
+	GameLogger.debug("ui", "Player node: %s" % str(player_node))
 	_on_player_health_changed(
 		player_node.attribute_component.health_component.get_current_health(),
 		player_node.attribute_component.health_component.get_max_health()

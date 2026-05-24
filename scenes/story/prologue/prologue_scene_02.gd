@@ -144,9 +144,9 @@ func _on_molecule_collected(type: Molecule.MoleculeType, is_glucose: bool):
 		ui.on_molecule_collected(type, is_glucose)
 
 func _show_victory_screen():
-	Logger.info("story", "=== VICTORY ===")
-	Logger.info("story", "Congratulations! You've healed the cell!")
-	Logger.info("story", "You successfully identified glucose and restored the cell to health.")
+	GameLogger.info("story", "=== VICTORY ===")
+	GameLogger.info("story", "Congratulations! You've healed the cell!")
+	GameLogger.info("story", "You successfully identified glucose and restored the cell to health.")
 	
 	if ui:
 		ui.show_victory()
@@ -159,8 +159,8 @@ func _show_victory_screen():
 	prologue_completed.emit()
 
 func _show_game_over_screen(reason: String):
-	Logger.info("story", "=== GAME OVER ===")
-	Logger.info("story", "%s" % reason)
+	GameLogger.info("story", "=== GAME OVER ===")
+	GameLogger.info("story", "%s" % reason)
 	
 	if ui:
 		ui.show_game_over(reason)

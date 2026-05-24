@@ -50,7 +50,7 @@ func load_syllabi() -> void:
 		else:
 			start_button.disabled = true
 	else:
-		Logger.error("bioblitz", "Failed to open question bank path: %s" % QUESTION_BANK_PATH)
+		GameLogger.error("bioblitz", "Failed to open question bank path: %s" % QUESTION_BANK_PATH)
 
 func _on_syllabus_selected(index: int) -> void:
 	if index < 0 or index >= syllabi.size():
@@ -92,7 +92,7 @@ func _on_start_pressed() -> void:
 	var syllabus_name = syllabus_option.get_item_text(selected_syllabus_index)
 	var boss_map_key = syllabus_name + "/" + chapter_filename
 
-	Logger.info("bioblitz", "Starting game with chapter: %s" % full_path)
+	GameLogger.info("bioblitz", "Starting game with chapter: %s" % full_path)
 
 	# Load the battle scene
 	var battle_scene_res = load(BATTLE_SCENE_PATH)
@@ -106,7 +106,7 @@ func _on_start_pressed() -> void:
 		# Set Boss Data if defined for this chapter
 		if boss_map_key in chapter_boss_map and "boss_data" in battle_scene_instance:
 			battle_scene_instance.boss_data = chapter_boss_map[boss_map_key]
-			Logger.info("bioblitz", "Loaded specific boss for chapter: %s" % boss_map_key)
+			GameLogger.info("bioblitz", "Loaded specific boss for chapter: %s" % boss_map_key)
 
 		# Switch scene manually since we instantiated it
 		var root = get_tree().root
@@ -114,7 +114,7 @@ func _on_start_pressed() -> void:
 		get_tree().current_scene.queue_free()
 		get_tree().current_scene = battle_scene_instance
 	else:
-		Logger.error("bioblitz", "Could not load battle scene at %s" % BATTLE_SCENE_PATH)
+		GameLogger.error("bioblitz", "Could not load battle scene at %s" % BATTLE_SCENE_PATH)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

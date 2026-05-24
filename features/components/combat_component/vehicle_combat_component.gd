@@ -105,7 +105,7 @@ func _connect_weapon_signals(weapon_component):
 func _on_weapon_fired(_weapon_data: WeaponData, _charge_level: int):
 	# Handle weapon firing logic
 	# You can also emit a signal or update HUD here
-	Logger.debug("combat", "Weapon fired: %s Charge Level: %d" % [(_weapon_data.weapon_name if _weapon_data else "Unknown Weapon"), _charge_level])
+	GameLogger.debug("combat", "Weapon fired: %s Charge Level: %d" % [(_weapon_data.weapon_name if _weapon_data else "Unknown Weapon"), _charge_level])
 
 func _on_weapon_charge_updated(_charge_level: int):
 	# Handle charge level updates
@@ -221,7 +221,7 @@ func perform_light_attack():
 	# Fire the weapons
 	for i in range(weapons_to_fire):
 		if i < secondary_weapons.size() and secondary_weapons[i]:
-			Logger.debug("combat", "Firing secondary weapon: %s" % weapon_effect)
+			GameLogger.debug("combat", "Firing secondary weapon: %s" % weapon_effect)
 			secondary_weapons[i].fire(weapon_effect)
 		# Add a short delay between shots
 		await get_tree().create_timer(0.2).timeout

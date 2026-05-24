@@ -17,7 +17,7 @@ func _ready():
 
 func save_game(slot_id: String):
 	var file_path = SAVE_DIR.path_join(slot_id + SAVE_FILE_EXTENSION)
-	Logger.info("save", "Starting save to slot: %s" % slot_id)
+	GameLogger.info("save", "Starting save to slot: %s" % slot_id)
 	var save_data = {}
 	
 	# Add metadata for the save slot menu
@@ -48,15 +48,15 @@ func save_game(slot_id: String):
 	if file:
 		var binary_data = var_to_bytes(save_data)
 		file.store_buffer(binary_data)
-		Logger.info("save", "Game saved to %s" % file_path)
+		GameLogger.info("save", "Game saved to %s" % file_path)
 	else:
-		Logger.error("save", "Failed to open save file for writing: %s" % file_path)
+		GameLogger.error("save", "Failed to open save file for writing: %s" % file_path)
 
 func load_game(slot_id: String):
 	var file_path = SAVE_DIR.path_join(slot_id + SAVE_FILE_EXTENSION)
-	Logger.info("save", "Loading game from slot: %s" % slot_id)
+	GameLogger.info("save", "Loading game from slot: %s" % slot_id)
 	if not FileAccess.file_exists(file_path):
-		Logger.warn("save", "No save file for slot: %s" % slot_id)
+		GameLogger.warn("save", "No save file for slot: %s" % slot_id)
 		_is_loading_save = false
 		return false
 		
@@ -81,10 +81,10 @@ func load_game(slot_id: String):
 				MapManager.load_data(_pending_load_data["global_map_manager"])
 				_pending_load_data.erase("global_map_manager")
 			
-			Logger.info("save", "Save file loaded. Scene data is pending.")
+			GameLogger.info("save", "Save file loaded. Scene data is pending.")
 			return true
 		else:
-			Logger.error("save", "Failed to deserialize save file for slot: %s" % slot_id)
+			GameLogger.error("save", "Failed to deserialize save file for slot: %s" % slot_id)
 			_pending_load_data = {}
 			_is_loading_save = false
 			return false
@@ -100,7 +100,7 @@ func claim_data_for_node(node: Node):
 	var node_path = node.get_path()
 	if _pending_load_data.has(node_path):
 		if node.has_method("load_data"):
-			Logger.debug("save", "Data claimed for node: %s" % node_path)
+			GameLogger.debug("save", "Data claimed for node: %s" % node_path)
 			node.call("load_data", _pending_load_data[node_path])
 			_pending_load_data.erase(node_path)
 		else:

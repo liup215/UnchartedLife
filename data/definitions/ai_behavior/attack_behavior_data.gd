@@ -42,7 +42,7 @@ func execute(actor: Node, _delta: float):
 			if combat:
 				combat.fire_actor_weapons(state.player.global_position)
 			else:
-				Logger.error("ai", "No CombatComponent found on actor: %s" % actor.name)
+				GameLogger.error("ai", "No CombatComponent found on actor: %s" % actor.name)
 			# var weapon = actor.get_node_or_null("WeaponComponent")
 			# if combat and weapon:
 			#     weapon.fire()

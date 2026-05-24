@@ -44,13 +44,13 @@ func _input(event):
 
 func _activate_portal(player: Node2D):
 	if target_map_id.is_empty():
-		Logger.warn("map", "Portal: No target map set!")
+		GameLogger.warn("map", "Portal: No target map set!")
 		return
 	
 	# Check if target map exists
 	var target_map = MapManager.get_map_data(target_map_id)
 	if not target_map:
-		Logger.warn("map", "Portal: Target map '%s' not found!" % target_map_id)
+		GameLogger.warn("map", "Portal: Target map '%s' not found!" % target_map_id)
 		return
 	
 	# Use provided spawn position or map's default
@@ -60,4 +60,4 @@ func _activate_portal(player: Node2D):
 	if MapManager.switch_to_map(target_map_id, spawn_pos):
 		# Move player to spawn position
 		player.global_position = spawn_pos
-		Logger.info("map", "Portal: Teleported to %s at %s" % [target_map_id, spawn_pos])
+		GameLogger.info("map", "Portal: Teleported to %s at %s" % [target_map_id, spawn_pos])

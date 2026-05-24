@@ -48,13 +48,13 @@ func _initialize_player():
 		# Position player if we have an active game scene
 		if game_scene and "game_scene_data" in game_scene and game_scene.game_scene_data:
 			_position_player_in_scene(game_scene.game_scene_data)
-		Logger.debug("game", "MainGameManager: Player initialized from scene tree")
+		GameLogger.debug("game", "MainGameManager: Player initialized from scene tree")
 	else:
 		push_error("MainGameManager: Player node not found in Main scene!")
 
 func transition_to_scene(scene_id: String, spawn_point_id: String = "default") -> void:
 	"""Handle scene transition request"""
-	Logger.debug("game", "MainGameManager: Transition requested to '%s' at '%s'" % [scene_id, spawn_point_id])
+	GameLogger.debug("game", "MainGameManager: Transition requested to '%s' at '%s'" % [scene_id, spawn_point_id])
 	var data = _find_scene_data_by_id(scene_id)
 	if data:
 		load_game_scene(data, spawn_point_id)
@@ -69,7 +69,7 @@ func _find_scene_data_by_id(scene_id: String) -> GameSceneData:
 
 func load_game_scene(data: GameSceneData, spawn_point_id: String = "default"):
 	"""Load a game level with loading screen"""
-	Logger.debug("game", "MainGameManager: Loading game scene '%s'" % data.scene_name)
+	GameLogger.debug("game", "MainGameManager: Loading game scene '%s'" % data.scene_name)
 	
 	# Show loading screen
 	_show_loading_screen(null, "Loading " + data.scene_name + "...")
@@ -124,13 +124,13 @@ func _position_player_in_scene(data: GameSceneData, spawn_point_id: String = "de
 	if data.spawn_points.has(spawn_point_id):
 		target_pos = data.spawn_points[spawn_point_id]
 		found_spawn = true
-		Logger.debug("game", "MainGameManager: Using named spawn point '%s': %s" % [spawn_point_id, target_pos])
+		GameLogger.debug("game", "MainGameManager: Using named spawn point '%s': %s" % [spawn_point_id, target_pos])
 	
 	# 2. Fallback to default spawn point if "default" was requested but not found in map
 	elif spawn_point_id == "default" and data.player_spawn:
 		target_pos = data.player_spawn.spawn_position
 		found_spawn = true
-		Logger.debug("game", "MainGameManager: Using legacy default spawn point: %s" % target_pos)
+		GameLogger.debug("game", "MainGameManager: Using legacy default spawn point: %s" % target_pos)
 		
 	if not found_spawn:
 		push_warning("MainGameManager: Could not find spawn point '%s' in scene '%s'" % [spawn_point_id, data.scene_id])
@@ -149,7 +149,7 @@ func _position_player_in_scene(data: GameSceneData, spawn_point_id: String = "de
 	if should_use_spawn_position:
 		player_instance.global_position = target_pos
 	else:
-		Logger.debug("game", "MainGameManager: Player position will be loaded from save file")
+		GameLogger.debug("game", "MainGameManager: Player position will be loaded from save file")
 	
 	# If custom player data provided, use it
 	if data.player_spawn and data.player_spawn.player_data:

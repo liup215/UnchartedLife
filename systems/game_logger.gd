@@ -1,4 +1,4 @@
-# logger.gd
+# GameLogger.gd
 # Global logging system replacing print() calls
 # Supports log levels, categories, and runtime filtering
 extends Node

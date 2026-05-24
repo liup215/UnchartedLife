@@ -23,12 +23,12 @@ func _on_interacted(actor):
 	
 	if inventory:
 		if inventory.add_item(item_data):
-			Logger.info("interactive", "Picked up: %s" % item_data.item_name)
+			GameLogger.info("interactive", "Picked up: %s" % item_data.item_name)
 			queue_free()
 		else:
-			Logger.warn("interactive", "Inventory full!")
+			GameLogger.warn("interactive", "Inventory full!")
 	else:
-		Logger.error("interactive", "Actor has no inventory!")
+		GameLogger.error("interactive", "Actor has no inventory!")
 
 func _find_inventory_component(node: Node) -> InventoryComponent:
 	# Check if the node itself is the component (unlikely but possible)

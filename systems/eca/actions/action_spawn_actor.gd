@@ -52,7 +52,7 @@ func execute(context: Node) -> void:
 	if actor_instance is Node2D and marker is Node2D:
 		actor_instance.global_position = marker.global_position
 	
-	Logger.debug("eca", "ActionSpawnActor: Spawned actor at marker '%s' with data: %s" % [marker_id, actor_data.resource_path])
+	GameLogger.debug("eca", "ActionSpawnActor: Spawned actor at marker '%s' with data: %s" % [marker_id, actor_data.resource_path])
 
 # Helper function to find a marker by ID
 func _find_marker(root: Node, id: String) -> Node:

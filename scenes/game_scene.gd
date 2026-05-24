@@ -21,7 +21,7 @@ func _ready() -> void:
 
 func _setup_scene() -> void:
 	"""Setup the game scene from data"""
-	Logger.info("scene", "Setting up scene '%s'" % game_scene_data.scene_name)
+	GameLogger.info("scene", "Setting up scene '%s'" % game_scene_data.scene_name)
 	
 	# 1. Setup map container for chunk loading
 	_setup_map_container()
@@ -41,7 +41,7 @@ func _setup_scene() -> void:
 	# 6. Bind interaction triggers (ECA system)
 	_bind_triggers()
 	
-	Logger.info("scene", "Scene setup complete")
+	GameLogger.info("scene", "Scene setup complete")
 
 func _setup_map_container() -> void:
 	"""Create container for map chunks"""
@@ -70,18 +70,18 @@ func _load_map() -> void:
 		spawn_pos = game_scene_data.player_spawn.spawn_position
 	
 	MapManager.switch_to_map(map_data.map_id, spawn_pos)
-	Logger.info("scene", "Loaded map '%s'" % map_data.map_id)
+	GameLogger.info("scene", "Loaded map '%s'" % map_data.map_id)
 
 func _spawn_entities() -> void:
 	"""Spawn all dynamic entities from configuration"""
 	if game_scene_data.spawnable_entities.is_empty():
-		Logger.info("scene", "No entities to spawn")
+		GameLogger.info("scene", "No entities to spawn")
 		return
 	
 	for entity_data in game_scene_data.spawnable_entities:
 		_spawn_entity(entity_data)
 	
-	Logger.info("scene", "Spawned %d entities" % spawned_entities.size())
+	GameLogger.info("scene", "Spawned %d entities" % spawned_entities.size())
 
 func _spawn_entity(entity_data: SpawnableEntityData) -> void:
 	"""Spawn a single entity from SpawnableEntityData"""
@@ -115,7 +115,7 @@ func _spawn_entity(entity_data: SpawnableEntityData) -> void:
 	if not entity_data.spawn_id.is_empty():
 		spawned_entities[entity_data.spawn_id] = entity_instance
 	
-	Logger.info("scene", "Spawned entity '%s' at position %s" % [entity_data.entity_type, entity_data.spawn_position])
+	GameLogger.info("scene", "Spawned entity '%s' at position %s" % [entity_data.entity_type, entity_data.spawn_position])
 
 func _apply_entity_resource(entity_instance: Node, resource: Resource) -> void:
 	"""Apply resource data to entity instance"""
@@ -181,7 +181,7 @@ func _execute_on_start_events() -> void:
 	if not game_scene_data or game_scene_data.on_start_events.is_empty():
 		return
 	
-	Logger.info("scene", "Executing %d on_start events" % game_scene_data.on_start_events.size())
+	GameLogger.info("scene", "Executing %d on_start events" % game_scene_data.on_start_events.size())
 	
 	for event in game_scene_data.on_start_events:
 		if event:
@@ -192,7 +192,7 @@ func _bind_triggers() -> void:
 	if not game_scene_data or game_scene_data.interaction_events.is_empty():
 		return
 	
-	Logger.info("scene", "Binding %d interaction triggers" % game_scene_data.interaction_events.size())
+	GameLogger.info("scene", "Binding %d interaction triggers" % game_scene_data.interaction_events.size())
 	
 	for area_name in game_scene_data.interaction_events.keys():
 		var event_data: GameEventData = game_scene_data.interaction_events[area_name]
@@ -208,7 +208,7 @@ func _bind_triggers() -> void:
 		# Connect the body_entered signal to trigger the event
 		if not area.body_entered.is_connected(_on_trigger_area_entered):
 			area.body_entered.connect(_on_trigger_area_entered.bind(event_data))
-			Logger.info("scene", "Bound trigger '%s' to event '%s'" % [area_name, event_data.event_id])
+			GameLogger.info("scene", "Bound trigger '%s' to event '%s'" % [area_name, event_data.event_id])
 
 func _find_area2d(area_name: String) -> Area2D:
 	"""Find an Area2D node by name in the scene hierarchy"""
@@ -238,5 +238,5 @@ func _on_trigger_area_entered(body: Node, event_data: GameEventData) -> void:
 	if not body.is_in_group("player"):
 		return
 	
-	Logger.info("scene", "Player entered trigger area, executing event '%s'" % event_data.event_id)
+	GameLogger.info("scene", "Player entered trigger area, executing event '%s'" % event_data.event_id)
 	event_data.try_execute(self)

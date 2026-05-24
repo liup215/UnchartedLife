@@ -143,7 +143,7 @@ func add_actor_weapon(weapon_component) -> bool:
 			charge_component.set_charge_rate(weapon_data.charge_rate_per_second)
 			charge_component.progress_per_level = weapon_data.progress_per_level
 			charge_component.light_attacks_build_charge = weapon_data.light_attacks_build_charge
-			Logger.debug("combat", "Configured charge component: rate=%s progress/level=%s" % [weapon_data.charge_rate_per_second, weapon_data.progress_per_level])
+			GameLogger.debug("combat", "Configured charge component: rate=%s progress/level=%s" % [weapon_data.charge_rate_per_second, weapon_data.progress_per_level])
 	return true
 
 func remove_actor_weapon(index: int) -> bool:
@@ -161,7 +161,7 @@ func _connect_weapon_signals(weapon_component):
 		weapon_component.ammo_updated.connect(_on_weapon_ammo_updated)
 
 func _on_weapon_fired(_weapon_data: ItemData, _charge_level: int):
-	Logger.debug("combat", "Weapon fired: %s Charge Level: %d" % [(_weapon_data.item_name if _weapon_data else "Unknown Weapon"), _charge_level])
+	GameLogger.debug("combat", "Weapon fired: %s Charge Level: %d" % [(_weapon_data.item_name if _weapon_data else "Unknown Weapon"), _charge_level])
 
 func _on_weapon_charge_updated(_charge_level: int):
 	pass
@@ -172,9 +172,9 @@ func _on_weapon_ammo_updated(_current_ammo: int):
 func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
 	if actor_weapons.is_empty():
 		return
-	Logger.debug("combat", "Firing all actor weapons, total: %d" % actor_weapons.size())
+	GameLogger.debug("combat", "Firing all actor weapons, total: %d" % actor_weapons.size())
 	for weapon in actor_weapons:
-		Logger.debug("combat", "Firing actor weapon: %s" % (weapon.item_data.item_name if weapon.item_data else "Unknown Weapon"))
+		GameLogger.debug("combat", "Firing actor weapon: %s" % (weapon.item_data.item_name if weapon.item_data else "Unknown Weapon"))
 		weapon.fire(weapon_effect, target_pos)
 		await get_tree().create_timer(0.2).timeout
 	emit_signal("weapons_fired", "actor", actor_weapons.size(), 1)
@@ -191,11 +191,11 @@ func perform_light_attack():
 		_perform_simple_light_attack()
 		return
 	var combo_data: ComboAttackData = combo_system.advance_combo(weapon_data)
-	Logger.debug("combat", "Light attack - Combo stage: %d Count: %d" % [combo_system.combo_stage, combo_system.combo_counter])
+	GameLogger.debug("combat", "Light attack - Combo stage: %d Count: %d" % [combo_system.combo_stage, combo_system.combo_counter])
 	var base_atp_cost = weapon.get_atp_cost()
 	var total_atp_cost = base_atp_cost
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
-		Logger.warn("combat", "Not enough ATP for light attack")
+		GameLogger.warn("combat", "Not enough ATP for light attack")
 		return
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
@@ -222,7 +222,7 @@ func _perform_simple_light_attack():
 		attribute_component.consume_atp(total_atp_cost)
 	for i in range(weapons_to_fire):
 		if i < actor_weapons.size() and actor_weapons[i]:
-			Logger.debug("combat", "Firing secondary weapon: %s" % weapon_effect)
+			GameLogger.debug("combat", "Firing secondary weapon: %s" % weapon_effect)
 			actor_weapons[i].fire(weapon_effect)
 		await get_tree().create_timer(0.2).timeout
 	if combo_system.combo_counter >= actor_weapons.size():
@@ -235,14 +235,14 @@ func reset_combo():
 
 func start_heavy_attack_charge():
 	if not charge_component:
-		Logger.error("combat", "No charge component found!")
+		GameLogger.error("combat", "No charge component found!")
 		return
 	heavy_attack_system.start_charge(charge_component)
-	Logger.debug("combat", "Started charging heavy attack, charge_component != null: %s" % (charge_component != null))
+	GameLogger.debug("combat", "Started charging heavy attack, charge_component != null: %s" % (charge_component != null))
 
 func release_heavy_attack():
 	if not charge_component or not heavy_attack_system.is_charging_heavy:
-		Logger.warn("combat", "Cannot release - not charging or no charge component")
+		GameLogger.warn("combat", "Cannot release - not charging or no charge component")
 		return
 	var effective_charge: float = heavy_attack_system.release_charge(charge_component)
 	if actor_weapons.is_empty():
@@ -252,17 +252,17 @@ func release_heavy_attack():
 		return
 	var weapon_data = weapon.item_data.weapon_data as WeaponData
 	if not weapon_data or weapon_data.heavy_attacks.is_empty():
-		Logger.debug("combat", "No heavy attack data configured")
+		GameLogger.debug("combat", "No heavy attack data configured")
 		return
 	var heavy_data = heavy_attack_system.get_heavy_attack_data(weapon_data, effective_charge)
 	if not heavy_data:
-		Logger.debug("combat", "No heavy attack data found for charge level: %s" % effective_charge)
+		GameLogger.debug("combat", "No heavy attack data found for charge level: %s" % effective_charge)
 		return
-	Logger.debug("combat", "Heavy attack - Effective charge: %.2f" % effective_charge)
+	GameLogger.debug("combat", "Heavy attack - Effective charge: %.2f" % effective_charge)
 	var base_atp_cost = weapon.get_atp_cost()
 	var total_atp_cost = heavy_attack_system.calculate_atp_cost(base_atp_cost, effective_charge, heavy_data)
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
-		Logger.warn("combat", "Not enough ATP for heavy attack - charge preserved")
+		GameLogger.warn("combat", "Not enough ATP for heavy attack - charge preserved")
 		heavy_attack_system.is_charging_heavy = false
 		return
 	if attribute_component:
@@ -284,10 +284,10 @@ func on_enemy_hit(target: Node, base_weapon_damage: float):
 		hit_damage_calculator.on_enemy_hit(get_parent(), target, base_weapon_damage)
 
 func _on_charge_changed(level: int, progress: float, max_level: int):
-	Logger.debug("combat", "Charge changed: Lv %d (%.1f%%) / Max Lv %d" % [level, progress, max_level])
+	GameLogger.debug("combat", "Charge changed: Lv %d (%.1f%%) / Max Lv %d" % [level, progress, max_level])
 
 func _on_charge_level_up(level: int):
-	Logger.debug("combat", "Charge level up: %d" % level)
+	GameLogger.debug("combat", "Charge level up: %d" % level)
 
 func get_total_actor_weapon_damage() -> float:
 	var total_damage = 0.0

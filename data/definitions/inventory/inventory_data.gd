@@ -57,7 +57,7 @@ func add_item(item: ItemData, amount: int = 1) -> bool:
 		# non-stackable: each unit occupies its own slot (unique key)
 		while amount > 0:
 			if (not is_unlimited) and slots.size() >= capacity:
-				Logger.warn("inventory", "Inventory full, cannot add more non-stackable items.")
+				GameLogger.warn("inventory", "Inventory full, cannot add more non-stackable items.")
 				return false
 			var unique_key := base + ":" + str(Time.get_unix_time_from_system()) + ":" + str(randi())
 			slots[unique_key] = InventorySlotData.new(item, 1)

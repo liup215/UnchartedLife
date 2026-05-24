@@ -15,7 +15,7 @@ func _on_save_game_pressed():
 	SaveManager.save_game(PlayerData.current_slot)
 	# Optionally, give feedback to the player
 	# e.g., show a "Game Saved!" label for a second.
-	Logger.info("save", "Game saved to slot: %s" % PlayerData.current_slot)
+	GameLogger.info("save", "Game saved to slot: %s" % PlayerData.current_slot)
 	close_menu()
 
 func _on_quit_to_menu_pressed():

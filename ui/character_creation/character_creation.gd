@@ -21,4 +21,4 @@ func _on_start_game_pressed(text: String = ""):
 	if main_game_scene:
 		get_tree().change_scene_to_packed(main_game_scene)
 	else:
-		Logger.debug("ui", "Main game scene not set in the inspector!")
+		GameLogger.debug("ui", "Main game scene not set in the inspector!")

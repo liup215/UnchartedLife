@@ -19,7 +19,7 @@ func _init():
 	# Test 2: Get available voices
 	print("")
 	print("Test 2: Getting available voices...")
-	var voices = DisplayServer.tts_get_voices()
+	voices = DisplayServer.tts_get_voices()
 	if voices.size() > 0:
 		print("  Available voices: ", voices.size())
 		for i in min(3, voices.size()):

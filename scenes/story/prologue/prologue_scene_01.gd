@@ -85,7 +85,7 @@ func _randomize_target_distance() -> void:
 	var offset = randf_range(min_offset, max_offset)
 	
 	target_distance = coarse_base + offset
-	Logger.debug("story", "New target distance: %s" % target_distance)
+	GameLogger.debug("story", "New target distance: %s" % target_distance)
 
 func _ready() -> void:
 	_setup_controls()
@@ -97,7 +97,7 @@ func _ready() -> void:
 		continue_button.visible = false
 	
 	EventBus.emit_signal("story_scene_entered", "prologue_01_microscope")
-	Logger.info("story", "Microscope learning interface loaded")
+	GameLogger.info("story", "Microscope learning interface loaded")
 
 func _setup_controls() -> void:
 	"""Setup all control button connections"""

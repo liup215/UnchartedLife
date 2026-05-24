@@ -11,9 +11,9 @@ func _ready() -> void:
 # Play music with a fade-in effect
 # If music is already playing, it will crossfade to the new track
 func play_music(stream: AudioStream, fade_duration: float = 1.0, volume_db: float = 0.0) -> void:
-    Logger.debug("audio", "AudioManager: play_music called with stream: %s" % stream)
+    GameLogger.debug("audio", "AudioManager: play_music called with stream: %s" % stream)
     if stream == _music_player.stream and _music_player.playing:
-        Logger.debug("audio", "AudioManager: Stream already playing")
+        GameLogger.debug("audio", "AudioManager: Stream already playing")
         return
 
     # If already playing, fade out first (or crossfade logic could be more complex)
@@ -26,7 +26,7 @@ func play_music(stream: AudioStream, fade_duration: float = 1.0, volume_db: floa
     _music_player.stream = stream
     _music_player.volume_db = -80.0 # Start silent
     _music_player.play()
-    Logger.debug("audio", "AudioManager: Started playing stream")
+    GameLogger.debug("audio", "AudioManager: Started playing stream")
 
     if _tween:
         _tween.kill()

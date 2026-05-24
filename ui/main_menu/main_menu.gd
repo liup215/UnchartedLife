@@ -75,14 +75,14 @@ func _process(delta):
 func CheckStartupSuccess():
 	# Check Safe Mode (Stub)
 	# Report Startup Success (Stub)
-	Logger.info("ui", "Startup checks completed successfully.")
+	GameLogger.info("ui", "Startup checks completed successfully.")
 	
 	# Check Performance (Stub)
 	WarnAboutLowPerformance()
 
 func FetchNews():
 	# Placeholder for fetching news
-	Logger.info("ui", "Fetching news...")
+	GameLogger.info("ui", "Fetching news...")
 	# In a real implementation, this would make an HTTP request
 	# await get_tree().create_timer(1.0).timeout
 	# print("News fetched.")
@@ -91,7 +91,7 @@ func FetchNews():
 
 func CheckSystemInfo():
 	var rendering_device = RenderingServer.get_video_adapter_name()
-	Logger.info("ui", "Graphics Adapter: " + str(rendering_device))
+	GameLogger.info("ui", "Graphics Adapter: " + str(rendering_device))
 	# Logic to warn about specific drivers could go here
 
 func CheckStoreStatus():
@@ -101,7 +101,7 @@ func CheckStoreStatus():
 func WarnAboutLowPerformance():
 	var fps = Engine.get_frames_per_second()
 	if fps < 30 and fps > 0:
-		Logger.warn("ui", "Low performance detected in menu.")
+		GameLogger.warn("ui", "Low performance detected in menu.")
 
 # --- Button Callbacks ---
 
@@ -111,7 +111,7 @@ func _on_new_game_pressed():
 	if new_game_settings:
 		new_game_settings.OpenFromMainMenu(self)
 	else:
-		Logger.error("ui", "NewGameSettings node not found.")
+		GameLogger.error("ui", "NewGameSettings node not found.")
 
 
 func _on_new_game_confirmed(settings):
@@ -128,18 +128,18 @@ func _on_continue_pressed():
 			OnEnteringGame(false)
 			get_tree().change_scene_to_file(ScenePaths.MAIN_SCENE)
 		else:
-			Logger.error("save", "Error loading latest save file.")
+			GameLogger.error("save", "Error loading latest save file.")
 	else:
-		Logger.info("ui", "No save file found to continue.")
+		GameLogger.info("ui", "No save file found to continue.")
 
 func _on_load_game_pressed():
 	get_tree().change_scene_to_file(ScenePaths.LOAD_GAME_MENU)
 
 func _on_options_pressed():
-	Logger.debug("ui", "Options button pressed")
+	GameLogger.debug("ui", "Options button pressed")
 
 func _on_credits_pressed():
-	Logger.debug("ui", "Credits button pressed")
+	GameLogger.debug("ui", "Credits button pressed")
 
 func _on_quit_pressed():
 	SceneManager.quit_game()
@@ -148,4 +148,4 @@ func OnEnteringGame(is_new_game: bool):
 	# Disable cheats (Stub)
 	# Clear last save time (Stub)
 	# Report achievements (Stub)
-	Logger.info("ui", "Entering game. New game: " + str(is_new_game))
+	GameLogger.info("ui", "Entering game. New game: " + str(is_new_game))

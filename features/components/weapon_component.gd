@@ -23,8 +23,8 @@ func _ready():
 
 func setup_weapon():
 	if item_data:
-		Logger.debug("weapon", "Setting up weapon: %s" % item_data.item_name)
-		Logger.debug("weapon", "Weapon ammo capacity: %d" % item_data.weapon_data.ammo_capacity)
+		GameLogger.debug("weapon", "Setting up weapon: %s" % item_data.item_name)
+		GameLogger.debug("weapon", "Weapon ammo capacity: %d" % item_data.weapon_data.ammo_capacity)
 		current_ammo = item_data.weapon_data.ammo_capacity
 		if has_node("Sprite2D"):
 			var sprite = get_node("Sprite2D")
@@ -61,11 +61,11 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# Allow firing at any charge level (including 0)
 		# Damage will scale with charge level
 		if current_ammo <= 0:
-			Logger.warn("weapon", "Out of ammo! Cannot fire.")
+			GameLogger.warn("weapon", "Out of ammo! Cannot fire.")
 			return
 		# Consume ammo
 		current_ammo -= 1
-		Logger.debug("weapon", "Firing main cannon at charge %d, ammo left: %d" % [current_charge, current_ammo])
+		GameLogger.debug("weapon", "Firing main cannon at charge %d, ammo left: %d" % [current_charge, current_ammo])
 		emit_signal("ammo_updated", current_ammo)
 		# Emit fire signal
 		emit_signal("weapon_fired", item_data, current_charge)
@@ -74,10 +74,10 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		emit_signal("charge_updated", current_charge)
 	elif item_data.weapon_data.weapon_type == WeaponData.WeaponType.ACTOR_WEAPON:
 		if current_ammo <= 0:
-			Logger.warn("weapon", "Out of ammo! Cannot fire.")
+			GameLogger.warn("weapon", "Out of ammo! Cannot fire.")
 			return
 		# Consume ammo
-		Logger.debug("weapon", "Firing actor weapon, ammo left: %d" % current_ammo)
+		GameLogger.debug("weapon", "Firing actor weapon, ammo left: %d" % current_ammo)
 		current_ammo -= 1
 		emit_signal("ammo_updated", current_ammo)
 		# Emit fire signal

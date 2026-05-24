@@ -54,7 +54,7 @@ func on_enemy_hit(attacker: Node, target: Node, base_weapon_damage: float) -> vo
 			armor_break = heavy_data.armor_break_power
 			stagger_power = heavy_data.stagger_power
 
-		Logger.debug(
+		GameLogger.debug(
 			"combat",
 			"Heavy attack hit - Charge: %.2f, Multiplier: %.2fx" % [heavy_attack_system.last_heavy_charge, damage_multiplier]
 		)
@@ -80,8 +80,8 @@ func on_enemy_hit(attacker: Node, target: Node, base_weapon_damage: float) -> vo
 	var final_damage: float = damage_result["final_damage"]
 	var toughness_damage: float = damage_result["toughness_damage"]
 
-	Logger.debug("combat", "Hit %s - Damage: %s Toughness: %s" % [target.name, final_damage, toughness_damage])
-	Logger.debug("combat", "Damage breakdown: %s" % damage_result["damage_breakdown"])
+	GameLogger.debug("combat", "Hit %s - Damage: %s Toughness: %s" % [target.name, final_damage, toughness_damage])
+	GameLogger.debug("combat", "Damage breakdown: %s" % damage_result["damage_breakdown"])
 
 	if target.has_method("take_damage"):
 		target.take_damage(int(final_damage))

@@ -72,9 +72,9 @@ func _connect_to_player(player: Node):
 		
 		# Initialize display
 		_update_display(charge_component.get_current_charge_level(), charge_component.get_current_charge_progress(), charge_component.get_max_charge_level())
-		Logger.debug("ui", "Connected to charge component")
+		GameLogger.debug("ui", "Connected to charge component")
 	else:
-		Logger.warn("ui", "Could not find charge component")
+		GameLogger.warn("ui", "Could not find charge component")
 
 func _on_charge_changed(level: int, progress: float, max_level: int):
 	_update_display(level, progress, max_level)
