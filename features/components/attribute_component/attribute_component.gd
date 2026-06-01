@@ -7,12 +7,12 @@ class_name AttributeComponent
 @onready var speed_component: SpeedComponent = $SpeedComponent
 @onready var toughness_component: ToughnessComponent = $ToughnessComponent if has_node("ToughnessComponent") else null
 
-func set_actor_data(data: ActorData):
-	health_component.set_actor_data(data)
-	metabolism_component.set_actor_data(data)
-	speed_component.set_actor_data(data)
+func set_runtime_state(rs: ActorRuntimeState):
+	health_component.set_runtime_state(rs)
+	metabolism_component.set_runtime_state(rs)
+	speed_component.set_runtime_state(rs)
 	if toughness_component:
-		toughness_component.set_actor_data(data)
+		toughness_component.set_runtime_state(rs)
 
 # ATP delegation (used by combat, dodge, and item systems)
 func get_current_atp() -> float:

@@ -11,11 +11,9 @@ var base_speed: float = 100.0
 func _ready() -> void:
 	pass
 
-func set_actor_data(data: ActorData) -> void:
-	# data_source = data
-	# emit_signal("speed_changed", data_source.current_speed, data_source.base_speed)
-	current_speed = data.current_speed
-	base_speed = data.base_speed
+func set_runtime_state(rs: ActorRuntimeState) -> void:
+	current_speed = rs.current_speed
+	base_speed = rs.base_speed
 	emit_signal("speed_changed", current_speed, base_speed)
 
 func set_current_speed(value: float):

@@ -339,7 +339,7 @@ func save_data() -> Dictionary:
 		"current_state": current_state,
 		"current_vehicle_path": vehicle_path,
 		"atp_depletion_timer": atp_depletion_timer,
-		# Actor stats are saved in PlayerData.actor_data singleton
+		"runtime_state": runtime_state.to_dict() if runtime_state else {},
 	}
 
 func load_data(data: Dictionary) -> void:
@@ -353,13 +353,15 @@ func load_data(data: Dictionary) -> void:
 		current_state = data["current_state"]
 	if data.has("atp_depletion_timer"):
 		atp_depletion_timer = data["atp_depletion_timer"]
+	if data.has("runtime_state"):
+		runtime_state.from_dict(data["runtime_state"])
 	
 	# Restore vehicle reference if player was in a vehicle
 	if data.has("current_vehicle_path") and data["current_vehicle_path"] != "":
-		var vehicle_path = data["current_vehicle_path"]
+		var vehicle_path_str = data["current_vehicle_path"]
 		# Wait a frame to ensure the vehicle node is loaded
 		await get_tree().process_frame
-		var vehicle_node = get_node_or_null(vehicle_path)
+		var vehicle_node = get_node_or_null(vehicle_path_str)
 		if vehicle_node and vehicle_node.has_method("enter_vehicle"):
 			current_vehicle = vehicle_node
 			# Re-enter the vehicle to restore the full state

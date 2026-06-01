@@ -25,15 +25,15 @@ var atp_conversion_rate: float = 5.0
 func _ready():
 	pass
 
-func set_actor_data(data: Resource):
-	current_atp = data.current_atp
-	current_glucose = data.current_glucose
-	max_atp = data.max_atp
-	max_glucose = data.max_glucose
-	atp_consume_rate = data.atp_consume_rate
-	glucose_consume_rate = data.glucose_consume_rate
-	atp_production_rate = data.atp_production_rate
-	atp_conversion_rate = data.atp_conversion_rate
+func set_runtime_state(rs: ActorRuntimeState):
+	current_atp = rs.current_atp
+	current_glucose = rs.current_glucose
+	max_atp = rs.max_atp
+	max_glucose = rs.max_glucose
+	atp_consume_rate = rs.atp_consume_rate
+	glucose_consume_rate = rs.glucose_consume_rate
+	atp_production_rate = rs.atp_production_rate
+	atp_conversion_rate = rs.atp_conversion_rate
 	
 	# Emit initial signals to update UI
 	atp_changed.emit(current_atp, max_atp)

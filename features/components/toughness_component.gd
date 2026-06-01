@@ -37,12 +37,11 @@ func _process(delta: float):
 		toughness_changed.emit(current_toughness, max_toughness)
 
 ## Initialize toughness from ActorData
-func set_actor_data(data: ActorData):
-	if data:
-		max_toughness = data.max_toughness
-		current_toughness = data.current_toughness
-		toughness_recovery_rate = data.toughness_recovery_rate
-		toughness_changed.emit(current_toughness, max_toughness)
+func set_runtime_state(rs: ActorRuntimeState):
+	max_toughness = rs.max_toughness
+	current_toughness = rs.current_toughness
+	toughness_recovery_rate = rs.toughness_recovery_rate
+	toughness_changed.emit(current_toughness, max_toughness)
 
 ## Apply toughness damage
 func apply_toughness_damage(damage: float, stagger_power: float = 0.0):

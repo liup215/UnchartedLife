@@ -19,6 +19,14 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 # This property will be set by the spawner.
 @export var actor_data: ActorData
 
+## A stable unique identifier used for save/load. Unlike NodePath, this ID
+## persists across scene tree renames and allows entity-identity to be stable.
+## If left empty, the node path will be used as a fallback during saving.
+@export var save_id: String = ""
+
+## Mutable runtime state for this actor instance. Not a Resource; never saved to .tres.
+var runtime_state: ActorRuntimeState = ActorRuntimeState.new()
+
 var last_direction: Vector2 = Vector2.DOWN
 # 不再直接持有weapon_components，由combat组件管理
 
@@ -26,6 +34,14 @@ func _ready():
 	# This function is meant to be called by child classes AFTER they have
 	# assigned their specific ActorData to the stats_component.
 	if actor_data:
+		# Initialize runtime state from template data.
+		# This separates "what the actor can be" (ActorData) from
+		# "what the actor currently is" (runtime_state).
+		runtime_state.initialize_from_template(actor_data)
+		
+		# Copy default equipped weapons from template into runtime state
+		runtime_state.equipped_weapons = actor_data.equipped_weapons.duplicate()
+		
 		# Assign the metabolism component's data source
 		_setup_animations()
 		# Apply sprite scale
@@ -38,14 +54,14 @@ func _ready():
 			if shape and shape.has_method("set_radius"):
 				shape.set_radius(actor_data.get_collision_radius())
 		
-		# 动态加载战斗组件和武器
-		actor_combat_component.set_actor_data(actor_data)
+		# 动态加载战斗组件和武器 (runtime_state holds current equipment)
+		actor_combat_component.set_actor_data(actor_data, runtime_state.equipped_weapons)
 
 		# Initialize inventory component
 		inventory_component.set_data(actor_data)
 
-		# Connect signals from components to the actor's own signals
-		attribute_component.set_actor_data(actor_data)
+		# Sync components to runtime state (separates template from mutable state)
+		attribute_component.set_runtime_state(runtime_state)
 		attribute_component.health_component.health_changed.connect(
 			func(current, max_hp): actor_health_changed.emit(current, max_hp)
 		)

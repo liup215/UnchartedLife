@@ -19,36 +19,35 @@ extends Control
 func _ready():
 	update_character_info()
 
+func _get_player_runtime_state() -> ActorRuntimeState:
+	var player = get_tree().get_first_node_in_group("player") as Actor
+	if player and player.runtime_state:
+		return player.runtime_state
+	return null
+
 func update_character_info():
 	if PlayerData:
 		# Update basic info
 		name_label.text = "Name: " + PlayerData.player_name
 
-		# Update stats if actor_data exists
+		# Update static attributes from template
 		if PlayerData.actor_data:
 			var actor_data = PlayerData.actor_data
-
-			# Health
-			health_bar.max_value = actor_data.max_health
-			health_bar.value = actor_data.current_health
-			health_value.text = str(actor_data.current_health) + " / " + str(actor_data.max_health)
-
-			# ATP
-			atp_bar.max_value = actor_data.max_atp
-			atp_bar.value = actor_data.current_atp
-			atp_value.text = str(actor_data.current_atp) + " / " + str(actor_data.max_atp)
-
-			# Glucose
-			glucose_bar.max_value = actor_data.max_glucose
-			glucose_bar.value = actor_data.current_glucose
-			glucose_value.text = str(actor_data.current_glucose) + " / " + str(actor_data.max_glucose)
-
-			# Attributes
 			neural_response_value.text = str(actor_data.neural_response_speed)
 			muscle_coordination_value.text = str(actor_data.muscle_coordination)
 			base_speed_value.text = str(actor_data.base_speed)
-
-func _process(_delta):
-	# Update in real-time if needed
-	if visible:
-		update_character_info()
+		
+		# Update live stats from runtime state
+		var rs := _get_player_runtime_state()
+		if rs:
+			health_bar.max_value = rs.max_health
+			health_bar.value = rs.current_health
+			health_value.text = str(rs.current_health) + " / " + str(rs.max_health)
+			
+			atp_bar.max_value = rs.max_atp
+			atp_bar.value = rs.current_atp
+			atp_value.text = str(rs.current_atp) + " / " + str(rs.max_atp)
+			
+			glucose_bar.max_value = rs.max_glucose
+			glucose_bar.value = rs.current_glucose
+			glucose_value.text = str(rs.current_glucose) + " / " + str(rs.max_glucose)

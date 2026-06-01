@@ -14,11 +14,9 @@ var is_invincible: bool = false  # Invincibility flag for dodge and other effect
 func _ready():
 	pass
 
-func set_actor_data(ds: ActorData):
-	# data_source = ds
-	max_health = ds.max_health
-	current_health = ds.current_health
-	# emit_signal("health_changed", data_source.current_health, data_source.max_health)
+func set_runtime_state(rs: ActorRuntimeState):
+	max_health = rs.max_health
+	current_health = rs.current_health
 	emit_signal("health_changed", current_health, max_health)
 
 func set_current_health(value: int):

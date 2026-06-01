@@ -5,6 +5,11 @@ extends RigidBody2D
 class_name Vehicle
 
 @export var vehicle_data: VehicleData
+
+## A stable unique identifier used for save/load. Unlike NodePath, this ID
+## persists across scene tree renames and allows entity-identity to be stable.
+## If left empty, the node path will be used as a fallback during saving.
+@export var save_id: String = ""
 @onready var stats_component: VehicleStatsComponent = $VehicleStatsComponent
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var collision: CollisionShape2D = $CollisionShape2D

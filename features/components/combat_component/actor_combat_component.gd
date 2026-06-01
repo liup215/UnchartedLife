@@ -101,9 +101,10 @@ func _ready():
 
 	hit_damage_calculator.configure(actor_weapons, charge_component, heavy_attack_system, combo_system)
 
-func set_actor_data(data: ActorData):
+func set_actor_data(data: ActorData, initial_weapons: Array[ItemData] = []):
 	data_source = data
-	for weapon_item in data.equipped_weapons:
+	var weapons_to_equip := initial_weapons if not initial_weapons.is_empty() else data.equipped_weapons
+	for weapon_item in weapons_to_equip:
 		if actor_weapons.size() >= data.weapon_number_limit:
 			break
 		var weapon_instance := WeaponComponent.new()
