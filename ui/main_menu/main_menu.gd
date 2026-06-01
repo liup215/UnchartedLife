@@ -16,7 +16,8 @@ const STARTUP_SUCCESS_DELAY: float = 2.0 # Seconds to wait before checking succe
 
 func _ready():
 	# 1. Exit Check
-	if SceneManager.QuitOrQuitting:
+	var mgm = get_tree().root.get_node_or_null("Main/MainGameManager")
+	if mgm and mgm.QuitOrQuitting:
 		return
 
 	# Force unpause and input mode
@@ -142,7 +143,7 @@ func _on_credits_pressed():
 	GameLogger.debug("ui", "Credits button pressed")
 
 func _on_quit_pressed():
-	SceneManager.quit_game()
+	get_tree().quit()
 
 func OnEnteringGame(is_new_game: bool):
 	# Disable cheats (Stub)

@@ -14,6 +14,18 @@ extends Node2D
 var current_scene_instance: Node = null
 var loading_screen_instance: Control = null
 
+## Used by menus to quickly bail if the game is already quitting.
+var QuitOrQuitting: bool = false
+
+func quit_game() -> void:
+	QuitOrQuitting = true
+	get_tree().quit()
+
+func _notification(what: int):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		QuitOrQuitting = true
+		get_tree().quit()
+
 func _ready():
 	# Initialize player first
 	_initialize_player()
