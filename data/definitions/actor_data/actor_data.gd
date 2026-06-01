@@ -35,8 +35,6 @@ class_name ActorData
 @export var base_speed: float = 250.0
 
 @export_group("Weapons")
-## The list of weapons this actor starts with (template default).
-@export var weapons: Array[ItemData] = []
 ## The weapons this actor has equipped by default when spawned.
 @export var equipped_weapons: Array[ItemData] = []
 @export var weapon_number_limit: int = 1
@@ -78,10 +76,10 @@ func to_dict() -> Dictionary:
 		if anim and anim.resource_path != "":
 			animations_paths.append(anim.resource_path)
 	
-	var weapons_paths: Array[String] = []
-	for weapon in weapons:
+	var equipped_weapons_paths: Array[String] = []
+	for weapon in equipped_weapons:
 		if weapon and weapon.resource_path != "":
-			weapons_paths.append(weapon.resource_path)
+			equipped_weapons_paths.append(weapon.resource_path)
 	
 	var behaviors_paths: Array[String] = []
 	for behavior in behaviors:
@@ -102,7 +100,7 @@ func to_dict() -> Dictionary:
 		"base_metabolic_rate": base_metabolic_rate,
 		"base_speed": base_speed,
 		"animations_paths": animations_paths,
-		"weapons_paths": weapons_paths,
+		"equipped_weapons_paths": equipped_weapons_paths,
 		"behaviors_paths": behaviors_paths,
 		"inventory_config_paths": inventory_config_paths,
 		"max_atp": max_atp,
@@ -143,13 +141,20 @@ func from_dict(data: Dictionary) -> void:
 			if anim:
 				animations.append(anim)
 	
-	# Deserialize weapons pool
-	if data.has("weapons_paths"):
-		weapons.clear()
+	# Deserialize equipped weapons
+	if data.has("equipped_weapons_paths"):
+		equipped_weapons.clear()
+		for path in data["equipped_weapons_paths"]:
+			var weapon = load(path)
+			if weapon:
+				equipped_weapons.append(weapon)
+	# Legacy alias support (if old save still has weapons_paths)
+	elif data.has("weapons_paths"):
+		equipped_weapons.clear()
 		for path in data["weapons_paths"]:
 			var weapon = load(path)
 			if weapon:
-				weapons.append(weapon)
+				equipped_weapons.append(weapon)
 	
 	# Deserialize behaviors
 	if data.has("behaviors_paths"):

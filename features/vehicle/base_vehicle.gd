@@ -73,25 +73,23 @@ func clear_input_component() -> void:
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
-		# Gather input
-		var move_input = 0
-		var turn_input = 0
-		if input_component:
-			move_input = input_component.vehicle_move_input
-			turn_input = input_component.vehicle_turn_input
-		else:
-			# Fallback to direct input if no input_component assigned
-			if Input.is_action_pressed("move_forward"):
-				move_input += 1
-			if Input.is_action_pressed("move_backward"):
-				move_input -= 1
-			if Input.is_action_pressed("turn_left"):
-				turn_input -= 1
-			if Input.is_action_pressed("turn_right"):
-				turn_input += 1
+		# Gather input from relayed input_component ( Player sets this on enter )
+		var move_input = input_component.vehicle_move_input if input_component else 0
+		var turn_input = input_component.vehicle_turn_input if input_component else 0
+
 		movement_component.process_movement(self, move_input, turn_input, delta)
 		movement_component.consume_fuel(vehicle_data, stats_component, linear_velocity.length(), delta)
-		_handle_combat_input()
+
+		# Combat input (read from relayed component, never Input directly)
+		if vehicle_combat_component and input_component:
+			if input_component.should_main_attack:
+				vehicle_combat_component.start_main_charge()
+			if input_component.main_attack_released:
+				vehicle_combat_component.stop_main_charge()
+				vehicle_combat_component.fire_main_weapons()
+			if input_component.should_light_attack:
+				vehicle_combat_component.perform_light_attack()
+
 		# Aim weapons at mouse
 		var mouse_pos = input_component.aim_target if input_component else get_global_mouse_position()
 		var main_weapon_components = vehicle_combat_component.main_weapons
@@ -189,21 +187,6 @@ func get_interaction_text() -> String:
 		return "Press E to enter " + (vehicle_data.vehicle_name if vehicle_data else "Vehicle")
 	else:
 		return "Vehicle occupied"
-
-func _handle_combat_input():
-	if not vehicle_combat_component:
-		return
-
-	# Main weapon charging
-	if Input.is_action_just_pressed("main_attack"):
-		vehicle_combat_component.start_main_charge()
-	elif Input.is_action_just_released("main_attack"):
-		vehicle_combat_component.stop_main_charge()
-		vehicle_combat_component.fire_main_weapons()
-
-	# Light attack combos
-	if Input.is_action_just_pressed("light_attack"):
-		vehicle_combat_component.perform_light_attack()
 
 # Map-related functions
 func _on_map_changed(map_id: String, _spawn_position: Vector2):
