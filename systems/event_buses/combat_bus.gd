@@ -13,3 +13,6 @@ signal buff_applied(actor: Actor, buff_id: String, duration: float)
 signal weapon_out_of_ammo(item_data: ItemData)
 signal request_quiz_reload(weapon_data: Resource)
 signal quiz_completed(success: bool)
+
+# Generic combat action failure feedback for HUD popups
+signal combat_action_failed(action: String, reason: String)

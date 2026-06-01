@@ -20,6 +20,7 @@ signal buff_applied(actor: Actor, buff_id: String, duration: float)
 signal request_quiz_reload(weapon_data: Resource)
 signal weapon_out_of_ammo(item_data: ItemData)
 signal quiz_completed(success: bool)
+signal combat_action_failed(action: String, reason: String)  # Generic failure feedback for combat actions (e.g. "light_attack", "Not enough ATP")
 
 # --- Quest signals (delegated to QuestBus) ---
 signal quest_triggered(quest_id: String, step: int)
@@ -75,6 +76,8 @@ func _relay_combat_signals() -> void:
 	combat.request_quiz_reload.connect(func(w): request_quiz_reload.emit(w))
 	combat.weapon_out_of_ammo.connect(func(i): weapon_out_of_ammo.emit(i))
 	combat.quiz_completed.connect(func(s): quiz_completed.emit(s))
+	# Forward generic combat action failures
+	combat.combat_action_failed.connect(func(a, r): combat_action_failed.emit(a, r))
 
 func _relay_quest_signals() -> void:
 	# Forward: QuestBus → EventBus
@@ -98,3 +101,4 @@ func _relay_ui_signals() -> void:
 	ui.story_scene_entered.connect(func(s): story_scene_entered.emit(s))
 	ui.story_milestone_reached.connect(func(m, d): story_milestone_reached.emit(m, d))
 	ui.request_scene_transition.connect(func(s, sp): request_scene_transition.emit(s, sp))
+	ui.combat_action_failed.connect(func(a, r): combat_action_failed.emit(a, r))

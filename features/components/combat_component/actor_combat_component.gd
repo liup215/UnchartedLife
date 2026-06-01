@@ -197,6 +197,7 @@ func perform_light_attack():
 	var total_atp_cost = base_atp_cost
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
 		GameLogger.warn("combat", "Not enough ATP for light attack")
+		EventBus.combat_action_failed.emit("light_attack", "Not enough ATP")
 		return
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
@@ -264,6 +265,7 @@ func release_heavy_attack():
 	var total_atp_cost = heavy_attack_system.calculate_atp_cost(base_atp_cost, effective_charge, heavy_data)
 	if attribute_component and attribute_component.get_current_atp() < total_atp_cost:
 		GameLogger.warn("combat", "Not enough ATP for heavy attack - charge preserved")
+		EventBus.combat_action_failed.emit("heavy_attack", "Not enough ATP")
 		heavy_attack_system.is_charging_heavy = false
 		return
 	if attribute_component:

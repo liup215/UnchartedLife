@@ -18,3 +18,6 @@ signal story_scene_entered(scene_id: String)
 signal story_milestone_reached(milestone_id: String, data: Dictionary)
 
 signal request_scene_transition(scene_id: String, spawn_point_id: String)
+
+# Generic combat action failure feedback for HUD popups
+signal combat_action_failed(action: String, reason: String)

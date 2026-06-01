@@ -142,6 +142,8 @@ The project has completed several major development phases, establishing a robus
 2. **June 2026 Fixes**:
    - AttributeComponent now exposes `get_current_atp()` and `consume_atp()` delegates to MetabolismComponent (fixes combat crash)
    - Weapon out-of-ammo: replaced backend warnings with EventBus-driven on-screen HUD notification
+   - Player attack/dodge not responding: fixed `consume_transient_intents()` being called too early (before input processing), moved it to end of `_handle_on_foot_logic()`
+   - **Combat Action Failure UI Feedback system**: Added `EventBus.combat_action_failed` signal + HUD queue-based notification with fade animation for dodge/attack ATP/cooldown errors
 
 2. **Comprehensive Damage Calculation:**
    - DamageCalculator static class considering all combat factors

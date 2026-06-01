@@ -80,10 +80,6 @@ func _physics_process(delta: float) -> void:
 		input_component.consume_transient_intents()
 		return
 	
-	# Consume transient intents that may have been used elsewhere
-	if input_component:
-		input_component.consume_transient_intents()
-
 	# Different behavior based on current state
 	match current_state:
 		PlayerState.ON_FOOT:
@@ -145,6 +141,9 @@ func _handle_on_foot_logic(delta: float):
 			if wc and wc.has_method("look_at"):
 				wc.look_at(aim_target)
 				wc.rotation_degrees += 90  # Adjust orientation
+	
+	# Consume transient one-shot intents after processing
+	input_component.consume_transient_intents()
 
 func _handle_in_vehicle_logic(delta: float):
 	# 进入载具后，player位置随vehicle同步

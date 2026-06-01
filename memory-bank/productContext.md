@@ -43,6 +43,7 @@ The game is built on a highly modular, data-driven architecture. Core entities l
 - Visual feedback (damage numbers, muzzle effects)
 - BioBlitz mode: Combat pauses for biology questions when enemy health is low
 - On-screen HUD notifications for out-of-ammo feedback (instead of backend console warnings)
+- **Queue-based notification system** for combat/dodge action failures (e.g., "Not enough ATP", "Dodge on cooldown") with sequential fade-in/out animations
 
 ### Biology Knowledge Integration
 - **Cell Biology**: Understanding organelles, cellular respiration, ATP generation

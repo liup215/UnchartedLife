@@ -550,3 +550,5 @@ func reset_for_new_game() -> void:
 23. **Versioned save headers** - prepend `[version: u32][payload_len: u32]` for safe forward/backward compatibility
 24. **Export scene references** - always assign `@export PackedScene` fields in `.tscn` files, never leave them null
 25. **Silence transitional warnings** - `map_parent` null during `GameScene` swap and `game_scene_data` null in placeholder nodes are expected; use `debug` logs, not `push_warning`
+26. **Clear transient intents after processing** - One-shot input flags (`should_dodge`, `should_light_attack`) must be consumed *after* all systems that read them in the same frame. Never clear them at the start of `_physics_process`
+27. **Queue-based HUD notifications** - Use a message queue with sequential tween animations to prevent rapid events from overwriting/losing each other

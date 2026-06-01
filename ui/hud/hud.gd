@@ -76,6 +76,15 @@ func _ready():
 	
 	# Listen for out-of-ammo events
 	EventBus.weapon_out_of_ammo.connect(_on_weapon_out_of_ammo)
+	
+	# Listen for dodge failure events (show UI hint instead of just console warning)
+	EventBus.player_dodge_failed.connect(_on_player_dodge_failed)
+	
+	# Listen for generic combat action failures
+	EventBus.combat_action_failed.connect(_on_combat_action_failed)
+
+var _notification_queue: Array[String] = []
+var _notification_active: bool = false
 
 func _setup_notification_label():
 	_notification_label = Label.new()
@@ -95,16 +104,59 @@ func _setup_notification_label():
 	add_child(_notification_label)
 
 func _show_notification(text: String, duration: float = 2.0):
-	if not _notification_label:
+	_notification_queue.append(text)
+	if not _notification_active:
+		_process_notification_queue(duration)
+
+func _process_notification_queue(duration: float):
+	if _notification_queue.is_empty():
+		_notification_active = false
+		if _notification_label:
+			_notification_label.visible = false
 		return
-	_notification_label.text = text
-	_notification_label.visible = true
-	await get_tree().create_timer(duration).timeout
-	_notification_label.visible = false
+	
+	_notification_active = true
+	var text = _notification_queue.pop_front()
+	if _notification_label:
+		_notification_label.text = text
+		_notification_label.visible = true
+		# Fade in/out animation
+		_notification_label.modulate.a = 0.0
+		var tween = create_tween()
+		tween.tween_property(_notification_label, "modulate:a", 1.0, 0.1)
+		tween.tween_interval(duration)
+		tween.tween_property(_notification_label, "modulate:a", 0.0, 0.3)
+		tween.finished.connect(func():
+			_process_notification_queue(duration)
+		)
+	else:
+		_process_notification_queue(duration)
 
 func _on_weapon_out_of_ammo(item_data: ItemData):
 	var weapon_name = item_data.item_name if item_data else "Weapon"
 	_show_notification(weapon_name + ": Out of ammo! (Press reload key)")
+
+func _on_player_dodge_failed(_player: Node, reason: String):
+	# Show user-friendly localized hint on screen instead of just console warning
+	var hint_text: String = ""
+	if reason == "Not enough ATP":
+		hint_text = "Dodge failed: Not enough ATP!"
+	elif reason == "Dodge on cooldown":
+		hint_text = "Dodge on cooldown!"
+	elif reason == "Already dodging":
+		hint_text = "Dodge in progress!"
+	else:
+		hint_text = "Dodge failed: %s" % reason
+	_show_notification(hint_text, 1.5)
+
+func _on_combat_action_failed(action: String, reason: String):
+	var action_name := ""
+	match action:
+		"light_attack": action_name = "Light Attack"
+		"heavy_attack": action_name = "Heavy Attack"
+		_:
+			action_name = action.capitalize()
+	_show_notification("%s failed: %s" % [action_name, reason], 1.5)
 
 func _find_player():
 	# Try to find the player in the scene

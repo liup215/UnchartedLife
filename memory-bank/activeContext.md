@@ -127,6 +127,22 @@ A focused bug-fixing session resolved multiple startup and runtime errors discov
    - `event_bus.gd`: added new `weapon_out_of_ammo(item_data: ItemData)` signal
    - `hud.gd`: added `_show_notification()` overlay label for on-screen feedback (bottom-center, 2s duration)
 
+### June 1, 2026 Session — Input System Fix & Combat Feedback UI
+
+1. **Player Attack/Dodge Input Fix (Root Cause: consume_transient_intents)**:
+   - `player.gd`: `consume_transient_intents()` was being called at the top of `_physics_process()`, immediately clearing all one-shot input flags (`should_dodge`, `should_light_attack`, `should_heavy_attack`, `heavy_attack_released`)
+   - This caused attack and dodge to never register when keys were pressed, while movement worked fine (because `desired_direction` is a continuous state, not a one-shot flag)
+   - **Fix**: Moved `consume_transient_intents()` to the END of `_handle_on_foot_logic()`, after `_handle_combat_input()` and all input processing
+
+2. **Combat Action Failure UI Feedback System**:
+   - **EventBus Signals**: Added `combat_action_failed(action: String, reason: String)` signal to `EventBus`, `CombatBus`, and `UIEventBus` for generic combat failure notifications
+   - **HUD Notification Queue**: Upgraded `_show_notification()` from a single direct-display to a queue-based system with fade in/out tween animations, preventing message overwriting when multiple events occur simultaneously
+   - **Dodge Failures**: Connected `EventBus.player_dodge_failed` → HUD, showing user-friendly messages ("Dodge failed: Not enough ATP!", "Dodge on cooldown!", "Dodge in progress!")
+   - **Light/Heavy Attack Failures**: Modified `actor_combat_component.gd` to emit `EventBus.combat_action_failed.emit("light_attack", "Not enough ATP")` and `EventBus.combat_action_failed.emit("heavy_attack", "Not enough ATP")`
+   - **HUD Handler**: Added `_on_combat_action_failed()` in `hud.gd` mapping action names to localized display names ("Light Attack", "Heavy Attack")
+
+3. **Cleaned `.godot` cache**: Deleted and regenerated the entire `.godot` uid_cache folder to fix invalid UID references (base_actor.tscn not in cache).
+
 ## Next Steps
 - **BioBlitz Enhancement:**
   - Expand question bank with diverse biology topics
