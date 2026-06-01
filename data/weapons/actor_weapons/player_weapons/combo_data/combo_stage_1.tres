@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ComboAttackData" load_steps=2 format=3 uid="uid://combo_stage_1"]
 
-[ext_resource type="Script" path="res://data/definitions/inventory/item/equipment/combo_attack_data.gd" id="1_combo"]
+[ext_resource type="Script" path="res://data/definitions/combo_attack_data.gd" id="1_combo"]
 
 [resource]
 script = ExtResource("1_combo")

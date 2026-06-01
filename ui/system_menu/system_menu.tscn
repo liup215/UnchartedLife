@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://c1d2e3f4g5h6i"]
 
 [ext_resource type="Script" uid="uid://utidfl0kj3if" path="res://ui/system_menu/system_menu.gd" id="1_menu_script"]
-[ext_resource type="PackedScene" uid="uid://dy2610pxsf1i8" path="res://ui/system_menu/charactor_menu.tscn" id="2_3d1e2"]
+[ext_resource type="PackedScene" uid="uid://dy2610pxsf1i8" path="res://ui/system_menu/character_menu.tscn" id="2_3d1e2"]
 [ext_resource type="PackedScene" uid="uid://c5v3khc42d5el" path="res://ui/system_menu/inventory_ui.tscn" id="3_inventory_ui"]
 [ext_resource type="PackedScene" uid="uid://bddi1h8lxrwxd" path="res://ui/system_menu/equipment_ui.tscn" id="4_equipment_ui"]
 [ext_resource type="PackedScene" uid="uid://cutjmmcfu7du4" path="res://scenes/story/prologue/prologue_scene_01.tscn" id="5_2rxmw"]
@@ -68,7 +68,7 @@ current_tab = 0
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="CharactorMenu" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Character" instance=ExtResource("2_3d1e2")]
+[node name="characterMenu" parent="Panel/VBoxContainer/MarginContainer/TabContainer/Character" instance=ExtResource("2_3d1e2")]
 layout_mode = 0
 
 [node name="Inventory" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/TabContainer"]

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://data/definitions/inventory/item_data.gd" id="1_item_data"]
 [ext_resource type="Script" path="res://data/definitions/item/item_effect_data.gd" id="2_item_effect"]
-[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="3_icon"]
+[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/character/actor01.png" id="3_icon"]
 
 [sub_resource type="Resource" id="ItemEffectData_heal"]
 script = ExtResource("2_item_effect")

@@ -91,7 +91,7 @@
 | `ui/system_menu/inventory_ui.tscn` | 主题 |
 | `ui/system_menu/item_slot.tscn` | 主题 + 边框发光着色器 |
 | `ui/system_menu/equipment_ui.tscn` | 主题 |
-| `ui/system_menu/charactor_menu.tscn` | 主题 |
+| `ui/system_menu/character_menu.tscn` | 主题 |
 | `ui/dialogue/dialogue_panel.tscn` | 主题 + 边框发光着色器 |
 | `ui/loading_screen/loading_screen.tscn` | 主题 + 动态背景着色器 |
 | `ui/load_game/load_game_menu.tscn` | 主题 + 动态背景着色器 |

@@ -4,7 +4,7 @@ class_name AttributeComponent
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var metabolism_component: MetabolismComponent = $MetabolismComponent
-@onready var speed_component: SpeedComponent = $SpeedComponent_gd
+@onready var speed_component: SpeedComponent = $SpeedComponent
 @onready var toughness_component: ToughnessComponent = $ToughnessComponent if has_node("ToughnessComponent") else null
 
 func set_actor_data(data: ActorData):

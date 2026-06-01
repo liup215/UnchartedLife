@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://brcjrf6lfrix8"]
 
 [ext_resource type="Script" uid="uid://227h0k850fre" path="res://ui/system_menu/item_slot.gd" id="1_slot_script"]
-[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/charactor/actor01.png" id="2_placeholder"]
+[ext_resource type="Texture2D" uid="uid://dnamfesfa7xvc" path="res://assets/character/actor01.png" id="2_placeholder"]
 [ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
 [ext_resource type="Shader" path="res://ui/themes/shaders/border_glow.gdshader" id="4_border"]
 

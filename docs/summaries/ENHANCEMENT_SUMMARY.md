@@ -19,9 +19,9 @@ The combat system uses data-driven configuration:
 - Each weapon can have unique combo sequences
 
 **Files**: 
-- `data/definitions/inventory/item/equipment/weapon_data.gd`
-- `data/definitions/inventory/item/equipment/combo_attack_data.gd`
-- `data/definitions/inventory/item/equipment/heavy_attack_data.gd`
+- `data/definitions/weapon_data.gd`
+- `data/definitions/combo_attack_data.gd`
+- `data/definitions/heavy_attack_data.gd`
 
 ### Feature 2: Comprehensive Damage Calculation ✅
 

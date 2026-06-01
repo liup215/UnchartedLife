@@ -78,7 +78,7 @@ func _physics_process(delta: float) -> void:
 func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes (Always run, even during stagger/dodge) ---
 	# Get movement input once for metabolism and movement logic (performance optimization)
-	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
 	# Determine if sprinting for metabolism calculation
 	var is_sprinting = Input.is_action_pressed("shift")
