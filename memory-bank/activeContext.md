@@ -191,6 +191,69 @@ A large-scale architectural refactor to remove Player.gd as a "God Script" and r
 - Delete `_handle_combat_input()` from Player.gd (superseded by CombatCommandHandler)
 - Remove old `_process_metabolism()` and `_process_basal_metabolism()` from Player.gd
 
+### June 1, 2026 Session — Architecture Refactor Compilation Fixes
+
+A focused session resolved **GDScript parse errors and runtime crashes** introduced by the Wave 1–6 architecture refactor:
+
+1. **EntityManager `get_node()` signature conflict**:
+   - Root cause: `EntityManager.get_node(entity_id: int)` collided with `Node.get_node(NodePath)` built-in
+   - Fix: Renamed to `get_entity_node()` in `entity_manager.gd` + updated single caller in `animation_system.gd`
+
+2. **StatSystem type scope issues**:
+   - Root cause: `class_name StatDefinition` / `class_name StatModifier` not resolved by Godot's class cache during hot reload
+   - Fix: Added `const` preloads in `stat_system.gd` for both types
+
+3. **ResourcePoolSystem type inference failure**:
+   - Root cause: `_stat_system` untyped (`var _stat_system = null`), so GDScript could not infer `.get_stat()` return type
+   - Fix: Typed `_stat_system: StatSystem` and added `preload` constant
+
+4. **CommandBus `issue()` arg mismatch**:
+   - Root cause: Callers passed `(CommandType, Dictionary)` but `issue()` expected a single `Command` object
+   - Fix: Added `issue_type(cmd_type, payload, issuer, target)` convenience overload + updated all callers in `input_command_system.gd` and `player.gd`
+
+5. **Missing `CommandType` enum members**:
+   - Added `ATTACK_RELEASED`, `ABILITY_REQUEST`, `SYSTEM_MENU_TOGGLE` to match callers
+
+6. **Missing `class_name Player`**:
+   - `player.gd` was missing `class_name Player`, causing scripts referencing the `Player` type to fail
+   - Fix: Added `class_name Player` after `extends Actor`
+
+7. **Missing `PlayerStateMachine` references in Player.gd**:
+   - `Player.gd` referenced `PlayerStateMachine` type and `_on_player_state_changed` callback without declaration
+   - Fix: Added `const PlayerStateMachine = preload(...)` and implemented `_on_player_state_changed()`
+
+8. **InputMap action runtime errors**:
+   - Multiple actions (`fire_weapon`, `dodge`, `interact`, `ability1–4`, `reload`, `system_menu`, `charge_weapon`) not defined in project settings
+   - Fix: Wrapped all `Input.is_action_*()` calls with `InputMap.has_action()` guards in `input_command_system.gd`
+
+9. **EntityManager `register_entity()` type mismatch**:
+   - `actor.gd` passed `actor_data` (Resource) as second arg instead of expected `String`
+   - Fix: Changed to pass `actor_data.actor_name` (with fallback)
+
+10. **StatSystem `get_stat_value()` signature mismatch**:
+    - Callers throughout the project used 3-arg `(entity_id, stat_id, default)` but function only accepted 2 args
+    - Fix: Added `default_value: float = 0.0` parameter
+
+11. **Stat registration skipped silently**:
+    - `actor.gd` guarded `stat_system.add_stat()` with `has_method("to_stat_instance")`, which `StatDefinition` lacks
+    - Fix: Removed the guard so stats actually register
+
+12. **ResourcePoolSystem `register_entity()` does not exist**:
+    - `actor.gd` called `pool_system.register_entity()` but the method was never defined
+    - Fix: Removed the call (StatSystem already registers the entity during `add_stat()`)
+
+13. **CommandBus `remove_validator()` missing**:
+    - `dodge_command_handler.gd` called `remove_validator()` which didn't exist
+    - Fix: Added `remove_validator()` to `CommandBus`, mirroring `remove_executor()`
+
+14. **Dodge cool-down log noise**:
+    - `Player._on_dodge_failed()` emitted WARNING for every dodge-cooldown attempt
+    - Fix: Downgraded to `GameLogger.debug()`
+
+## Key Pattern Discovered: Preload over `class_name` for Cache-Resilience
+- When large-scale refactors introduce new types, GDScript's `class_name` cache may not hot-reload correctly
+- **Rule of thumb**: Add `const TypeName = preload("res://path.gd")` in any script that references a recently added `class_name` type, especially for autoloads and cross-system handlers
+
 ## Next Steps
 - **Wave 7 Final Cleanup**: Remove all legacy components and fallbacks
 - **BioBlitz Enhancement**: Expand question bank, add new question types, difficulty progression

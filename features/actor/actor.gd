@@ -28,7 +28,7 @@ signal inventory_item_added(item_data: ItemData)
 @export var save_id: String = ""
 
 ## Mutable runtime state for this actor instance. Not a Resource; never saved to .tres.
-var runtime_state: ActorRuntimeState = ActorRuntimeState.new()
+var runtime_state = ActorRuntimeState.new()
 
 ## NEW: Entity ID for the new ECS-lite architecture.
 ## All systems reference this actor by entity_id instead of node references.
@@ -85,6 +85,17 @@ func _ready():
 		_register_in_ecs()
 	else:
 		printerr("Actor _ready() called, but no ActorData was assigned.")
+
+## Check if actor is currently staggered.
+## Preferred: new StatSystem. Fallback: old AttributeComponent/ToughnessComponent.
+func _is_staggered() -> bool:
+	if entity_id >= 0:
+		var stat_system := ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(entity_id, "toughness", 0.0) <= 0.0
+	if attribute_component and attribute_component.toughness_component:
+		return attribute_component.toughness_component.is_in_stagger()
+	return false
 
 func _physics_process(delta: float):
 	# Check if staggered - if so, disable all movement and AI
@@ -283,6 +294,21 @@ func _connect_new_system_signals() -> void:
 	if pool_system:
 		pool_system.resource_depleted.connect(_on_resource_depleted)
 	
+func _on_resource_depleted(entity_id: int, resource_type: String) -> void:
+	if entity_id != self.entity_id:
+		return
+	match resource_type:
+		"health":
+			_on_death()
+		"atp":
+			# ATP depletion — could trigger movement penalties or fatigue
+			pass
+		"glucose":
+			# Glucose depletion — could trigger starvation damage in future
+			pass
+		_:
+			pass
+
 func _on_stat_system_changed(entity_id: int, stat_id: String, current: float, max_val: float) -> void:
 	if entity_id != self.entity_id:
 		return
@@ -310,22 +336,17 @@ func _register_in_ecs() -> void:
 	if entity_id >= 0:
 		return  # Already registered
 	
-	entity_id = entity_manager.register_entity(self, actor_data)
+	entity_id = entity_manager.register_entity(self, actor_data.actor_name if actor_data else "actor")
 	
 	# Register in StatSystem using the actor's data
 	var stat_system = ServiceRegistry.get_service("StatSystem")
 	if stat_system and actor_data:
 		var stat_defs = actor_data.create_stat_sheet()
 		for stat_def in stat_defs:
-			# Use duck-typing check to avoid compile-time dependency on StatDefinition class.
-			if stat_def != null and stat_def.has_method("to_stat_instance"):
+			if stat_def != null:
 				stat_system.add_stat(entity_id, stat_def)
 	
-	# Register in ResourcePoolSystem
-	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
-	if pool_system:
-		pool_system.register_entity(entity_id)
-	
+	# ResourcePoolSystem delegates to StatSystem which already registered the entity.
 	# Sync old HealthComponent current value to new StatSystem
 	if attribute_component and attribute_component.health_component:
 		_reconcile_to_new_stat_system()

@@ -43,7 +43,7 @@ func unregister_entity(entity_id: int) -> void:
 func get_entity(entity_id: int) -> Dictionary:
 	return _entities.get(entity_id, {})
 
-func get_node(entity_id: int) -> Node:
+func get_entity_node(entity_id: int) -> Node:
 	var data: Dictionary = _entities.get(entity_id, {})
 	return data.get("node", null)
 

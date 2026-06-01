@@ -129,18 +129,11 @@ func _give_ammo(player: Node2D) -> void:
 	GameLogger.info("prologue", "Glucose collected! Ammo +%d (now %d/%d)" % [ammo_amount, weapon_comp.current_ammo, max_ammo])
 
 func _damage_player(player: Node2D) -> void:
-	# Find player's health component and apply damage
 	if not player is Actor:
 		GameLogger.warn("prologue", "Warning: Target is not an Actor")
 		return
-	
 	var player_actor := player as Actor
-	var attr_component := player_actor.attribute_component
-	if not attr_component or not attr_component.health_component:
-		GameLogger.warn("prologue", "Warning: Player has no health component")
-		return
-		
-	attr_component.health_component.take_damage(damage_amount)
+	player_actor.take_damage(damage_amount)
 	GameLogger.info("prologue", "Wrong molecule! -%d HP" % damage_amount)
 
 func _play_positive_feedback():

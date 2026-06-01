@@ -192,6 +192,12 @@ func _check_zone(actor: Actor, requirement: Dictionary) -> bool:
 # Effect executors
 func _execute_heal(actor: Actor, params: Dictionary) -> bool:
 	var amount = params.get("amount", 0)
+	if actor.entity_id >= 0:
+		var stat_system = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			stat_system.modify_current(actor.entity_id, "health", float(amount))
+			return true
+	# Fallback
 	if actor.attribute_component and actor.attribute_component.health_component:
 		actor.attribute_component.health_component.heal(amount)
 		return true

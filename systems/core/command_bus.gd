@@ -3,7 +3,6 @@
 # Every state change in the game flows through here as a serializable Command.
 # Benefits: logging, validation, interception, replay, network sync.
 extends Node
-class_name CommandBus
 
 enum CommandType {
 	## Movement
@@ -14,10 +13,12 @@ enum CommandType {
 
 	## Combat
 	ATTACK_REQUEST,
+	ATTACK_RELEASED,
 	HEAVY_CHARGE_START,
 	HEAVY_CHARGE_RELEASE,
 	RELOAD_REQUEST,
 	WEAPON_SWITCH,
+	ABILITY_REQUEST,
 
 	## Interaction
 	INTERACT_REQUEST,
@@ -39,6 +40,9 @@ enum CommandType {
 	PLAY_ANIMATION,
 	SPAWN_EFFECT,
 	PLAY_SOUND,
+
+	## UI
+	SYSTEM_MENU_TOGGLE,
 
 	## Misc
 	CUSTOM
@@ -96,6 +100,11 @@ func add_executor(cmd_type: CommandType, executor: Callable) -> void:
 		_executors[cmd_type] = []
 	_executors[cmd_type].append(executor)
 
+## Remove a previously registered validator.
+func remove_validator(cmd_type: CommandType, validator: Callable) -> void:
+	if _validators.has(cmd_type):
+		_validators[cmd_type].erase(validator)
+
 ## Remove a previously registered executor.
 func remove_executor(cmd_type: CommandType, executor: Callable) -> void:
 	if _executors.has(cmd_type):
@@ -110,6 +119,14 @@ func remove_listener(listener: Callable) -> void:
 
 ## The main entry point. Issuing a command triggers validation then execution.
 func issue(command: Command) -> bool:
+	return _do_issue(command)
+
+## Convenience overload: issue by type + payload (auto-creates Command).
+func issue_type(cmd_type: CommandType, payload: Dictionary = {},
+		issuer: int = -1, target: int = -1) -> bool:
+	return _do_issue(create_command(cmd_type, payload, issuer, target))
+
+func _do_issue(command: Command) -> bool:
 	command_issued.emit(command)
 
 	## Notify global listeners first (for logging/audit, non-blocking)

@@ -2,6 +2,9 @@
 # The main script for the player character.
 # It extends the base Actor class.
 extends Actor
+class_name Player
+
+const PlayerStateMachine = preload("res://systems/input/player_state_machine.gd")
 
 # Player states
 enum PlayerState {
@@ -226,7 +229,7 @@ func _ready():
 		GameLogger.debug("player", "Registered with PlayerStateMachine")
 	else:
 		push_warning("Player: PlayerStateMachine not available in _ready()")
-	
+
 	# --- Wave 3: Register with TargetResolverSystem ---
 	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	if target_resolver:
@@ -239,6 +242,10 @@ func _ready():
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)
 
+func _on_player_state_changed(_new_state: int) -> void:
+	# Sync handled in _physics_process via state checks
+	pass
+
 
 
 func _physics_process(delta: float) -> void:
@@ -247,7 +254,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Handle vehicle interaction input (still uses old input_component temporarily)
 	if input_component and input_component.should_interact:
-		CommandBus.issue(CommandBus.CommandType.INTERACT_REQUEST, {})
+		CommandBus.issue_type(CommandBus.CommandType.INTERACT_REQUEST, {})
 		input_component.consume_transient_intents()
 		return
 	
@@ -546,7 +553,7 @@ func _on_invincibility_ended():
 
 func _on_dodge_failed(reason: String):
 	"""Called when dodge fails"""
-	GameLogger.warn("player", "Dodge failed: %s" % reason)
+	GameLogger.debug("player", "Dodge failed: %s" % reason)
 	# Emit global event
 	EventBus.player_dodge_failed.emit(self, reason)
 

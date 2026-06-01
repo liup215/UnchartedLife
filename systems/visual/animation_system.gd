@@ -35,7 +35,7 @@ func _on_play_animation(command: CommandBus.Command) -> void:
 		# Try to discover via EntityManager
 		var entity_manager = ServiceRegistry.get_service("EntityManager")
 		if entity_manager:
-			var node = entity_manager.get_node(entity_id)
+			var node = entity_manager.get_entity_node(entity_id)
 			if node and node.has_method("play_combat_animation"):
 				node.play_combat_animation(anim_name)
 				return

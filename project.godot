@@ -33,6 +33,7 @@ DialogueManager="*res://systems/dialogue_manager.gd"
 TTSManager="*res://systems/tts_manager.gd"
 ServiceRegistry="*res://systems/core/service_registry.gd"
 Bootstrap="*res://systems/core/bootstrap.gd"
+CommandBus="*res://systems/core/command_bus.gd"
 
 [gui]
 

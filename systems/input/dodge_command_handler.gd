@@ -4,6 +4,8 @@
 extends Node
 class_name DodgeCommandHandler
 
+const Player = preload("res://features/player/player.gd")
+
 func _ready() -> void:
 	CommandBus.add_validator(CommandBus.CommandType.DODGE_REQUEST, _validate_dodge)
 	CommandBus.add_executor(CommandBus.CommandType.DODGE_REQUEST, _on_dodge_request)

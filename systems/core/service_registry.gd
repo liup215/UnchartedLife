@@ -3,7 +3,6 @@
 # Systems register themselves here; consumers request services by name.
 # This replaces all direct singleton references with a single lookup point.
 extends Node
-class_name ServiceRegistry
 
 var _services: Dictionary[String, Object] = {}
 

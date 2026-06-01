@@ -112,10 +112,8 @@ func _connect_signals():
 		target_cell.cell_died.connect(_on_cell_died)
 		target_cell.health_changed.connect(_on_cell_health_changed)
 	
-	if player and player.has_node("AttributeComponent"):
-		var attr_comp = player.get_node("AttributeComponent")
-		if attr_comp.health_component:
-			attr_comp.health_component.died.connect(_on_player_died)
+	if player:
+		player.actor_died.connect(_on_player_died)
 	
 	# Connect molecule collection events
 	EventBus.molecule_collected.connect(_on_molecule_collected)

@@ -5,6 +5,9 @@
 extends Node
 class_name StatSystem
 
+const StatDefinition = preload("res://data/definitions/stat/stat_definition.gd")
+const StatModifier = preload("res://systems/stat_system/stat_modifier.gd")
+
 ## Debug grouping for GameLogger
 const LOG_DOMAIN: String = "stat"
 
@@ -136,11 +139,11 @@ func get_stat(entity_id: int, stat_id: String) -> StatInstance:
 	var entity_dict: Dictionary = _entity_stats[entity_id]
 	return entity_dict.get(stat_id, null)
 
-func get_stat_value(entity_id: int, stat_id: String) -> float:
+func get_stat_value(entity_id: int, stat_id: String, default_value: float = 0.0) -> float:
 	var stat := get_stat(entity_id, stat_id)
 	if stat:
 		return stat.get_final_value()
-	return 0.0
+	return default_value
 
 func get_stat_current(entity_id: int, stat_id: String) -> float:
 	var stat := get_stat(entity_id, stat_id)
@@ -175,7 +178,7 @@ func remove_modifiers_by_source(entity_id: int, source_id: String) -> void:
 		return
 	var entity_dict: Dictionary = _entity_stats[entity_id]
 	for stat_id in entity_dict:
-		var stat: StatInstance = entity_dict[stat_id]
+		var stat = entity_dict[stat_id]
 		stat.remove_modifiers_by_source(source_id)
 
 ## --- Modification API ---
@@ -223,7 +226,7 @@ func get_entity_stats_dict(entity_id: int) -> Dictionary:
 	var result: Dictionary = {}
 	var entity_dict: Dictionary = _entity_stats[entity_id]
 	for stat_id in entity_dict:
-		var stat: StatInstance = entity_dict[stat_id]
+		var stat = entity_dict[stat_id]
 		result[stat_id] = stat.to_dict()
 	return result
 
@@ -232,7 +235,7 @@ func load_entity_stats_dict(entity_id: int, data: Dictionary) -> void:
 	var entity_dict: Dictionary = _entity_stats[entity_id]
 	for stat_id in data:
 		var stat_data: Dictionary = data[stat_id]
-		var inst: StatInstance = entity_dict.get(stat_id) as StatInstance
+		var inst = entity_dict.get(stat_id) as StatInstance
 		if inst:
 			inst.from_dict(stat_data)
 		else:
@@ -248,7 +251,7 @@ func on_tick(delta: float) -> void:
 	for entity_id in _entity_stats:
 		var entity_dict: Dictionary = _entity_stats[entity_id]
 		for stat_id in entity_dict:
-			var stat: StatInstance = entity_dict[stat_id]
+			var stat = entity_dict[stat_id]
 			var expired: Array[StatModifier] = []
 			for mod in stat.modifiers:
 				if mod.duration >= 0.0:

@@ -29,49 +29,61 @@ func _process(delta: float) -> void:
 ## --- Private polling methods ---
 
 func _poll_attack_input() -> void:
+	if not InputMap.has_action("fire_weapon"):
+		return
 	var just_pressed = Input.is_action_just_pressed("fire_weapon")
 	var released = Input.is_action_just_released("fire_weapon")
-	
+
 	if just_pressed:
-		CommandBus.issue(CommandBus.CommandType.ATTACK_REQUEST, {})
+		CommandBus.issue_type(CommandBus.CommandType.ATTACK_REQUEST, {})
 		_is_fire_held = true
 		_last_fire_time = Time.get_time_dict_from_system()["second"]
-	
+
 	if released:
+		CommandBus.issue_type(CommandBus.CommandType.ATTACK_RELEASED, {})
 		_is_fire_held = false
-		CommandBus.issue(CommandBus.CommandType.ATTACK_RELEASED, {})
 
 func _poll_charge_input() -> void:
+	if not InputMap.has_action("charge_weapon"):
+		return
 	var just_pressed = Input.is_action_just_pressed("charge_weapon")
 	var released = Input.is_action_just_released("charge_weapon")
-	
+
 	if just_pressed:
-		CommandBus.issue(CommandBus.CommandType.HEAVY_CHARGE_START, {})
+		CommandBus.issue_type(CommandBus.CommandType.HEAVY_CHARGE_START, {})
 	if released:
-		CommandBus.issue(CommandBus.CommandType.HEAVY_CHARGE_RELEASE, {})
+		CommandBus.issue_type(CommandBus.CommandType.HEAVY_CHARGE_RELEASE, {})
 
 func _poll_dodge_input() -> void:
+	if not InputMap.has_action("dodge"):
+		return
 	if Input.is_action_just_pressed("dodge"):
-		CommandBus.issue(CommandBus.CommandType.DODGE_REQUEST, {})
+		CommandBus.issue_type(CommandBus.CommandType.DODGE_REQUEST, {})
 
 func _poll_interact_input() -> void:
+	if not InputMap.has_action("interact"):
+		return
 	if Input.is_action_just_pressed("interact"):
-		CommandBus.issue(CommandBus.CommandType.INTERACT_REQUEST, {})
+		CommandBus.issue_type(CommandBus.CommandType.INTERACT_REQUEST, {})
 
 func _poll_ability_input() -> void:
-	if Input.is_action_just_pressed("ability1"):
-		CommandBus.issue(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 0})
-	if Input.is_action_just_pressed("ability2"):
-		CommandBus.issue(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 1})
-	if Input.is_action_just_pressed("ability3"):
-		CommandBus.issue(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 2})
-	if Input.is_action_just_pressed("ability4"):
-		CommandBus.issue(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 3})
+	if InputMap.has_action("ability1") and Input.is_action_just_pressed("ability1"):
+		CommandBus.issue_type(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 0})
+	if InputMap.has_action("ability2") and Input.is_action_just_pressed("ability2"):
+		CommandBus.issue_type(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 1})
+	if InputMap.has_action("ability3") and Input.is_action_just_pressed("ability3"):
+		CommandBus.issue_type(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 2})
+	if InputMap.has_action("ability4") and Input.is_action_just_pressed("ability4"):
+		CommandBus.issue_type(CommandBus.CommandType.ABILITY_REQUEST, {"ability_index": 3})
 
 func _poll_reload_input() -> void:
+	if not InputMap.has_action("reload"):
+		return
 	if Input.is_action_just_pressed("reload"):
-		CommandBus.issue(CommandBus.CommandType.RELOAD_REQUEST, {})
+		CommandBus.issue_type(CommandBus.CommandType.RELOAD_REQUEST, {})
 
 func _poll_system_menu_input() -> void:
+	if not InputMap.has_action("system_menu"):
+		return
 	if Input.is_action_just_pressed("system_menu"):
-		CommandBus.issue(CommandBus.CommandType.SYSTEM_MENU_TOGGLE, {})
+		CommandBus.issue_type(CommandBus.CommandType.SYSTEM_MENU_TOGGLE, {})

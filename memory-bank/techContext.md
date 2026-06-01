@@ -416,3 +416,7 @@ func _on_body_entered(body: Node2D):
 21. **UI Theme Consistency:** Apply biocell_theme.tres to all UI scenes for visual coherence
 22. **Export Scene References:** Assign `@export PackedScene` in `.tscn` Inspector, never leave null
 23. **Component Delegation:** If multiple callers need sub-component methods, expose wrappers on the parent component (e.g., AttributeComponent → MetabolismComponent)
+24. **Prefer `preload` over `class_name` for cross-system type references** - During large refactors, Godot's `class_name` cache may not hot-reload correctly. Add `const TypeName = preload("res://path.gd")` in scripts that reference newly-introduced types (especially autoloads and command handlers)
+25. **Guard all `Input.is_action_*` calls with `InputMap.has_action()`** - Prevents runtime errors when actions haven't been added to `project.godot` InputMap yet
+26. **CommandBus `issue_type` convenience overload** - When many callers pass `(CommandType, Dictionary)` instead of a `Command` object, add an `issue_type()` overload rather than refactoring every call site
+27. **Never shadow built-in `Node` methods** - `get_node(NodePath)` is built-in; custom `get_node(entity_id: int)` causes parse errors. Use descriptive names like `get_entity_node()`

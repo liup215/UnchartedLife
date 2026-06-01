@@ -4,12 +4,14 @@
 extends Node
 class_name ResourcePoolSystem
 
+const StatSystem = preload("res://systems/stat_system/stat_system.gd")
+
 signal resource_depleted(entity_id: int, resource_type: String)
 signal resource_insufficient(entity_id: int, resource_type: String, requested: float, available: float)
 signal resource_changed(entity_id: int, resource_type: String, current: float, max_value: float)
 signal resource_recovered(entity_id: int, resource_type: String, amount: float, current: float, max_value: float)
 
-var _stat_system = null
+var _stat_system: StatSystem = null
 
 func _ready() -> void:
 	_stat_system = ServiceRegistry.get_service("StatSystem")

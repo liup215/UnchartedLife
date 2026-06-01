@@ -94,6 +94,17 @@ The project has completed several major development phases, establishing a robus
 
 ## Current Phase: Phase 10 - Combat System & Educational Content (In Progress) 🚧
 
+### Recent Updates (June 2026):
+
+#### Wave 1–6 Architecture Refactor — Compilation & Runtime Fixes (Complete) ✅
+1. **Infrastructure (EntityManager, ServiceRegistry, CommandBus, TickSystem, Bootstrap)**: All scripts compile and bootstrap correctly
+2. **Stat System (StatSystem, ResourcePoolSystem, StatModifier)**: Central stat authority functional; entities register stats from `ActorData.create_stat_sheet()`
+3. **Input Decoupling (InputCommandSystem, PlayerStateMachine)**: Raw Input mapped to CommandBus commands; `PlayerStateMachine` manages ON_FOOT/IN_VEHICLE and combat states
+4. **Command Handlers (DodgeCommandHandler, VehicleCommandHandler, CombatCommandHandler)**: Bridge commands to legacy components during transition
+5. **Combat Pipeline (ChargeSystem, DamagePipeline, WeaponSystem, TargetResolverSystem)**: Wired through CommandBus
+6. **AnimationSystem**: Consumes `PLAY_ANIMATION` commands; `ActorCombatComponent` routes animations through it
+7. **14 distinct parse/runtime issues resolved**: See `activeContext.md` for full session details
+
 ### Recent Updates (May 2026):
 
 #### UI Theme System (Complete) ✅

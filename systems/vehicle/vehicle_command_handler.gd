@@ -4,6 +4,8 @@
 extends Node
 class_name VehicleCommandHandler
 
+const Player = preload("res://features/player/player.gd")
+
 func _ready() -> void:
 	CommandBus.add_executor(CommandBus.CommandType.INTERACT_REQUEST, _on_interact_request)
 

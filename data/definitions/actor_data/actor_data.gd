@@ -7,6 +7,7 @@ class_name ActorData
 
 # This import is handled via class_name in the target script
 # const AnimationData = preload("res://data/components/animation_data.gd")
+const StatDefinition = preload("res://data/definitions/stat/stat_definition.gd")
 
 # --- Player Character Stats ---
 @export_group("Identity")
@@ -71,8 +72,8 @@ class_name ActorData
 
 ## Generate stat definitions from this actor data for the new StatSystem.
 ## This bridges the old Resource-driven approach to the new ECS-lite stat system.
-func create_stat_sheet() -> Array[StatDefinition]:
-	var stats: Array[StatDefinition] = []
+func create_stat_sheet() -> Array:
+	var stats: Array = []
 	
 	# --- Resource Pools (stats with current/max pairs) ---
 	var health := StatDefinition.new()
