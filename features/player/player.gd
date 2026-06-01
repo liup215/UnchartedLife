@@ -166,6 +166,8 @@ func _handle_vehicle_interaction():
 			if result:
 				current_vehicle = nearby_vehicle
 				current_state = PlayerState.IN_VEHICLE
+				if nearby_vehicle.has_method("set_input_component"):
+					nearby_vehicle.set_input_component(input_component)
 				var vehicle_name = "Unknown"
 				if nearby_vehicle.vehicle_data and nearby_vehicle.vehicle_data.has_method("get"):
 					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
@@ -179,6 +181,8 @@ func _handle_vehicle_interaction():
 			if typeof(result) == TYPE_OBJECT and result.has_method("is_valid") and result.is_valid():
 				result = await result
 			if result:
+				if current_vehicle and current_vehicle.has_method("clear_input_component"):
+					current_vehicle.clear_input_component()
 				current_vehicle = null
 				current_state = PlayerState.ON_FOOT
 				GameLogger.debug("player", "Exited vehicle")

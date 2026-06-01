@@ -13,6 +13,12 @@ var should_light_attack: bool = false
 var should_heavy_attack: bool = false
 var heavy_attack_released: bool = false
 
+# Vehicle-specific inputs (filled when player is in vehicle)
+var vehicle_move_input: int = 0   # -1=back, 0=none, 1=forward
+var vehicle_turn_input: int = 0   # -1=left, 0=none, 1=right
+var should_main_attack: bool = false
+var main_attack_released: bool = false
+
 # Mouse position in world space (for weapon aiming)
 var aim_target: Vector2 = Vector2.ZERO
 
@@ -33,6 +39,20 @@ func _process(_delta: float):
 	should_light_attack = Input.is_action_just_pressed("light_attack")
 	should_heavy_attack = Input.is_action_just_pressed("heavy_attack")
 	heavy_attack_released = Input.is_action_just_released("heavy_attack")
+	should_main_attack = Input.is_action_just_pressed("main_attack")
+	main_attack_released = Input.is_action_just_released("main_attack")
+	
+	# Vehicle inputs (tank-style)
+	vehicle_move_input = 0
+	if Input.is_action_pressed("move_forward"):
+		vehicle_move_input = 1
+	elif Input.is_action_pressed("move_backward"):
+		vehicle_move_input = -1
+	vehicle_turn_input = 0
+	if Input.is_action_pressed("turn_right"):
+		vehicle_turn_input = 1
+	elif Input.is_action_pressed("turn_left"):
+		vehicle_turn_input = -1
 	
 	# Aim target
 	aim_target = get_global_mouse_position()
@@ -44,3 +64,5 @@ func consume_transient_intents():
 	should_light_attack = false
 	should_heavy_attack = false
 	heavy_attack_released = false
+	should_main_attack = false
+	main_attack_released = false

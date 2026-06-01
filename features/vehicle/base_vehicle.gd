@@ -52,104 +52,58 @@ func _ready():
 	# Set owner_node for combat_component
 	if vehicle_combat_component:
 		vehicle_combat_component.set_actor_data(vehicle_data)
-		# for weapon in vehicle_data.weapons:
-		# 	if weapon is WeaponData:
-		# var weapon_comp = WeaponComponent.new()
-		# 		weapon_comp.weapon_data = weapon
-		# 		weapon_comp.setup_weapon()
-		# 		# add a random position offset to the weapon
-		# 		weapon_comp.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		# 		weapon_comp.rotation = rotation
-		# 		add_child(weapon_comp)
-		# 		if weapon.weapon_type == WeaponData.WeaponType.MAIN_CANNON:
-		# 			vehicle_combat_component.add_main_weapon(weapon_comp)
-		# 		elif weapon.weapon_type == WeaponData.WeaponType.SUB_WEAPON:
-		# 			vehicle_combat_component.add_secondary_weapon(weapon_comp)
+
+	# Get or create movement component
+	movement_component = get_node_or_null("VehicleMovementComponent") as VehicleMovementComponent
+	if not movement_component:
+		movement_component = VehicleMovementComponent.new()
+		movement_component.name = "VehicleMovementComponent"
+		movement_component.stats_component = stats_component
+		movement_component.animated_sprite = _animated_sprite
+		add_child(movement_component)
+
+# Input component for vehicle (assigned by Player when entering vehicle)
+var input_component: PlayerInputComponent = null
+
+func set_input_component(ic: PlayerInputComponent) -> void:
+	input_component = ic
+
+func clear_input_component() -> void:
+	input_component = null
 
 func _physics_process(delta: float):
 	if occupied and driver and stats_component.can_move:
-		_handle_vehicle_movement(delta)
-		_consume_fuel(delta)
+		# Gather input
+		var move_input = 0
+		var turn_input = 0
+		if input_component:
+			move_input = input_component.vehicle_move_input
+			turn_input = input_component.vehicle_turn_input
+		else:
+			# Fallback to direct input if no input_component assigned
+			if Input.is_action_pressed("move_forward"):
+				move_input += 1
+			if Input.is_action_pressed("move_backward"):
+				move_input -= 1
+			if Input.is_action_pressed("turn_left"):
+				turn_input -= 1
+			if Input.is_action_pressed("turn_right"):
+				turn_input += 1
+		movement_component.process_movement(self, move_input, turn_input, delta)
+		movement_component.consume_fuel(vehicle_data, stats_component, linear_velocity.length(), delta)
 		_handle_combat_input()
-		# get weapon components and make them look at the mouse
+		# Aim weapons at mouse
+		var mouse_pos = input_component.aim_target if input_component else get_global_mouse_position()
 		var main_weapon_components = vehicle_combat_component.main_weapons
 		for wc in main_weapon_components:
-			wc.look_at(get_global_mouse_position())
-			wc.rotation_degrees += 90 # Add 90 degrees to correct the orientation
+			wc.look_at(mouse_pos)
+			wc.rotation_degrees += 90
 		var secondary_weapon_components = vehicle_combat_component.secondary_weapons
 		for wc in secondary_weapon_components:
-			wc.look_at(get_global_mouse_position())
-			wc.rotation_degrees += 90 # Add 90 degrees to correct the orientation
+			wc.look_at(mouse_pos)
+			wc.rotation_degrees += 90
 	else:
-		# Auto-dampening when idle or overloaded
-		linear_damp = 8
-		angular_damp = 8
-
-func _handle_vehicle_movement(_delta: float):
-	# Only allow forward/backward movement and turning
-	var move_input = 0
-	var turn_input = 0
-
-	if Input.is_action_pressed("move_forward"):
-		move_input += 1
-	if Input.is_action_pressed("move_backward"):
-		move_input -= 1
-	if Input.is_action_pressed("turn_left"):
-		turn_input -= 1
-	if Input.is_action_pressed("turn_right"):
-		turn_input += 1
-
-	# Reset angular velocity each frame
-	angular_velocity = 0
-
-	# Forward/Backward Movement
-	if move_input != 0:
-		var forward = Vector2.UP.rotated(rotation)
-		var force = forward * stats_component.final_acceleration * move_input
-		apply_central_force(force)
-		_animated_sprite.play("moving")
-		# Speed Limiter
-		if linear_velocity.length() > stats_component.final_max_speed:
-			linear_velocity = linear_velocity.normalized() * stats_component.final_max_speed
-
-	# Turning (Only allow turning while moving forward or backward)
-	if turn_input != 0 and move_input != 0:
-		# Allow turning when moving (forward or backward)
-		var effective_turn_speed = stats_component.final_max_speed / 150.0 # Example formula
-		# Invert turning direction when reversing for realistic steering
-		if move_input < 0:
-			angular_velocity = effective_turn_speed * -turn_input
-		else:
-			angular_velocity = effective_turn_speed * turn_input
-
-	# Auto-dampening at low speed
-	if move_input == 0:
-		_animated_sprite.stop()
-		linear_damp = 8
-	else:
-		linear_damp = 2
-
-func _consume_fuel(_delta: float):
-	# More detailed fuel consumption based on engine efficiency
-	var total_glucose_efficiency = 0.0
-	var engine_count = 0
-	for engine_res in vehicle_data.engine_slots:
-		if engine_res is EngineData:
-			var engine: EngineData = engine_res
-			total_glucose_efficiency += engine.glucose_efficiency
-			engine_count += 1
-
-	if engine_count > 0:
-		var avg_efficiency = total_glucose_efficiency / engine_count
-		var _consumption_rate = 1.0 / avg_efficiency # Base consumption is inverse of efficiency
-
-		# Consume more fuel at higher speeds
-		var speed_ratio = linear_velocity.length() / stats_component.final_max_speed if stats_component.final_max_speed > 0 else 0
-		_consumption_rate += speed_ratio * 2.0 # Additional consumption based on speed
-
-		# TODO: Link this to the global player glucose store
-		# current_fuel = max(0, current_fuel - _consumption_rate * _delta)
-		pass
+		movement_component.apply_idle_damping(self)
 
 func _on_body_entered(body: Node2D):
 	if body.has_method("show_vehicle_interaction") and not occupied:
