@@ -1,7 +1,7 @@
 # player_input_component.gd
 # Encapsulates input device reading into high-level intent signals.
 # Player.gd reads desired state from this component instead of calling Input directly.
-extends Node
+extends Node2D
 class_name PlayerInputComponent
 
 # High-level player intents (updated each frame)

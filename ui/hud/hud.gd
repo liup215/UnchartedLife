@@ -79,8 +79,8 @@ func _ready():
 
 func _setup_notification_label():
 	_notification_label = Label.new()
-	_notification_label.theme_override_font_sizes/font_size = 24
-	_notification_label.theme_override_colors/font_color = Color(0.94, 0.27, 0.27)
+	_notification_label.add_theme_font_size_override("font_size", 24)
+	_notification_label.add_theme_color_override("font_color", Color(0.94, 0.27, 0.27))
 	_notification_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_notification_label.anchors_preset = Control.PRESET_CENTER_BOTTOM
 	_notification_label.anchor_left = 0.5
