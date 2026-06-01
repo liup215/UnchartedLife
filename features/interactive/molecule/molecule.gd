@@ -93,13 +93,17 @@ func _interact_with_player(player: Node):
 	await get_tree().create_timer(PICKUP_ANIMATION_DURATION).timeout
 	queue_free()
 
-func _give_ammo(player: Node):
-	# Find the player's combat component and refill weapon ammo
-	if not player.has_node("ActorCombatComponent"):
-		GameLogger.warn("prologue", "Warning: Player has no ActorCombatComponent")
+func _give_ammo(player: Node2D) -> void:
+	# Get player's combat component via typed member variable
+	if not player is Actor:
+		GameLogger.warn("prologue", "Warning: Target is not an Actor")
 		return
-		
-	var combat_component = player.get_node("ActorCombatComponent")
+	
+	var player_actor := player as Actor
+	var combat_component := player_actor.actor_combat_component
+	if not combat_component:
+		GameLogger.warn("prologue", "Warning: Player has no combat component")
+		return
 	
 	# Check if player has any weapons
 	if combat_component.actor_weapons.is_empty():
@@ -107,7 +111,7 @@ func _give_ammo(player: Node):
 		return
 	
 	# Refill first weapon's ammo
-	var weapon_comp = combat_component.actor_weapons[0]
+	var weapon_comp: WeaponComponent = combat_component.actor_weapons[0]
 	if not weapon_comp:
 		GameLogger.warn("prologue", "Warning: Weapon component is null")
 		return
@@ -116,7 +120,7 @@ func _give_ammo(player: Node):
 		GameLogger.warn("prologue", "Warning: Weapon has no data")
 		return
 	
-	var max_ammo = weapon_comp.item_data.weapon_data.ammo_capacity
+	var max_ammo: int = weapon_comp.item_data.weapon_data.ammo_capacity
 	weapon_comp.current_ammo = min(
 		weapon_comp.current_ammo + ammo_amount,
 		max_ammo
@@ -124,15 +128,16 @@ func _give_ammo(player: Node):
 	weapon_comp.ammo_updated.emit(weapon_comp.current_ammo)
 	GameLogger.info("prologue", "Glucose collected! Ammo +%d (now %d/%d)" % [ammo_amount, weapon_comp.current_ammo, max_ammo])
 
-func _damage_player(player: Node):
+func _damage_player(player: Node2D) -> void:
 	# Find player's health component and apply damage
-	if not player.has_node("AttributeComponent"):
-		GameLogger.warn("prologue", "Warning: Player has no AttributeComponent")
+	if not player is Actor:
+		GameLogger.warn("prologue", "Warning: Target is not an Actor")
 		return
-		
-	var attr_component = player.get_node("AttributeComponent")
-	if not attr_component.health_component:
-		GameLogger.warn("prologue", "Warning: Player AttributeComponent has no health_component")
+	
+	var player_actor := player as Actor
+	var attr_component := player_actor.attribute_component
+	if not attr_component or not attr_component.health_component:
+		GameLogger.warn("prologue", "Warning: Player has no health component")
 		return
 		
 	attr_component.health_component.take_damage(damage_amount)

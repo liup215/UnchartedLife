@@ -27,7 +27,16 @@ func execute(actor: Node, _delta: float):
 
         if distance_to_player < detection_radius:
             var direction_to_player = actor.global_position.direction_to(state.player.global_position)
-            actor.velocity = direction_to_player * actor.attribute_component.speed_component.get_current_speed()
+            # NEW: Prefer StatSystem for speed read (Wave 2 migration)
+            var speed: float = 0.0
+            if actor is Actor and actor.entity_id >= 0:
+                var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+                if stat_system:
+                    speed = stat_system.get_stat_value(actor.entity_id, "speed", 250.0)
+            else:
+                if actor.attribute_component and actor.attribute_component.speed_component:
+                    speed = actor.attribute_component.speed_component.get_current_speed()
+            actor.velocity = direction_to_player * speed
         else:
             # If player is out of range, this behavior does nothing,
             # allowing other behaviors (like wandering) to take over.

@@ -48,13 +48,31 @@ func execute(actor: Node, _delta: float):
 			#     weapon.fire()
 			# Optionally: trigger attack animation, sound, etc.
 			state.cooldown = attack_cooldown
-			# Move到攻击距离
+			# Move to attack distance
 			var direction = actor.global_position.direction_to(state.player.global_position)
-			actor.velocity = direction * actor.attribute_component.speed_component.get_current_speed()
+			# NEW: Prefer StatSystem for speed read (Wave 2 migration)
+			var speed: float = 0.0
+			if actor is Actor and actor.entity_id >= 0:
+				var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+				if stat_system:
+					speed = stat_system.get_stat_value(actor.entity_id, "speed", 250.0)
+			else:
+				if actor.attribute_component and actor.attribute_component.speed_component:
+					speed = actor.attribute_component.speed_component.get_current_speed()
+			actor.velocity = direction * speed
 		elif distance_to_player > attack_radius:
 			# Move closer to player
 			var direction = actor.global_position.direction_to(state.player.global_position)
-			actor.velocity = direction * actor.attribute_component.speed_component.get_current_speed()
+			# NEW: Prefer StatSystem for speed read (Wave 2 migration)
+			var chase_speed: float = 0.0
+			if actor is Actor and actor.entity_id >= 0:
+				var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+				if stat_system:
+					chase_speed = stat_system.get_stat_value(actor.entity_id, "speed", 250.0)
+			else:
+				if actor.attribute_component and actor.attribute_component.speed_component:
+					chase_speed = actor.attribute_component.speed_component.get_current_speed()
+			actor.velocity = direction * chase_speed
 		else:
 			# In cooldown, stop or idle
 			actor.velocity = Vector2.ZERO

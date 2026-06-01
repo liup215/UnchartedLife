@@ -1,4 +1,9 @@
 extends Area2D
+class_name BaseBullet
+
+# --- Bullet visual constants ---
+const DEFAULT_BULLET_GLOW: Color = Color(1.2, 1.2, 0.8, 1.0)  # Warm yellow glow
+const ROTATION_OFFSET: float = PI / 2.0
 
 # These properties will be set by the weapon that fires the bullet
 var speed: float = 800.0
@@ -15,51 +20,45 @@ var hit_effect_frame_count: int = 1
 var hit_effect_duration: float = 0.5
 
 # Reference to shooter for charge accumulation
-var shooter: Node = null
+var shooter: Node2D = null
 
 func _ready():
-	# 旋转子弹朝向移动方向
-	rotation = direction.angle() + PI/2
+	# Rotate bullet to face movement direction
+	rotation = direction.angle() + ROTATION_OFFSET
 
-	# 确保精灵可见并设置合适的视觉效果
+	# Configure visual sprite
 	if has_node("Sprite2D"):
-		var sprite = $Sprite2D
+		var sprite: Sprite2D = $Sprite2D
 		if bullet_texture:
 			sprite.texture = bullet_texture
 		sprite.scale = bullet_scale
 		sprite.visible = true
-		# 使用第一帧作为子弹图像
 		sprite.frame = 0
-		# 添加发光效果
-		sprite.modulate = Color(1.2, 1.2, 0.8, 1)  # 略微发光的黄色
+		# Apply bullet glow effect
+		sprite.modulate = DEFAULT_BULLET_GLOW
 
-	# 设置子弹的生命周期
+	# Set up bullet lifetime auto-cleanup
 	_setup_lifetime()
 
-func _setup_lifetime():
+func _setup_lifetime() -> void:
 	await get_tree().create_timer(lifetime, false).timeout
 	if is_instance_valid(self):
 		queue_free()
 
 func _physics_process(delta):
-	# 移动子弹
+	# Move bullet along direction
 	position += direction * speed * delta
 
 func _on_body_entered(body):
 	GameLogger.debug("combat", "Bullet hit: %s" % body.name)
 	
 	# Notify shooter's combat component about the hit (for comprehensive damage calculation)
-	if shooter and shooter.has_node("ActorCombatComponent"):
-		var combat_comp = shooter.get_node("ActorCombatComponent")
-		if combat_comp.has_method("on_enemy_hit"):
-			# Pass base weapon damage - combat component will calculate final damage
-			combat_comp.on_enemy_hit(body, damage)
-	else:
-		# Fallback: direct damage if no combat component
-		if body.has_method("take_damage"):
-			body.take_damage(int(damage))
+	if shooter and shooter.has_method("on_enemy_hit"):
+		shooter.on_enemy_hit(body, damage)
+	elif body.has_method("take_damage"):
+		body.take_damage(int(damage))
 	
-	# 创建命中效果
+	# Create hit visual effect
 	_create_hit_effect()
 
 	# 击中任何物体后消失

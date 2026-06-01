@@ -43,6 +43,14 @@ func set_runtime_state(rs: ActorRuntimeState):
 	toughness_recovery_rate = rs.toughness_recovery_rate
 	toughness_changed.emit(current_toughness, max_toughness)
 
+## Sync toughness to new StatSystem.
+func _sync_new_system_toughness() -> void:
+	var eid: int = _get_actor_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			stat_system.set_stat_value(eid, "toughness", current_toughness)
+
 ## Apply toughness damage
 func apply_toughness_damage(damage: float, stagger_power: float = 0.0):
 	if is_staggered:
@@ -52,6 +60,7 @@ func apply_toughness_damage(damage: float, stagger_power: float = 0.0):
 	var toughness_damage = damage * (1.0 + stagger_power / 100.0)
 	
 	current_toughness -= toughness_damage
+	_sync_new_system_toughness()
 	toughness_changed.emit(current_toughness, max_toughness)
 	
 	GameLogger.debug("toughness", "Damage: %s Current: %s/%s" % [toughness_damage, current_toughness, max_toughness])
@@ -86,6 +95,7 @@ func _end_stagger():
 	is_staggered = false
 	# Restore some toughness when stagger ends
 	current_toughness = max_toughness * 0.3  # Restore 30% toughness
+	_sync_new_system_toughness()
 	
 	stagger_ended.emit()
 	toughness_changed.emit(current_toughness, max_toughness)
@@ -97,12 +107,31 @@ func reset_toughness():
 	current_toughness = max_toughness
 	toughness_changed.emit(current_toughness, max_toughness)
 
+## Get actor entity_id from parent chain (ToughnessComponent -> AttributeComponent -> Actor)
+func _get_actor_entity_id() -> int:
+	var attribute_comp: Node = get_parent()
+	if attribute_comp and attribute_comp.get_parent():
+		var actor = attribute_comp.get_parent()
+		if actor and actor.get("entity_id"):
+			return int(actor.entity_id)
+	return -1
+
 ## Get current toughness
 func get_current_toughness() -> float:
+	var eid: int = _get_actor_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "toughness", current_toughness)
 	return current_toughness
 
 ## Get max toughness
 func get_max_toughness() -> float:
+	var eid: int = _get_actor_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "max_toughness", max_toughness)
 	return max_toughness
 
 ## Check if currently staggered

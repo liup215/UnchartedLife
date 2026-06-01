@@ -21,6 +21,159 @@ var current_vehicle: Node2D = null  # Will be Vehicle when available
 var nearby_vehicle: Node2D = null   # Vehicle player can interact with
 var interaction_ui_visible: bool = false
 
+# --- NEW: Migration Compatibility Helpers ---
+# These helpers provide a uniform API for stat access that works with BOTH
+# the old AttributeComponent system AND the new StatSystem.
+# During Wave 2 migration, these resolve to the new StatSystem if available.
+# After Wave 7 (old component deletion), they resolve to StatSystem only.
+
+## Returns the player's entity_id in the new ECS-lite architecture.
+func _get_entity_id() -> int:
+	if entity_id < 0:
+		# EntityManager may not have been ready during _ready; retry
+		var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+		if entity_manager:
+			var node_id = entity_manager.get_entity_id(self)
+			if node_id >= 0:
+				entity_id = node_id
+	return entity_id
+
+## Consume ATP using BOTH ResourcePoolSystem (new) AND old metabolism_component.
+## Dual-writing ensures old signals fire while new system becomes authoritative.
+func _consume_atp(amount: float) -> void:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		if pool_system:
+			pool_system.consume(eid, "atp", amount)
+	# Always write to old system too (signals are still wired there)
+	if attribute_component and attribute_component.metabolism_component:
+		attribute_component.metabolism_component.consume_atp(amount)
+
+## Recover ATP using BOTH ResourcePoolSystem (new) AND old metabolism_component.
+func _recover_atp(amount: float) -> void:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		if pool_system:
+			pool_system.recover(eid, "atp", amount)
+	if attribute_component and attribute_component.metabolism_component:
+		attribute_component.metabolism_component.recover_atp(amount)
+
+## Consume glucose using BOTH ResourcePoolSystem (new) AND old metabolism_component.
+func _consume_glucose(amount: float) -> void:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		if pool_system:
+			pool_system.consume(eid, "glucose", amount)
+	if attribute_component and attribute_component.metabolism_component:
+		attribute_component.metabolism_component.consume_glucose(amount)
+
+## Get current ATP (new StatSystem preferred, old fallback).
+func _get_current_atp() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "atp", 0.0)
+	return attribute_component.metabolism_component.get_current_atp()
+
+## Get max ATP (new StatSystem preferred, old fallback).
+func _get_max_atp() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "max_atp", 0.0)
+	return attribute_component.metabolism_component.get_max_atp()
+
+## Get current glucose (new StatSystem preferred, old fallback).
+func _get_current_glucose() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "glucose", 0.0)
+	return attribute_component.metabolism_component.get_current_glucose()
+
+## Get glucose consume rate (new StatSystem preferred, old fallback).
+func _get_glucose_consume_rate() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "glucose_consume_rate", 0.0)
+	return attribute_component.metabolism_component.get_glucose_consume_rate()
+
+## Get ATP conversion rate (new StatSystem preferred, old fallback).
+func _get_atp_conversion_rate() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "atp_conversion_rate", 0.0)
+	return attribute_component.metabolism_component.get_atp_conversion_rate()
+
+## Get ATP production rate (new StatSystem preferred, old fallback).
+func _get_atp_production_rate() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "atp_production_rate", 0.0)
+	return attribute_component.metabolism_component.atp_production_rate
+
+## Check if player is staggered (new StatSystem preferred, old fallback).
+func _is_staggered() -> bool:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "toughness", 0.0) <= 0.0
+	# Fallback: old component chain
+	if attribute_component and attribute_component.toughness_component:
+		return attribute_component.toughness_component.is_in_stagger()
+	return false
+
+## Get current health (new StatSystem preferred, old fallback).
+func _get_current_health() -> int:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return int(stat_system.get_stat_value(eid, "health", 0.0))
+	return attribute_component.health_component.get_current_health()
+
+## Set current health (new StatSystem preferred, old fallback).
+func _set_current_health(new_hp: int) -> void:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			# Clamp to max
+			var max_hp: float = stat_system.get_stat_value(eid, "max_health", float(new_hp))
+			stat_system.set_stat_value(eid, "health", clampf(float(new_hp), 1.0, max_hp))
+			return
+	attribute_component.health_component.set_current_health(new_hp)
+
+## Get current speed (new StatSystem preferred, old fallback).
+func _get_current_speed() -> float:
+	var eid := _get_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "speed", 250.0)
+	return attribute_component.speed_component.get_current_speed()
+
+## Set invincibility on health.
+func _set_invincible(state: bool) -> void:
+	# New system has no invincibility concept in StatSystem yet; use old component
+	if attribute_component and attribute_component.health_component:
+		attribute_component.health_component.set_invincible(state)
+
+# ---
+
 # Dodge component (initialized in _ready)
 var dodge_component: DodgeComponent = null
 
@@ -65,6 +218,21 @@ func _ready():
 	else:
 		push_warning("Player: DodgeComponent not found - dodge functionality disabled")
 	
+	# --- Wave 4: Register with PlayerStateMachine ---
+	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	if psm:
+		psm.player_actor = self
+		psm.state_changed.connect(_on_player_state_changed)
+		GameLogger.debug("player", "Registered with PlayerStateMachine")
+	else:
+		push_warning("Player: PlayerStateMachine not available in _ready()")
+	
+	# --- Wave 3: Register with TargetResolverSystem ---
+	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	if target_resolver:
+		target_resolver.set_player_actor(self)
+		GameLogger.debug("player", "Registered with TargetResolverSystem")
+
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
 	add_to_group("saveable")
@@ -74,14 +242,21 @@ func _ready():
 
 
 func _physics_process(delta: float) -> void:
-	# Handle vehicle interaction input
+	# --- Wave 4: Check state machine for combat state transitions ---
+	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	
+	# Handle vehicle interaction input (still uses old input_component temporarily)
 	if input_component and input_component.should_interact:
-		await _handle_vehicle_interaction()
+		CommandBus.issue(CommandBus.CommandType.INTERACT_REQUEST, {})
 		input_component.consume_transient_intents()
 		return
 	
 	# Different behavior based on current state
-	match current_state:
+	var state_for_logic := current_state
+	if psm:
+		state_for_logic = 0 if psm.current_state == PlayerStateMachine.PlayerState.ON_FOOT else 1
+	
+	match state_for_logic:
 		PlayerState.ON_FOOT:
 			_handle_on_foot_logic(delta)
 		PlayerState.IN_VEHICLE:
@@ -92,10 +267,20 @@ func _handle_on_foot_logic(delta: float):
 	var direction := input_component.desired_direction if input_component else Vector2.ZERO
 	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD
 	var is_sprinting = input_component.is_sprinting if input_component else false
+	
+	# --- Wave 5: Metabolism is now handled by MetabolismSystem ---
+	# Register movement context so MetabolismSystem can process ATP/glucose
+	# in its per-frame tick. This removes ALL metabolism logic from Player.gd.
+	var metabolism_system: MetabolismSystem = ServiceRegistry.get_service("MetabolismSystem")
+	if metabolism_system:
+		var eid := _get_entity_id()
+		if eid >= 0:
+			metabolism_system.set_entity_movement_context(eid, has_movement_input, is_sprinting, "on_foot")
+	# TEMPORARY: during transition, also call old method so signals still fire via dual-write
 	_process_metabolism(delta, is_sprinting, has_movement_input)
 	
 	# Check if staggered - if so, no input allowed but metabolism continues
-	var is_staggered = attribute_component and attribute_component.toughness_component and attribute_component.toughness_component.is_in_stagger()
+	var is_staggered := _is_staggered()
 	
 	# Check if dodging - if so, no input allowed but metabolism continues
 	var is_dodging = dodge_component and dodge_component.is_in_dodge()
@@ -119,7 +304,7 @@ func _handle_on_foot_logic(delta: float):
 		last_direction = direction.normalized()
 
 	# Calculate movement speed based on sprinting state
-	var base_speed = attribute_component.speed_component.get_current_speed()
+	var base_speed = _get_current_speed()
 	var movement_speed = base_speed
 
 	if is_sprinting and direction.length() > 0:
@@ -130,82 +315,103 @@ func _handle_on_foot_logic(delta: float):
 	_update_animation()
 	move_and_slide()
 
-	# Handle combat input
-	_handle_combat_input()
-
-	# Make weapons look at aim target
-	if input_component:
-		var aim_target = input_component.aim_target
-		var weapons = actor_combat_component.actor_weapons
-		for wc in weapons:
-			if wc and wc.has_method("look_at"):
-				wc.look_at(aim_target)
-				wc.rotation_degrees += 90  # Adjust orientation
+	# --- Wave 3: Weapon orientation via TargetResolverSystem ---
+	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var aim_target := Vector2.ZERO
+	if target_resolver:
+		aim_target = target_resolver.get_player_aim_target_world()
+	elif input_component:
+		# Temporary fallback during transition
+		aim_target = input_component.aim_target
+	var weapons = actor_combat_component.actor_weapons
+	for wc in weapons:
+		if wc and wc.has_method("look_at"):
+			wc.look_at(aim_target)
+			wc.rotation_degrees += 90  # Adjust orientation
+	
+	# --- Wave 4: Combat actions are now COMMAND-DRIVEN, not input-driven ---
+	# _handle_combat_input() removed. The InputCommandSystem polls input,
+	# converts to Commands, and the PlayerStateMachine validates them.
+	# ActorCombatComponent then executes via CommandBus listeners.
+	# The actual combat execution is triggered by state machine callbacks.
 	
 	# Consume transient one-shot intents after processing
 	input_component.consume_transient_intents()
 
 func _handle_in_vehicle_logic(delta: float):
-	# 进入载具后，player位置随vehicle同步
+	# Sync player position to vehicle while inside
 	if current_vehicle:
 		global_position = current_vehicle.global_position
-	# When in vehicle, player only does basal metabolism
-	# Vehicle handles movement and glucose consumption
+	# --- Wave 5: Metabolism is now handled by MetabolismSystem ---
+	# Register in-vehicle context so MetabolismSystem processes basal metabolism.
+	var metabolism_system: MetabolismSystem = ServiceRegistry.get_service("MetabolismSystem")
+	if metabolism_system:
+		var eid := _get_entity_id()
+		if eid >= 0:
+			metabolism_system.set_entity_movement_context(eid, false, false, "in_vehicle")
+	# TEMPORARY: during transition, also call old basal method so signals still fire via dual-write
 	_process_basal_metabolism(delta)
 
-func _handle_vehicle_interaction():
+func _handle_vehicle_interaction() -> void:
+	# Wave 5: Delegated to VehicleCommandHandler via CommandBus
+	# This method is kept temporarily for backward compatibility but no longer called directly
+	_handle_vehicle_interaction_legacy()
+
+func _handle_vehicle_interaction_legacy() -> void:
 	if not input_component or not input_component.should_interact:
 		return
 	if current_state == PlayerState.ON_FOOT:
 		# Try to enter nearby vehicle
 		if nearby_vehicle and nearby_vehicle.has_method("can_be_entered") and nearby_vehicle.can_be_entered():
-			var result = nearby_vehicle.enter_vehicle(self)
-			if typeof(result) == TYPE_OBJECT and result.has_method("is_valid") and result.is_valid():
-				result = await result
-			if result:
+			var entered: bool = nearby_vehicle.enter_vehicle(self)
+			if entered:
 				current_vehicle = nearby_vehicle
 				current_state = PlayerState.IN_VEHICLE
 				if nearby_vehicle.has_method("set_input_component"):
 					nearby_vehicle.set_input_component(input_component)
-				var vehicle_name = "Unknown"
-				if nearby_vehicle.vehicle_data and nearby_vehicle.vehicle_data.has_method("get"):
-					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
-				elif nearby_vehicle.vehicle_data:
+				var vehicle_name: String = "Unknown"
+				if nearby_vehicle.vehicle_data:
 					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
 				GameLogger.debug("player", "Entered vehicle: %s" % vehicle_name)
+				# Notify PlayerStateMachine of state change
+				var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+				if psm:
+					psm.transition_to_state(PlayerStateMachine.PlayerState.IN_VEHICLE, {"vehicle": nearby_vehicle})
 	elif current_state == PlayerState.IN_VEHICLE:
 		# Try to exit current vehicle
 		if current_vehicle and current_vehicle.has_method("exit_vehicle"):
-			var result = await current_vehicle.exit_vehicle()
-			if typeof(result) == TYPE_OBJECT and result.has_method("is_valid") and result.is_valid():
-				result = await result
-			if result:
+			var exited: bool = current_vehicle.exit_vehicle()
+			if exited:
 				if current_vehicle and current_vehicle.has_method("clear_input_component"):
 					current_vehicle.clear_input_component()
 				current_vehicle = null
 				current_state = PlayerState.ON_FOOT
 				GameLogger.debug("player", "Exited vehicle")
+				# Notify PlayerStateMachine of state change
+				var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+				if psm:
+					psm.transition_to_state(PlayerStateMachine.PlayerState.ON_FOOT, {})
 
 func _process_basal_metabolism(delta: float):
 
 	# Only basal ATP consumption when in vehicle
 	var base_atp_consumption = 2.0 * delta  # 2 ATP/sec during rest
-	attribute_component.metabolism_component.consume_atp(base_atp_consumption)
+	_consume_atp(base_atp_consumption)
 
 	# ATP Recovery
-	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
+	if _get_current_atp() < _get_max_atp():
 		var atp_to_recover = base_atp_consumption
-		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
+		var conversion_rate = _get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
-			if attribute_component.metabolism_component.get_current_glucose() >= glucose_for_atp:
-				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
-				attribute_component.metabolism_component.recover_atp(atp_to_recover)
+			if _get_current_glucose() >= glucose_for_atp:
+				_consume_glucose(glucose_for_atp)
+				_recover_atp(atp_to_recover)
 
 	# Basal metabolic rate (reduced in vehicle - player is resting)
-	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.2  # Even more reduced in vehicle
-	if attribute_component.metabolism_component.get_current_glucose() > 0:
-		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
+	var basal_glucose_cost = _get_glucose_consume_rate() * delta * 0.2  # Even more reduced in vehicle
+	if _get_current_glucose() > 0:
+		_consume_glucose(basal_glucose_cost)
 
 # --- Vehicle Interaction Interface ---
 # These methods are called by vehicles when player enters/exits interaction range
@@ -242,55 +448,55 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 
 	# Extra consumption when sprinting
 	if is_sprinting and has_movement_input:  # Only consume sprint ATP if actually moving
-		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting (total: 2+3+6=11 ATP/sec)
+		sprint_atp_consumption = 6.0 * delta  # Additional 6 ATP/sec when sprinting
 
 	var total_atp_consumption = base_atp_consumption + movement_atp_consumption + sprint_atp_consumption
-	attribute_component.metabolism_component.consume_atp(total_atp_consumption)
+	_consume_atp(total_atp_consumption)
 
 	# 2. Glucose-Based ATP Recovery
 	# ATP recovers toward max at a fixed production rate, independent of consumption rate
 	# However, glucose is still consumed based on the conversion rate
-	if attribute_component.metabolism_component.get_current_atp() < attribute_component.metabolism_component.get_max_atp():
-		# Use the production rate from metabolism component for recovery
-		var atp_needed = attribute_component.metabolism_component.get_max_atp() - attribute_component.metabolism_component.get_current_atp()
-		var atp_to_recover = min(attribute_component.metabolism_component.atp_production_rate * delta, atp_needed)
+	if _get_current_atp() < _get_max_atp():
+		# Use the production rate for recovery
+		var atp_needed = _get_max_atp() - _get_current_atp()
+		var atp_to_recover = min(_get_atp_production_rate() * delta, atp_needed)
 		
 		# Calculate the glucose cost for that much ATP
-		var conversion_rate = attribute_component.metabolism_component.get_atp_conversion_rate()
+		var conversion_rate = _get_atp_conversion_rate()
 		if conversion_rate > 0:
 			var glucose_for_atp = atp_to_recover / conversion_rate
-			var current_glucose = attribute_component.metabolism_component.get_current_glucose()
+			var current_glucose = _get_current_glucose()
 			
 			# Check if we have enough glucose
 			if current_glucose >= glucose_for_atp:
-				attribute_component.metabolism_component.consume_glucose(glucose_for_atp)
-				attribute_component.metabolism_component.recover_atp(atp_to_recover)
+				_consume_glucose(glucose_for_atp)
+				_recover_atp(atp_to_recover)
 			elif current_glucose > 0:
 				# Not enough glucose - recover what we can with remaining glucose
 				var partial_atp = current_glucose * conversion_rate
-				attribute_component.metabolism_component.consume_glucose(current_glucose)
-				attribute_component.metabolism_component.recover_atp(partial_atp)
+				_consume_glucose(current_glucose)
+				_recover_atp(partial_atp)
 
 	# 3. Basal Metabolic Rate (minimal glucose consumption for basic cellular functions)
 	# This continues even when ATP is full, representing basic cellular maintenance
-	var basal_glucose_cost = attribute_component.metabolism_component.get_glucose_consume_rate() * delta * 0.3  # Reduced to 30% of original rate
-	if attribute_component.metabolism_component.get_current_glucose() > 0:
-		attribute_component.metabolism_component.consume_glucose(basal_glucose_cost)
+	var basal_glucose_cost = _get_glucose_consume_rate() * delta * 0.3  # Reduced to 30% of original rate
+	if _get_current_glucose() > 0:
+		_consume_glucose(basal_glucose_cost)
 	
 	# 4. ATP Depletion Damage (damages current health when ATP stays at 0)
 	# This damage does NOT auto-recover, but can be healed with healing items
-	if attribute_component.metabolism_component.get_current_atp() < ATP_DEPLETION_THRESHOLD:
+	if _get_current_atp() < ATP_DEPLETION_THRESHOLD:
 		atp_depletion_timer += delta
 		
 		# Apply HP damage at intervals
 		if atp_depletion_timer >= ATP_DEPLETION_DAMAGE_INTERVAL:
 			# Damage current health only if we have more than 1 HP
-			var current_hp = attribute_component.health_component.get_current_health()
+			var current_hp = _get_current_health()
 			if current_hp > 1:
 				# Reduce current_health (not max_health!)
 				# This damage doesn't auto-recover but can be healed with healing items
 				var new_current_health = max(current_hp - ATP_DEPLETION_DAMAGE_AMOUNT, 1)
-				attribute_component.health_component.set_current_health(new_current_health)
+				_set_current_health(new_current_health)
 			
 			# Reset timer, preserving fractional time for precise timing
 			atp_depletion_timer = fmod(atp_depletion_timer, ATP_DEPLETION_DAMAGE_INTERVAL)
@@ -320,8 +526,7 @@ func _handle_combat_input():
 func _on_dodge_started():
 	"""Called when dodge starts"""
 	# Set invincibility on health component
-	if attribute_component and attribute_component.health_component:
-		attribute_component.health_component.set_invincible(true)
+	_set_invincible(true)
 	
 	# Emit global event
 	EventBus.player_dodge_started.emit(self)
@@ -334,8 +539,7 @@ func _on_dodge_ended():
 func _on_invincibility_ended():
 	"""Called when invincibility ends (called by DodgeComponent)"""
 	# Remove invincibility from health component
-	if attribute_component and attribute_component.health_component:
-		attribute_component.health_component.set_invincible(false)
+	_set_invincible(false)
 	GameLogger.debug("player", "Invincibility ended")
 	# Emit global event
 	EventBus.player_dodge_ended.emit(self)

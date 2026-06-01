@@ -31,6 +31,8 @@ ItemUseService="*res://systems/item_use_service.gd"
 QuestManager="*res://systems/quest_manager.gd"
 DialogueManager="*res://systems/dialogue_manager.gd"
 TTSManager="*res://systems/tts_manager.gd"
+ServiceRegistry="*res://systems/core/service_registry.gd"
+Bootstrap="*res://systems/core/bootstrap.gd"
 
 [gui]
 

@@ -19,7 +19,7 @@ extends CanvasLayer
 @onready var boss_health_value: Label = $BossInfoContainer/VBoxContainer/BossHealthBar/BossHealthValue
 
 var player: Actor = null
-var vehicle: Node = null
+var vehicle: Vehicle = null
 
 func _update_tank_status():
 	# Try to find a vehicle the player is in

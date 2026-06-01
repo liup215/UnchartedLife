@@ -44,14 +44,34 @@ func set_runtime_state(rs: ActorRuntimeState) -> void:
 			comp.set_runtime_state(rs)
 
 # ATP delegation (used by combat, dodge, and item systems)
+# During Wave 2 migration: prefer StatSystem if the actor has an entity_id.
+func _get_actor_entity_id() -> int:
+	# AttributeComponent's parent should be the Actor (CharacterBody2D)
+	var parent = get_parent()
+	if parent and parent.get("entity_id"):
+		return int(parent.entity_id)
+	return -1
+
 func get_current_atp() -> float:
+	var eid: int = _get_actor_entity_id()
+	if eid >= 0:
+		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		if stat_system:
+			return stat_system.get_stat_value(eid, "atp", 0.0)
 	if metabolism_component:
 		return metabolism_component.get_current_atp()
 	return 0.0
 
 func consume_atp(amount: float) -> bool:
+	var eid: int = _get_actor_entity_id()
+	if eid >= 0:
+		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		if pool_system:
+			pool_system.consume(eid, "atp", amount)
+	# Always write to old system to trigger signals
 	if metabolism_component:
-		return metabolism_component.consume_atp(amount)
+		metabolism_component.consume_atp(amount)
+		return true
 	return false
 
 # 批量存档

@@ -28,6 +28,10 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 ## Mutable runtime state for this actor instance. Not a Resource; never saved to .tres.
 var runtime_state: ActorRuntimeState = ActorRuntimeState.new()
 
+## NEW: Entity ID for the new ECS-lite architecture.
+## All systems reference this actor by entity_id instead of node references.
+var entity_id: int = -1
+
 var last_direction: Vector2 = Vector2.DOWN
 # 不再直接持有weapon_components，由combat组件管理
 
@@ -49,19 +53,20 @@ func _ready():
 		if visuals and actor_data.sprite_scale != Vector2.ZERO:
 			visuals.scale = actor_data.sprite_scale
 
-		# 动态设置碰撞半径
-		if has_node("CollisionShape2D") and actor_data.has_method("get_collision_radius"):
-			var shape = get_node("CollisionShape2D").shape
+		# Dynamically set collision radius
+		var collision_shape: CollisionShape2D = $CollisionShape2D
+		if collision_shape and actor_data.has_method("get_collision_radius"):
+			var shape: Shape2D = collision_shape.shape
 			if shape and shape.has_method("set_radius"):
 				shape.set_radius(actor_data.get_collision_radius())
 		
-		# 动态加载战斗组件和武器 (runtime_state holds current equipment)
+		# Dynamically load combat component and weapons
 		actor_combat_component.set_actor_data(actor_data, runtime_state.equipped_weapons)
 
 		# Initialize inventory component
 		inventory_component.set_data(actor_data)
 		
-		# Initialize AI controller if present
+		# Initialize AI controller if present using unique_name
 		if ai_controller:
 			ai_controller.set_behaviors(actor_data.behaviors)
 		
@@ -76,6 +81,8 @@ func _ready():
 		if attribute_component.toughness_component:
 			attribute_component.toughness_component.stagger_started.connect(_on_stagger_started)
 			attribute_component.toughness_component.stagger_ended.connect(_on_stagger_ended)
+		# --- NEW: Register actor in the ECS-lite architecture ---
+		_register_in_ecs()
 	else:
 		printerr("Actor _ready() called, but no ActorData was assigned.")
 
@@ -210,8 +217,9 @@ func _show_damage_number(amount: int):
 func _on_death():
 	actor_died.emit()
 	
-	if has_node("CollisionShape2D"):
-		get_node("CollisionShape2D").set_deferred("disabled", true)
+	var collision_shape: CollisionShape2D = $CollisionShape2D
+	if collision_shape:
+		collision_shape.set_deferred("disabled", true)
 	
 	var tween = create_tween()
 	tween.set_parallel()
@@ -257,3 +265,52 @@ func _play_stagger_flash_effect():
 	tween.set_loops(3)
 	tween.tween_property(visuals, "modulate:a", 0.3, 0.2)
 	tween.tween_property(visuals, "modulate:a", 1.0, 0.2)
+
+# --- NEW: ECS-lite Registration ---
+
+func _register_in_ecs() -> void:
+	"""Register this actor in the new EntityManager and StatSystem."""
+	var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+	if entity_manager == null:
+		# ServiceRegistry not ready yet (Bootstrap hasn't run)
+		# Retry next frame via _process
+		return
+	
+	if entity_id >= 0:
+		return  # Already registered
+	
+	entity_id = entity_manager.register_entity(self, actor_data)
+	
+	# Register in StatSystem using the actor's data
+	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	if stat_system and actor_data:
+		var stat_defs = actor_data.create_stat_sheet()
+		for stat_def in stat_defs:
+			if stat_def is StatDefinition:
+				stat_system.add_stat(entity_id, stat_def)
+	
+	# Register in ResourcePoolSystem
+	var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+	if pool_system:
+		pool_system.register_entity(entity_id)
+	
+	# Sync old HealthComponent current value to new StatSystem
+	if health_component:
+		_reconcile_to_new_stat_system()
+
+func _reconcile_to_new_stat_system() -> void:
+	"""One-way sync: old component values -> new StatSystem. New system is authoritative during transition."""
+	if entity_id < 0:
+		return
+	
+	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	if stat_system:
+		stat_system.set_stat_value(entity_id, "health", float(health_component.current_health))
+		stat_system.set_stat_value(entity_id, "toughness", float(attribute_component.toughness_component.current_toughness))
+		stat_system.set_stat_value(entity_id, "atp", float(attribute_component.metabolism_component.current_atp))
+		stat_system.set_stat_value(entity_id, "glucose", float(attribute_component.metabolism_component.current_glucose))
+
+func _process(delta: float) -> void:
+	# Retry ECS registration if Bootstrap was not ready during _ready
+	if entity_id < 0:
+		_register_in_ecs()

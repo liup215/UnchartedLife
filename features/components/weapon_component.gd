@@ -21,6 +21,10 @@ func _ready():
 	EventBus.quiz_completed.connect(_on_quiz_completed)
 	setup_weapon()
 
+func _exit_tree() -> void:
+	if EventBus.quiz_completed.is_connected(_on_quiz_completed):
+		EventBus.quiz_completed.disconnect(_on_quiz_completed)
+
 func setup_weapon():
 	if item_data:
 		GameLogger.debug("weapon", "Setting up weapon: %s" % item_data.item_name)
@@ -51,7 +55,14 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	var target_pos = p_target_pos
 
 	if target_pos == Vector2.ZERO:
-		target_pos = get_global_mouse_position()
+		# Delegate aim target resolution to TargetResolverSystem (Wave 3).
+		# WeaponComponent should NEVER call get_global_mouse_position().
+		var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+		if target_resolver:
+			target_pos = target_resolver.get_player_aim_target_world()
+		else:
+			# Fallback during boot transition only.
+			target_pos = get_global_mouse_position()
 	var origin_pos = global_position
 	
 	# Get shooter reference (parent actor)
@@ -83,7 +94,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 		# Emit fire signal
 		emit_signal("weapon_fired", item_data, 1)
 	else: # SUB_WEAPON
-		# 副炮发射子弹
+		# Secondary weapon fires bullets
 		emit_signal("weapon_fired", item_data, 1)
 	
 	# Call the weapon_data's fire method, passing shooter reference

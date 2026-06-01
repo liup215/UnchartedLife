@@ -63,8 +63,6 @@ var combo_reset_time: float:
 		if combo_system:
 			combo_system.combo_reset_time = value
 
-# Preserved for full backward compatibility (was declared in original but unused)
-var heavy_charge_level: int = 0
 
 signal combat_action_performed(action_type: String, energy_cost: float)
 signal combo_updated(combo_count: int, combo_stage: int)
@@ -100,6 +98,13 @@ func _ready():
 		charge_component.charge_level_up.connect(_on_charge_level_up)
 
 	hit_damage_calculator.configure(actor_weapons, charge_component, heavy_attack_system, combo_system)
+
+func _exit_tree() -> void:
+	if charge_component:
+		if charge_component.charge_changed.is_connected(_on_charge_changed):
+			charge_component.charge_changed.disconnect(_on_charge_changed)
+		if charge_component.charge_level_up.is_connected(_on_charge_level_up):
+			charge_component.charge_level_up.disconnect(_on_charge_level_up)
 
 func set_actor_data(data: ActorData, initial_weapons: Array[ItemData] = []):
 	data_source = data
@@ -149,17 +154,28 @@ func add_actor_weapon(weapon_component) -> bool:
 
 func remove_actor_weapon(index: int) -> bool:
 	if index >= 0 and index < actor_weapons.size():
+		_disconnect_weapon_signals(actor_weapons[index])
 		actor_weapons.remove_at(index)
 		return true
 	return false
 
-func _connect_weapon_signals(weapon_component):
+func _connect_weapon_signals(weapon_component) -> void:
 	if weapon_component and weapon_component.has_signal("weapon_fired"):
 		weapon_component.weapon_fired.connect(_on_weapon_fired)
 	if weapon_component and weapon_component.has_signal("charge_updated"):
 		weapon_component.charge_updated.connect(_on_weapon_charge_updated)
 	if weapon_component and weapon_component.has_signal("ammo_updated"):
 		weapon_component.ammo_updated.connect(_on_weapon_ammo_updated)
+
+func _disconnect_weapon_signals(weapon_component) -> void:
+	if not weapon_component:
+		return
+	if weapon_component.has_signal("weapon_fired") and weapon_component.weapon_fired.is_connected(_on_weapon_fired):
+		weapon_component.weapon_fired.disconnect(_on_weapon_fired)
+	if weapon_component.has_signal("charge_updated") and weapon_component.charge_updated.is_connected(_on_weapon_charge_updated):
+		weapon_component.charge_updated.disconnect(_on_weapon_charge_updated)
+	if weapon_component.has_signal("ammo_updated") and weapon_component.ammo_updated.is_connected(_on_weapon_ammo_updated):
+		weapon_component.ammo_updated.disconnect(_on_weapon_ammo_updated)
 
 func _on_weapon_fired(_weapon_data: ItemData, _charge_level: int):
 	GameLogger.debug("combat", "Weapon fired: %s Charge Level: %d" % [(_weapon_data.item_name if _weapon_data else "Unknown Weapon"), _charge_level])
@@ -177,7 +193,6 @@ func fire_actor_weapons(target_pos: Vector2 = Vector2.ZERO):
 	for weapon in actor_weapons:
 		GameLogger.debug("combat", "Firing actor weapon: %s" % (weapon.item_data.item_name if weapon.item_data else "Unknown Weapon"))
 		weapon.fire(weapon_effect, target_pos)
-		await get_tree().create_timer(0.2).timeout
 	emit_signal("weapons_fired", "actor", actor_weapons.size(), 1)
 	emit_signal("combat_action_performed", "actor_attack", 10)
 
@@ -201,10 +216,30 @@ func perform_light_attack():
 		return
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
-	var target_pos = get_global_mouse_position()
+	# Target resolution delegated to TargetResolverSystem (Wave 3).
+	# This is the SINGLE authority for all aiming in the game.
+	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_pos := Vector2.ZERO
+	if target_resolver:
+		target_pos = target_resolver.get_player_aim_target_world()
+	else:
+		# Fallback: direct mouse position (should only happen during boot)
+		target_pos = get_global_mouse_position()
 	weapon.fire(weapon_effect, target_pos)
-	if get_parent() and get_parent().has_method("play_combat_animation"):
-		get_parent().play_combat_animation(combo_data.animation_name)
+	# Wave 6: Animation playback delegated to AnimationSystem via CommandBus
+	var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+	if entity_manager:
+		var entity_id = entity_manager.get_entity_id(get_parent()) if get_parent() else -1
+		if entity_id >= 0:
+			var animation_system: AnimationSystem = ServiceRegistry.get_service("AnimationSystem")
+			if animation_system:
+				animation_system.register_entity_animator(entity_id, get_parent())
+			CommandBus.issue(CommandBus.create_command(CommandBus.CommandType.PLAY_ANIMATION, {
+				"animation_name": combo_data.animation_name,
+				"caller": "ActorCombatComponent.perform_light_attack"
+			}, entity_id))
+		elif get_parent() and get_parent().has_method("play_combat_animation"):
+			get_parent().play_combat_animation(combo_data.animation_name)
 	combo_system.plan_reset_timer(weapon_data, combo_data, get_tree(), reset_combo)
 	emit_signal("weapons_fired", "light_attack", 1, combo_system.combo_stage + 1)
 	emit_signal("combat_action_performed", "light_attack", total_atp_cost)
@@ -226,7 +261,6 @@ func _perform_simple_light_attack():
 		if i < actor_weapons.size() and actor_weapons[i]:
 			GameLogger.debug("combat", "Firing secondary weapon: %s" % weapon_effect)
 			actor_weapons[i].fire(weapon_effect)
-		await get_tree().create_timer(0.2).timeout
 	if combo_system.combo_counter >= actor_weapons.size():
 		combo_system.reset_combo()
 	emit_signal("weapons_fired", "secondary", weapons_to_fire, 1)
@@ -271,16 +305,31 @@ func release_heavy_attack():
 	if attribute_component:
 		attribute_component.consume_atp(total_atp_cost)
 	heavy_attack_system.last_heavy_charge = effective_charge
-	var target_pos = get_global_mouse_position()
+	# Target resolution delegated to TargetResolverSystem (Wave 3).
+	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_pos := Vector2.ZERO
+	if target_resolver:
+		target_pos = target_resolver.get_player_aim_target_world()
+	else:
+		target_pos = get_global_mouse_position()
 	weapon.fire(weapon_effect, target_pos)
-	if get_parent() and get_parent().has_method("play_combat_animation"):
-		get_parent().play_combat_animation(heavy_data.animation_name)
+	# Wave 6: Animation playback delegated to AnimationSystem via CommandBus
+	var entity_manager2: EntityManager = ServiceRegistry.get_service("EntityManager")
+	if entity_manager2:
+		var entity_id2 = entity_manager2.get_entity_id(get_parent()) if get_parent() else -1
+		if entity_id2 >= 0:
+			CommandBus.issue(CommandBus.create_command(CommandBus.CommandType.PLAY_ANIMATION, {
+				"animation_name": heavy_data.animation_name,
+				"caller": "ActorCombatComponent.release_heavy_attack"
+			}, entity_id2))
+		elif get_parent() and get_parent().has_method("play_combat_animation"):
+			get_parent().play_combat_animation(heavy_data.animation_name)
 	var charge_for_signals = int(ceil(effective_charge))
 	emit_signal("heavy_attack_performed", charge_for_signals, heavy_data)
 	emit_signal("weapons_fired", "heavy_attack", 1, charge_for_signals)
 	emit_signal("combat_action_performed", "heavy_attack", total_atp_cost)
 	charge_component.reset_charge()
-	await get_tree().create_timer(heavy_data.recovery_time).timeout
+	# NOTE: Recovery time handled by caller/state machine to avoid await in _physics_process path
 
 func on_enemy_hit(target: Node, base_weapon_damage: float):
 	if hit_damage_calculator:

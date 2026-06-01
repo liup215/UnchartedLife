@@ -23,6 +23,7 @@ class_name Vehicle
 var occupied: bool = false
 var driver: Node2D = null
 var player_camera: Camera2D = null
+var movement_component: VehicleMovementComponent = null
 
 # Map binding - vehicles are tied to specific maps
 # If empty, vehicle is available on all maps
@@ -61,6 +62,15 @@ func _ready():
 		movement_component.stats_component = stats_component
 		movement_component.animated_sprite = _animated_sprite
 		add_child(movement_component)
+
+func _exit_tree() -> void:
+	if EventBus.map_changed.is_connected(_on_map_changed):
+		EventBus.map_changed.disconnect(_on_map_changed)
+	if interaction_area:
+		if interaction_area.body_entered.is_connected(_on_body_entered):
+			interaction_area.body_entered.disconnect(_on_body_entered)
+		if interaction_area.body_exited.is_connected(_on_body_exited):
+			interaction_area.body_exited.disconnect(_on_body_exited)
 
 # Input component for vehicle (assigned by Player when entering vehicle)
 var input_component: PlayerInputComponent = null

@@ -143,39 +143,58 @@ A focused bug-fixing session resolved multiple startup and runtime errors discov
 
 3. **Cleaned `.godot` cache**: Deleted and regenerated the entire `.godot` uid_cache folder to fix invalid UID references (base_actor.tscn not in cache).
 
+
+### June 2026 — Player System Decoupling (Waves 1-6)
+
+A large-scale architectural refactor to remove Player.gd as a "God Script" and replace tight coupling with an ECS-lite + Command Bus architecture.
+
+#### Wave 1: Infrastructure
+- **EntityManager**: `int entity_id` -> Node/component registry
+- **ServiceRegistry**: Central service lookup (replaces direct singleton access)
+- **CommandBus**: Serializable command pipeline with validators + executors
+- **TickSystem**: Priority-sorted frame tick pipeline
+- **Bootstrap**: Central system initialization
+
+#### Wave 2: Stat System
+- **StatSystem**: Central authority for ALL entity stats (HP, ATP, glucose, speed, toughness, attack, defense)
+- **ResourcePoolSystem**: High-level semantic API on top of StatSystem (consume/recover/has_enough + signals)
+- **StatModifier**: Pure data additive/multiplicative/override/min/max modifiers with duration
+- **Dual-Write Compatibility Layer**: Old component reads query StatSystem first; writes sync to StatSystem while preserving old signals for HUD
+
+#### Wave 3: Combat Pipeline
+- **TargetResolverSystem**: SINGLE authority for all aiming. Only system allowed to call `get_global_mouse_position()`
+- **WeaponSystem**: Global weapon data authority (entity_id -> equipped weapons array)
+- **ChargeSystem**: Pure data-driven charge state per entity+weapon (replaces node-based ChargeComponent)
+- **DamagePipeline**: Encapsulates full damage flow as pure function
+- **CombatCommandHandler**: Bridges ATTACK/CHARGE/RELOAD commands -> ActorCombatComponent
+
+#### Wave 4: Input & State Machine
+- **InputCommandSystem**: SINGLE authority for reading raw Input. Converts all discrete actions to CommandBus commands
+- **PlayerStateMachine**: Replaces PlayerState enum. States: ON_FOOT, IN_VEHICLE. Combat states: NORMAL, DODGING, STAGGERED, CHARGING, ATTACKING
+- **DodgeCommandHandler**: Bridges DODGE_REQUEST -> DodgeComponent with PlayerStateMachine validation
+
+#### Wave 5: Metabolism Extraction
+- **MetabolismSystem**: Central authority for ALL biological energy processing. Operates on all registered entities via per-frame tick
+- Player.gd no longer contains ATP/glucose math
+- All entity context (moving/sprinting/in_vehicle) registered with MetabolismSystem
+
+#### Wave 6: Visual & Vehicle Decoupling
+- **AnimationSystem**: Central authority for animation playback. Consumes PLAY_ANIMATION commands
+- **VehicleCommandHandler**: Bridges INTERACT_REQUEST -> Player vehicle logic
+- ActorCombatComponent animation calls routed through AnimationSystem via CommandBus
+
+#### Remaining for Wave 7 (Final Cleanup)
+- Remove AttributeComponent, HealthComponent, MetabolismComponent, SpeedComponent, ToughnessComponent, ChargeComponent
+- Migrate HUD to StatSystem/ResourcePoolSystem signals directly
+- Update SaveManager to persist StatSystem state
+- Remove all compatibility fallbacks from Actor.gd, Player.gd, DodgeComponent
+- Delete `_handle_combat_input()` from Player.gd (superseded by CombatCommandHandler)
+- Remove old `_process_metabolism()` and `_process_basal_metabolism()` from Player.gd
+
 ## Next Steps
-- **BioBlitz Enhancement:**
-  - Expand question bank with diverse biology topics
-  - Add different question types (multiple choice, fill-in-blank, matching)
-  - Implement difficulty progression
-  - Add hints system tied to ATP cost
-
-- **Biology Content Integration:**
-  - Create educational tooltips for all biological systems
-  - Design biology-themed enemies (viruses, bacteria, mutated cells)
-  - Build ecology restoration mini-game
-  - Implement genetic modification lab interface
-
-- **Vehicle Bionic Modifications:**
-  - Create bionic modification system based on animal adaptations
-  - Each modification teaches evolutionary biology concepts
-  - Visual representation of modifications on vehicle
-
-- **Combat System Polish:**
-  - Balance combo progression and charge levels
-  - Tune toughness/stagger mechanics
-  - Add more visual effects for combat feedback
-  - Create weapon-specific combo animations
-  - Implement elemental damage type effectiveness
-
-- **Map & Level Design:**
-  - Create additional maps with distinct biomes
-  - Design portal/transition systems between maps
-  - Add map-specific enemies and challenges
-  - Implement minimap and map discovery system
-
-- **Performance & Polish:**
-  - Profile combat system performance
-  - Optimize damage calculation for large battles
-  - Add audio feedback for combat actions
-  - Improve visual effects and screen shake
+- **Wave 7 Final Cleanup**: Remove all legacy components and fallbacks
+- **BioBlitz Enhancement**: Expand question bank, add new question types, difficulty progression
+- **Biology Content Integration**: Educational tooltips, biology-themed enemies, ecology mini-games
+- **Vehicle Bionic Modifications**: Animal adaptation-based modification system
+- **Combat System Polish**: Balance tuning, visual effects, elemental damage
+- **Map & Level Design**: Additional biome maps, portal systems, minimap

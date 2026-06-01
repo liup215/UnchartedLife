@@ -69,6 +69,124 @@ class_name ActorData
 ## Key: Container Name (String), Value: InventoryData Resource Path (String)
 @export var inventory_config: Dictionary[String, InventoryData] = {}
 
+## Generate stat definitions from this actor data for the new StatSystem.
+## This bridges the old Resource-driven approach to the new ECS-lite stat system.
+func create_stat_sheet() -> Array[StatDefinition]:
+	var stats: Array[StatDefinition] = []
+	
+	# --- Resource Pools (stats with current/max pairs) ---
+	var health := StatDefinition.new()
+	health.stat_id = "health"
+	health.base_value = max_health
+	health.min_value = 0.0
+	health.max_value = max_health
+	health.is_resource_pool = true
+	health.description = "Current health points"
+	stats.append(health)
+	
+	var max_hp := StatDefinition.new()
+	max_hp.stat_id = "max_health"
+	max_hp.base_value = max_health
+	max_hp.min_value = 1.0
+	stats.append(max_hp)
+	
+	var atp := StatDefinition.new()
+	atp.stat_id = "atp"
+	atp.base_value = max_atp
+	atp.min_value = 0.0
+	atp.max_value = max_atp
+	atp.is_resource_pool = true
+	stats.append(atp)
+	
+	var max_atp_def := StatDefinition.new()
+	max_atp_def.stat_id = "max_atp"
+	max_atp_def.base_value = max_atp
+	max_atp_def.min_value = 1.0
+	stats.append(max_atp_def)
+	
+	var glucose := StatDefinition.new()
+	glucose.stat_id = "glucose"
+	glucose.base_value = max_glucose
+	glucose.min_value = 0.0
+	glucose.max_value = max_glucose
+	glucose.is_resource_pool = true
+	stats.append(glucose)
+	
+	var max_glucose_def := StatDefinition.new()
+	max_glucose_def.stat_id = "max_glucose"
+	max_glucose_def.base_value = max_glucose
+	max_glucose_def.min_value = 1.0
+	stats.append(max_glucose_def)
+	
+	var toughness := StatDefinition.new()
+	toughness.stat_id = "toughness"
+	toughness.base_value = max_toughness
+	toughness.min_value = 0.0
+	toughness.max_value = max_toughness
+	toughness.is_resource_pool = true
+	stats.append(toughness)
+	
+	var max_toughness_def := StatDefinition.new()
+	max_toughness_def.stat_id = "max_toughness"
+	max_toughness_def.base_value = max_toughness
+	max_toughness_def.min_value = 1.0
+	stats.append(max_toughness_def)
+	
+	# --- Non-pool stats ---
+	var speed := StatDefinition.new()
+	speed.stat_id = "speed"
+	speed.base_value = base_speed
+	speed.min_value = 0.0
+	stats.append(speed)
+	
+	var attack := StatDefinition.new()
+	attack.stat_id = "base_attack"
+	attack.base_value = base_attack
+	stats.append(attack)
+	
+	var defense := StatDefinition.new()
+	defense.stat_id = "base_defense"
+	defense.base_value = base_defense
+	stats.append(defense)
+	
+	var neural := StatDefinition.new()
+	neural.stat_id = "neural_response_speed"
+	neural.base_value = neural_response_speed
+	stats.append(neural)
+	
+	var muscle := StatDefinition.new()
+	muscle.stat_id = "muscle_coordination"
+	muscle.base_value = muscle_coordination
+	stats.append(muscle)
+	
+	var collision := StatDefinition.new()
+	collision.stat_id = "collision_radius"
+	collision.base_value = collision_radius
+	stats.append(collision)
+	
+	# --- Metabolic configuration stats (not pools, but config values) ---
+	var atp_consume := StatDefinition.new()
+	atp_consume.stat_id = "atp_consume_rate"
+	atp_consume.base_value = atp_consume_rate
+	stats.append(atp_consume)
+	
+	var glucose_consume := StatDefinition.new()
+	glucose_consume.stat_id = "glucose_consume_rate"
+	glucose_consume.base_value = glucose_consume_rate
+	stats.append(glucose_consume)
+	
+	var atp_produce := StatDefinition.new()
+	atp_produce.stat_id = "atp_production_rate"
+	atp_produce.base_value = atp_production_rate
+	stats.append(atp_produce)
+	
+	var atp_conv := StatDefinition.new()
+	atp_conv.stat_id = "atp_conversion_rate"
+	atp_conv.base_value = atp_conversion_rate
+	stats.append(atp_conv)
+	
+	return stats
+
 # Template serialization (runtime fields are managed by ActorRuntimeState)
 func to_dict() -> Dictionary:
 	var animations_paths: Array[String] = []

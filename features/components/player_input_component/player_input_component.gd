@@ -54,8 +54,14 @@ func _process(_delta: float):
 	elif Input.is_action_pressed("turn_left"):
 		vehicle_turn_input = -1
 	
-	# Aim target
-	aim_target = get_global_mouse_position()
+	# Aim target - Wave 3: Delegate to TargetResolverSystem
+	# PlayerInputComponent is the ONLY place in the input layer that queries mouse position.
+	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	if target_resolver:
+		aim_target = target_resolver.get_player_aim_target_world()
+	else:
+		# Fallback during boot transition
+		aim_target = get_global_mouse_position()
 
 ## Reset transient one-shot flags after they have been consumed.
 func consume_transient_intents():

@@ -86,10 +86,22 @@ func on_enemy_hit(attacker: Node, target: Node, base_weapon_damage: float) -> vo
 	if target.has_method("take_damage"):
 		target.take_damage(int(final_damage))
 
-	if target.has_node("AttributeComponent"):
-		var target_attr: AttributeComponent = target.get_node("AttributeComponent")
-		if target_attr.toughness_component:
-			target_attr.toughness_component.apply_toughness_damage(toughness_damage, stagger_power)
+	if target is Actor:
+		var target_actor := target as Actor
+		# NEW: Prefer new StatSystem if entity is registered, else fallback to old component
+		if target_actor.entity_id >= 0:
+			var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+			if stat_system:
+				stat_system.modify_current(target_actor.entity_id, "toughness", -toughness_damage)
+				var toughness_val: float = stat_system.get_stat_current(target_actor.entity_id, "toughness")
+				if toughness_val <= stat_system.get_stat_value(target_actor.entity_id, "stagger_threshold", 0.0):
+					# Trigger stagger via old component bridge for now
+					if target_actor.attribute_component and target_actor.attribute_component.toughness_component:
+						target_actor.attribute_component.toughness_component.apply_toughness_damage(0.001, stagger_power)
+						return
+		# Fallback to old system during transition
+		if target_actor.attribute_component and target_actor.attribute_component.toughness_component:
+			target_actor.attribute_component.toughness_component.apply_toughness_damage(toughness_damage, stagger_power)
 
 	if weapon_data.light_attacks_build_charge:
 		var progress_gain: float = charge_gain * 20.0

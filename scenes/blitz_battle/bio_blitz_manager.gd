@@ -53,7 +53,18 @@ func _ready() -> void:
 		var boss_name = "Boss"
 		if boss.actor_data and "actor_name" in boss.actor_data:
 			boss_name = boss.actor_data.actor_name
-		game_hud.show_boss_health(boss_name, boss.attribute_component.health_component.get_current_health(), boss.attribute_component.health_component.get_max_health())
+		# NEW: Prefer StatSystem for boss health read (Wave 2 migration)
+		var current_hp: int = 0
+		var max_hp: int = 1
+		if boss.entity_id >= 0:
+			var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+			if stat_system:
+				current_hp = int(stat_system.get_stat_current(boss.entity_id, "health"))
+				max_hp = int(stat_system.get_stat_value(boss.entity_id, "max_health", 1.0))
+		else:
+			current_hp = boss.attribute_component.health_component.get_current_health()
+			max_hp = boss.attribute_component.health_component.get_max_health()
+		game_hud.show_boss_health(boss_name, current_hp, max_hp)
 		boss.actor_health_changed.connect(func(current, max_hp): game_hud.update_boss_health(current, max_hp))
 		boss.actor_died.connect(_on_boss_died)
 
