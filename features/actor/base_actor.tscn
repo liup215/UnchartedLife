@@ -1,35 +1,38 @@
-[gd_scene load_steps=7 format=3 uid="uid://d3e4f5g6h7i8j"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://d3ifpac5jqt5u" path="res://features/actor/actor.gd" id="1_actor_script"]
-[ext_resource type="PackedScene" uid="uid://b1x2y3v4a5s6d" path="res://features/components/attribute_component/health_component.tscn" id="2_health_comp"]
-[ext_resource type="PackedScene" uid="uid://vcg10p6kd1ob" path="res://features/components/attribute_component/attribute_component.tscn" id="4_c5xt3"]
-[ext_resource type="PackedScene" uid="uid://cxisxun04ixka" path="res://features/components/inventory_component/inventory_component.tscn" id="5_bq51l"]
-[ext_resource type="PackedScene" uid="uid://df1grkhu8bf5u" path="res://features/components/combat_component/actor_combat_component.tscn" id="5_g21jm"]
-
-[ext_resource type="Script" uid="uid://50cb304677354323a068cb3d500acde4" path="res://features/components/ai_controller_component/ai_controller_component.gd" id="6_ai_ctrl"]
+[ext_resource type="PackedScene" path="res://features/components/attribute_component/health_component.tscn" id="2_health_comp"]
+[ext_resource type="Script" path="res://features/components/attribute_component/health_component.gd" id="2_v200k"]
+[ext_resource type="PackedScene" path="res://features/components/attribute_component/attribute_component.tscn" id="4_c5xt3"]
+[ext_resource type="Script" path="res://features/components/attribute_component/attribute_component.gd" id="4_uk0hn"]
+[ext_resource type="PackedScene" path="res://features/components/inventory_component/inventory_component.tscn" id="5_bq51l"]
+[ext_resource type="PackedScene" path="res://features/components/combat_component/actor_combat_component.tscn" id="5_g21jm"]
+[ext_resource type="Script" path="res://features/components/ai_controller_component/ai_controller_component.gd" id="6_ai_ctrl"]
+[ext_resource type="Script" path="res://features/components/inventory_component/inventory_component.gd" id="7_mniys"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_default"]
 radius = 100.0
 
-[node name="BaseActor" type="CharacterBody2D"]
+[node name="BaseActor" type="CharacterBody2D" unique_id=1099592618]
 collision_layer = 2
 collision_mask = 2
 motion_mode = 1
-script = ExtResource("1_actor_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=511121964]
 unique_name_in_owner = true
 
-[node name="HealthComponent" parent="." instance=ExtResource("2_health_comp")]
+[node name="HealthComponent" type="Node" parent="." unique_id=267062005 instance=ExtResource("2_health_comp")]
+script = ExtResource("2_v200k")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=485950657]
 shape = SubResource("CircleShape2D_default")
 
-[node name="AttributeComponent" parent="." instance=ExtResource("4_c5xt3")]
+[node name="AttributeComponent" type="Node2D" parent="." unique_id=1434079022 instance=ExtResource("4_c5xt3")]
+script = ExtResource("4_uk0hn")
 
-[node name="ActorCombatComponent" parent="." instance=ExtResource("5_g21jm")]
+[node name="ActorCombatComponent" type="Node2D" parent="." unique_id=2042237753 instance=ExtResource("5_g21jm")]
 
-[node name="InventoryComponent" parent="." instance=ExtResource("5_bq51l")]
+[node name="InventoryComponent" type="Node2D" parent="." unique_id=144807234 instance=ExtResource("5_bq51l")]
+script = ExtResource("7_mniys")
 
-[node name="AIControllerComponent" type="Node" parent="."]
+[node name="AIControllerComponent" type="Node" parent="." unique_id=401660935]
 script = ExtResource("6_ai_ctrl")

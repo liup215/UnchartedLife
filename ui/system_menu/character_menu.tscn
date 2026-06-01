@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dy2610pxsf1i8"]
 
-[ext_resource type="Script" uid="uid://ji53biyu7dcc" path="res://ui/system_menu/character_menu.gd" id="1_ah6jm"]
+[ext_resource type="Script" uid="uid://srohttcpqojt" path="res://ui/system_menu/character_menu.gd" id="1_ah6jm"]
 [ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="2_theme"]
 
 [node name="characterMenu" type="Control"]
