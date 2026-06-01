@@ -172,28 +172,28 @@ func _on_node_added(node):
 		_on_player_ready(player)
 
 func _on_player_ready(player_node: Actor):
-	# Connect to the player's signals to update the HUD
+	# Connect to the player's new ECS-lite signals for stat changes.
 	player_node.actor_health_changed.connect(_on_player_health_changed)
+	player_node.actor_atp_changed.connect(_on_player_atp_changed)
+	player_node.actor_glucose_changed.connect(_on_player_glucose_changed)
 	
-	# Check if the player has an ATP component before connecting
-	if player_node.has_node("AttributeComponent"):
-		var attribute_component = player_node.get_node("AttributeComponent")
-		attribute_component.metabolism_component.atp_changed.connect(_on_player_atp_changed)
-		attribute_component.metabolism_component.glucose_changed.connect(_on_player_glucose_changed)
-		
-		# Set initial ATP value
-		_on_player_atp_changed(attribute_component.metabolism_component.get_current_atp(), attribute_component.metabolism_component.get_max_atp())
-		
-		# Set initial glucose value
-		_on_player_glucose_changed(attribute_component.metabolism_component.get_current_glucose(), attribute_component.metabolism_component.get_max_glucose())
-	
-	# Set initial health value
-	GameLogger.debug("ui", "Player HUD: Initializing health display")
-	GameLogger.debug("ui", "Player node: %s" % str(player_node))
-	_on_player_health_changed(
-		player_node.attribute_component.health_component.get_current_health(),
-		player_node.attribute_component.health_component.get_max_health()
-	)
+	# Trigger initial update via StatSystem (authoritative) if entity already registered.
+	if player_node.entity_id >= 0:
+		var stat_system = ServiceRegistry.get_service("StatSystem")
+		var eid := player_node.entity_id
+		if stat_system:
+			_on_player_health_changed(
+				int(stat_system.get_stat_current(eid, "health")),
+				int(stat_system.get_stat_value(eid, "health"))
+			)
+			_on_player_atp_changed(
+				stat_system.get_stat_current(eid, "atp"),
+				stat_system.get_stat_value(eid, "atp")
+			)
+			_on_player_glucose_changed(
+				stat_system.get_stat_current(eid, "glucose"),
+				stat_system.get_stat_value(eid, "glucose")
+			)
 	
 	# Update player name
 	if PlayerData:

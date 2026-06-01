@@ -12,7 +12,7 @@ signal resource_recovered(entity_id: int, resource_type: String, amount: float, 
 var _stat_system = null
 
 func _ready() -> void:
-	_stat_system = ServiceRegistry.get_service("stat_system") as StatSystem
+	_stat_system = ServiceRegistry.get_service("StatSystem")
 	if _stat_system:
 		_stat_system.stat_changed.connect(_on_stat_changed)
 

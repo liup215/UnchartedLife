@@ -5,10 +5,12 @@ extends CharacterBody2D
 
 class_name Actor
 
-# Signals
+# Signals (for external UI/GameLogic consumption)
 signal actor_health_changed(current_health: int, max_health: int)
+signal actor_atp_changed(current_atp: float, max_atp: float)
+signal actor_glucose_changed(current_glucose: float, max_glucose: float)
 signal actor_died()
-signal inventory_item_added(item_data: ItemData) # Example for future use
+signal inventory_item_added(item_data: ItemData)
 
 # @onready var atp_component: ATPComponent = $ATPComponent
 @onready var attribute_component: AttributeComponent = $AttributeComponent
@@ -33,7 +35,9 @@ var runtime_state: ActorRuntimeState = ActorRuntimeState.new()
 var entity_id: int = -1
 
 var last_direction: Vector2 = Vector2.DOWN
-# 不再直接持有weapon_components，由combat组件管理
+
+## Guard to prevent double-connecting system signals.
+var _system_signals_connected: bool = false
 
 func _ready():
 	# This function is meant to be called by child classes AFTER they have
@@ -70,17 +74,13 @@ func _ready():
 		if ai_controller:
 			ai_controller.set_behaviors(actor_data.behaviors)
 		
-		# Sync components to runtime state (separates template from mutable state)
+		# Sync old components to runtime state (keeps them alive during transition)
 		attribute_component.set_runtime_state(runtime_state)
-		attribute_component.health_component.health_changed.connect(
-			func(current, max_hp): actor_health_changed.emit(current, max_hp)
-		)
-		attribute_component.health_component.died.connect(_on_death)
 		
-		# Connect toughness/stagger signals
-		if attribute_component.toughness_component:
-			attribute_component.toughness_component.stagger_started.connect(_on_stagger_started)
-			attribute_component.toughness_component.stagger_ended.connect(_on_stagger_ended)
+		# Connect new system's stat signals to actor signals (UI bridge)
+		# These signals proxy StatSystem/ResourcePoolSystem changes to the visual layer.
+		_connect_new_system_signals()
+		
 		# --- NEW: Register actor in the ECS-lite architecture ---
 		_register_in_ecs()
 	else:
@@ -88,12 +88,10 @@ func _ready():
 
 func _physics_process(delta: float):
 	# Check if staggered - if so, disable all movement and AI
-	if attribute_component and attribute_component.toughness_component:
-		if attribute_component.toughness_component.is_in_stagger():
-			# Staggered! No movement allowed
-			velocity = Vector2.ZERO
-			move_and_slide()
-			return
+	if _is_staggered():
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	
 	# Delegate AI control to the controller component if available
 	if ai_controller and ai_controller.is_ai_active():
@@ -193,8 +191,14 @@ func play_combat_animation(anim_name: String):
 
 # --- Public API ---
 
-func take_damage(amount: int):
-	attribute_component.health_component.take_damage(amount)
+func take_damage(amount: int) -> void:
+	# Authoritative damage flow goes through StatSystem (DamagePipeline in future).
+	var stat_system = ServiceRegistry.get_service("StatSystem")
+	if stat_system and entity_id >= 0:
+		stat_system.modify_current(entity_id, "health", -float(amount))
+	# Old component kept as child for external compatibility.
+	if attribute_component and attribute_component.health_component:
+		attribute_component.health_component.take_damage(amount)
 	_show_damage_number(amount)
 
 func _show_damage_number(amount: int):
@@ -265,6 +269,32 @@ func _play_stagger_flash_effect():
 	tween.set_loops(3)
 	tween.tween_property(visuals, "modulate:a", 0.3, 0.2)
 	tween.tween_property(visuals, "modulate:a", 1.0, 0.2)
+
+func _connect_new_system_signals() -> void:
+	if _system_signals_connected:
+		return
+	_system_signals_connected = true
+	
+	var stat_system = ServiceRegistry.get_service("StatSystem")
+	if stat_system:
+		stat_system.stat_changed.connect(_on_stat_system_changed)
+	
+	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
+	if pool_system:
+		pool_system.resource_depleted.connect(_on_resource_depleted)
+	
+func _on_stat_system_changed(entity_id: int, stat_id: String, current: float, max_val: float) -> void:
+	if entity_id != self.entity_id:
+		return
+	match stat_id:
+		"health":
+			actor_health_changed.emit(int(current), int(max_val))
+			if current <= 0.0:
+				_on_death()
+		"atp":
+			actor_atp_changed.emit(current, max_val)
+		"glucose":
+			actor_glucose_changed.emit(current, max_val)
 
 # --- NEW: ECS-lite Registration ---
 

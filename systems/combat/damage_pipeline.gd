@@ -108,19 +108,32 @@ func apply_damage_result(attacker: Node, target: Node, result: DamageResult) -> 
 	if not is_instance_valid(target):
 		return
 	
-	# Apply HP damage
-	if target.has_method("take_damage"):
-		target.take_damage(int(result.final_damage))
-	
-	# Apply toughness damage
+	# Apply HP damage through StatSystem (authoritative)
 	if target is Actor:
 		var target_actor := target as Actor
-		if target_actor.attribute_component and target_actor.attribute_component.toughness_component:
-			target_actor.attribute_component.toughness_component.apply_toughness_damage(result.toughness_damage, result.stagger_power)
-		# Trigger stagger if needed via old component bridge
-		if result.should_stagger and target_actor.attribute_component and target_actor.attribute_component.toughness_component:
-			# The apply_toughness_damage already triggers stagger if threshold is crossed
-			pass
+		var eid: int = target_actor.entity_id
+		if eid >= 0:
+			apply_toughness_damage(eid, result.toughness_damage, result.stagger_power)
+			# Apply HP via modify_current
+			var stat_system = ServiceRegistry.get_service("StatSystem")
+			if stat_system:
+				stat_system.modify_current(eid, "health", -result.final_damage)
+		# Old component as fallback
+		if target_actor.has_method("take_damage"):
+			target_actor.take_damage(int(result.final_damage))
+	elif target.has_method("take_damage"):
+		target.take_damage(int(result.final_damage))
 	
 	# Emit hit event
 	EventBus.enemy_hit.emit(target, result.final_damage, result.armor_break, result.stagger_power)
+
+func apply_toughness_damage(entity_id: int, damage: float, stagger_power: float) -> void:
+	var eid = entity_id
+	var stat_system = ServiceRegistry.get_service("StatSystem")
+	if stat_system:
+		var current_toughness = stat_system.get_stat_current(eid, "toughness")
+		var new_toughness = current_toughness - damage
+		stat_system.set_current(eid, "toughness", new_toughness)
+		if new_toughness <= 0:
+			# Stagger! (Notify via CommandBus in future)
+			pass
