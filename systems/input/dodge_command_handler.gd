@@ -13,13 +13,13 @@ func _exit_tree() -> void:
 	CommandBus.remove_executor(CommandBus.CommandType.DODGE_REQUEST, _on_dodge_request)
 
 func _validate_dodge(_command: CommandBus.Command) -> bool:
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	if not psm:
 		return false
 	return psm.can_request_dodge()
 
 func _on_dodge_request(_command: CommandBus.Command) -> void:
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	if not psm or not psm.player_actor:
 		return
 

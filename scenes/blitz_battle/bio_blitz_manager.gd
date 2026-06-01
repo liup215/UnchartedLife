@@ -57,7 +57,7 @@ func _ready() -> void:
 		var current_hp: int = 0
 		var max_hp: int = 1
 		if boss.entity_id >= 0:
-			var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+			var stat_system = ServiceRegistry.get_service("StatSystem")
 			if stat_system:
 				current_hp = int(stat_system.get_stat_current(boss.entity_id, "health"))
 				max_hp = int(stat_system.get_stat_value(boss.entity_id, "max_health", 1.0))

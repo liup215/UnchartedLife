@@ -38,7 +38,7 @@ func _get_actor_entity_id() -> int:
 func get_current_speed() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "speed", current_speed)
 	return current_speed

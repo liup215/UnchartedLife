@@ -33,7 +33,7 @@ func _on_play_animation(command: CommandBus.Command) -> void:
 	var animator = _entity_animators.get(entity_id, null)
 	if not is_instance_valid(animator):
 		# Try to discover via EntityManager
-		var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+		var entity_manager = ServiceRegistry.get_service("EntityManager")
 		if entity_manager:
 			var node = entity_manager.get_node(entity_id)
 			if node and node.has_method("play_combat_animation"):

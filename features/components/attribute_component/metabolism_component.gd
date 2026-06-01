@@ -119,7 +119,7 @@ func produce_atp_from_glucose(delta: float) -> void:
 func _sync_new_system_stat(stat_id: String, value: float) -> void:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			stat_system.set_stat_value(eid, stat_id, value)
 
@@ -134,7 +134,7 @@ func _get_actor_entity_id() -> int:
 func get_current_atp() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp", current_atp)
 	return current_atp
@@ -142,7 +142,7 @@ func get_current_atp() -> float:
 func get_max_atp() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "max_atp", max_atp)
 	return max_atp
@@ -150,7 +150,7 @@ func get_max_atp() -> float:
 func get_current_glucose() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "glucose", current_glucose)
 	return current_glucose
@@ -158,7 +158,7 @@ func get_current_glucose() -> float:
 func get_max_glucose() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "max_glucose", max_glucose)
 	return max_glucose
@@ -166,7 +166,7 @@ func get_max_glucose() -> float:
 func get_atp_conversion_rate() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp_conversion_rate", atp_conversion_rate)
 	return atp_conversion_rate
@@ -174,7 +174,7 @@ func get_atp_conversion_rate() -> float:
 func get_glucose_consume_rate() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "glucose_consume_rate", glucose_consume_rate)
 	return glucose_consume_rate

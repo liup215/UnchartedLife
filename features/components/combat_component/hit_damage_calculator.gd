@@ -90,7 +90,7 @@ func on_enemy_hit(attacker: Node, target: Node, base_weapon_damage: float) -> vo
 		var target_actor := target as Actor
 		# NEW: Prefer new StatSystem if entity is registered, else fallback to old component
 		if target_actor.entity_id >= 0:
-			var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+			var stat_system = ServiceRegistry.get_service("StatSystem")
 			if stat_system:
 				stat_system.modify_current(target_actor.entity_id, "toughness", -toughness_damage)
 				var toughness_val: float = stat_system.get_stat_current(target_actor.entity_id, "toughness")

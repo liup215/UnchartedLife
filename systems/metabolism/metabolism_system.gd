@@ -133,27 +133,27 @@ func _process_atp_depletion_damage(entity_id: int, delta: float) -> void:
 ## --- Stat / Pool helpers ---
 
 func _get_stat(entity_id: int, stat_id: String, default_val: float) -> float:
-	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	var stat_system = ServiceRegistry.get_service("StatSystem")
 	if stat_system:
 		return stat_system.get_stat_value(entity_id, stat_id, default_val)
 	return default_val
 
 func _set_stat(entity_id: int, stat_id: String, value: float) -> void:
-	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	var stat_system = ServiceRegistry.get_service("StatSystem")
 	if stat_system:
 		stat_system.set_stat_value(entity_id, stat_id, value)
 
 func _consume_atp(entity_id: int, amount: float) -> void:
-	var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 	if pool_system:
 		pool_system.consume(entity_id, "atp", amount)
 
 func _recover_atp(entity_id: int, amount: float) -> void:
-	var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 	if pool_system:
 		pool_system.recover(entity_id, "atp", amount)
 
 func _consume_glucose(entity_id: int, amount: float) -> void:
-	var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 	if pool_system:
 		pool_system.consume(entity_id, "glucose", amount)

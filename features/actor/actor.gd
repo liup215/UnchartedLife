@@ -270,7 +270,8 @@ func _play_stagger_flash_effect():
 
 func _register_in_ecs() -> void:
 	"""Register this actor in the new EntityManager and StatSystem."""
-	var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+	# Use plain 'var' to avoid compile-time type resolution issues with autoload order.
+	var entity_manager = ServiceRegistry.get_service("EntityManager")
 	if entity_manager == null:
 		# ServiceRegistry not ready yet (Bootstrap hasn't run)
 		# Retry next frame via _process
@@ -282,20 +283,21 @@ func _register_in_ecs() -> void:
 	entity_id = entity_manager.register_entity(self, actor_data)
 	
 	# Register in StatSystem using the actor's data
-	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	var stat_system = ServiceRegistry.get_service("StatSystem")
 	if stat_system and actor_data:
 		var stat_defs = actor_data.create_stat_sheet()
 		for stat_def in stat_defs:
-			if stat_def is StatDefinition:
+			# Use duck-typing check to avoid compile-time dependency on StatDefinition class.
+			if stat_def != null and stat_def.has_method("to_stat_instance"):
 				stat_system.add_stat(entity_id, stat_def)
 	
 	# Register in ResourcePoolSystem
-	var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+	var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 	if pool_system:
 		pool_system.register_entity(entity_id)
 	
 	# Sync old HealthComponent current value to new StatSystem
-	if health_component:
+	if attribute_component and attribute_component.health_component:
 		_reconcile_to_new_stat_system()
 
 func _reconcile_to_new_stat_system() -> void:
@@ -303,12 +305,18 @@ func _reconcile_to_new_stat_system() -> void:
 	if entity_id < 0:
 		return
 	
-	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
-	if stat_system:
-		stat_system.set_stat_value(entity_id, "health", float(health_component.current_health))
-		stat_system.set_stat_value(entity_id, "toughness", float(attribute_component.toughness_component.current_toughness))
-		stat_system.set_stat_value(entity_id, "atp", float(attribute_component.metabolism_component.current_atp))
-		stat_system.set_stat_value(entity_id, "glucose", float(attribute_component.metabolism_component.current_glucose))
+	var stat_system = ServiceRegistry.get_service("StatSystem")
+	if stat_system and attribute_component:
+		var hc = attribute_component.health_component
+		if hc:
+			stat_system.set_stat_value(entity_id, "health", float(hc.current_health))
+		var tc = attribute_component.toughness_component
+		if tc:
+			stat_system.set_stat_value(entity_id, "toughness", float(tc.current_toughness))
+		var mc = attribute_component.metabolism_component
+		if mc:
+			stat_system.set_stat_value(entity_id, "atp", float(mc.current_atp))
+			stat_system.set_stat_value(entity_id, "glucose", float(mc.current_glucose))
 
 func _process(delta: float) -> void:
 	# Retry ECS registration if Bootstrap was not ready during _ready

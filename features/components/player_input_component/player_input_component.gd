@@ -56,7 +56,7 @@ func _process(_delta: float):
 	
 	# Aim target - Wave 3: Delegate to TargetResolverSystem
 	# PlayerInputComponent is the ONLY place in the input layer that queries mouse position.
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	if target_resolver:
 		aim_target = target_resolver.get_player_aim_target_world()
 	else:

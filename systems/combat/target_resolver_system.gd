@@ -5,7 +5,7 @@
 # from Business Logic (WeaponComponent, CombatComponent, etc.).
 #
 # Usage:
-#   var resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+#   var resolver = ServiceRegistry.get_service("TargetResolverSystem")
 #   var world_pos: Vector2 = resolver.get_player_aim_target()
 #
 extends Node

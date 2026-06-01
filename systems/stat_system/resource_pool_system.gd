@@ -9,7 +9,7 @@ signal resource_insufficient(entity_id: int, resource_type: String, requested: f
 signal resource_changed(entity_id: int, resource_type: String, current: float, max_value: float)
 signal resource_recovered(entity_id: int, resource_type: String, amount: float, current: float, max_value: float)
 
-var _stat_system: StatSystem = null
+var _stat_system = null
 
 func _ready() -> void:
 	_stat_system = ServiceRegistry.get_service("stat_system") as StatSystem

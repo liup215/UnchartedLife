@@ -55,7 +55,7 @@ func _get_actor_entity_id() -> int:
 func get_current_atp() -> float:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp", 0.0)
 	if metabolism_component:
@@ -65,7 +65,7 @@ func get_current_atp() -> float:
 func consume_atp(amount: float) -> bool:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 		if pool_system:
 			pool_system.consume(eid, "atp", amount)
 	# Always write to old system to trigger signals

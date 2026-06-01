@@ -11,7 +11,7 @@ func _exit_tree() -> void:
 	CommandBus.remove_executor(CommandBus.CommandType.INTERACT_REQUEST, _on_interact_request)
 
 func _on_interact_request(_command: CommandBus.Command) -> void:
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	if not psm or not psm.player_actor:
 		return
 

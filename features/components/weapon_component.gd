@@ -57,7 +57,7 @@ func fire(effect_node: Node = null, p_target_pos: Vector2 = Vector2.ZERO):
 	if target_pos == Vector2.ZERO:
 		# Delegate aim target resolution to TargetResolverSystem (Wave 3).
 		# WeaponComponent should NEVER call get_global_mouse_position().
-		var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+		var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 		if target_resolver:
 			target_pos = target_resolver.get_player_aim_target_world()
 		else:

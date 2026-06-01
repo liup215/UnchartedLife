@@ -91,7 +91,7 @@ func calculate_damage(
 func _get_stat_or_default(entity_id: int, stat_id: String, default_val: float) -> float:
 	if entity_id < 0:
 		return default_val
-	var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+	var stat_system = ServiceRegistry.get_service("StatSystem")
 	if stat_system:
 		return stat_system.get_stat_value(entity_id, stat_id, default_val)
 	return default_val

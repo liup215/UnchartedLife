@@ -45,7 +45,7 @@ func _on_reload_request(_command: CommandBus.Command) -> void:
 		combat.reload_all_weapons()
 
 func _get_player_actor_combat() -> ActorCombatComponent:
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	if not psm or not psm.player_actor:
 		return null
 	var actor := psm.player_actor as Actor

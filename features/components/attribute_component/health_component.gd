@@ -23,7 +23,7 @@ func set_runtime_state(rs: ActorRuntimeState):
 func _sync_new_system_health() -> void:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			stat_system.set_stat_value(eid, "health", float(current_health))
 
@@ -72,7 +72,7 @@ func _get_actor_entity_id() -> int:
 func get_current_health() -> int:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return int(stat_system.get_stat_value(eid, "health", float(current_health)))
 	return current_health
@@ -80,7 +80,7 @@ func get_current_health() -> int:
 func get_max_health() -> int:
 	var eid: int = _get_actor_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return int(stat_system.get_stat_value(eid, "max_health", float(max_health)))
 	return max_health

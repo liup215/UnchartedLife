@@ -218,7 +218,7 @@ func perform_light_attack():
 		attribute_component.consume_atp(total_atp_cost)
 	# Target resolution delegated to TargetResolverSystem (Wave 3).
 	# This is the SINGLE authority for all aiming in the game.
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	var target_pos := Vector2.ZERO
 	if target_resolver:
 		target_pos = target_resolver.get_player_aim_target_world()
@@ -227,11 +227,11 @@ func perform_light_attack():
 		target_pos = get_global_mouse_position()
 	weapon.fire(weapon_effect, target_pos)
 	# Wave 6: Animation playback delegated to AnimationSystem via CommandBus
-	var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+	var entity_manager = ServiceRegistry.get_service("EntityManager")
 	if entity_manager:
 		var entity_id = entity_manager.get_entity_id(get_parent()) if get_parent() else -1
 		if entity_id >= 0:
-			var animation_system: AnimationSystem = ServiceRegistry.get_service("AnimationSystem")
+			var animation_system = ServiceRegistry.get_service("AnimationSystem")
 			if animation_system:
 				animation_system.register_entity_animator(entity_id, get_parent())
 			CommandBus.issue(CommandBus.create_command(CommandBus.CommandType.PLAY_ANIMATION, {
@@ -306,7 +306,7 @@ func release_heavy_attack():
 		attribute_component.consume_atp(total_atp_cost)
 	heavy_attack_system.last_heavy_charge = effective_charge
 	# Target resolution delegated to TargetResolverSystem (Wave 3).
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	var target_pos := Vector2.ZERO
 	if target_resolver:
 		target_pos = target_resolver.get_player_aim_target_world()
@@ -314,7 +314,7 @@ func release_heavy_attack():
 		target_pos = get_global_mouse_position()
 	weapon.fire(weapon_effect, target_pos)
 	# Wave 6: Animation playback delegated to AnimationSystem via CommandBus
-	var entity_manager2: EntityManager = ServiceRegistry.get_service("EntityManager")
+	var entity_manager2 = ServiceRegistry.get_service("EntityManager")
 	if entity_manager2:
 		var entity_id2 = entity_manager2.get_entity_id(get_parent()) if get_parent() else -1
 		if entity_id2 >= 0:

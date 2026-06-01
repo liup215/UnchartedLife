@@ -31,7 +31,7 @@ var interaction_ui_visible: bool = false
 func _get_entity_id() -> int:
 	if entity_id < 0:
 		# EntityManager may not have been ready during _ready; retry
-		var entity_manager: EntityManager = ServiceRegistry.get_service("EntityManager")
+		var entity_manager = ServiceRegistry.get_service("EntityManager")
 		if entity_manager:
 			var node_id = entity_manager.get_entity_id(self)
 			if node_id >= 0:
@@ -43,7 +43,7 @@ func _get_entity_id() -> int:
 func _consume_atp(amount: float) -> void:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 		if pool_system:
 			pool_system.consume(eid, "atp", amount)
 	# Always write to old system too (signals are still wired there)
@@ -54,7 +54,7 @@ func _consume_atp(amount: float) -> void:
 func _recover_atp(amount: float) -> void:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 		if pool_system:
 			pool_system.recover(eid, "atp", amount)
 	if attribute_component and attribute_component.metabolism_component:
@@ -64,7 +64,7 @@ func _recover_atp(amount: float) -> void:
 func _consume_glucose(amount: float) -> void:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var pool_system: ResourcePoolSystem = ServiceRegistry.get_service("ResourcePoolSystem")
+		var pool_system = ServiceRegistry.get_service("ResourcePoolSystem")
 		if pool_system:
 			pool_system.consume(eid, "glucose", amount)
 	if attribute_component and attribute_component.metabolism_component:
@@ -74,7 +74,7 @@ func _consume_glucose(amount: float) -> void:
 func _get_current_atp() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp", 0.0)
 	return attribute_component.metabolism_component.get_current_atp()
@@ -83,7 +83,7 @@ func _get_current_atp() -> float:
 func _get_max_atp() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "max_atp", 0.0)
 	return attribute_component.metabolism_component.get_max_atp()
@@ -92,7 +92,7 @@ func _get_max_atp() -> float:
 func _get_current_glucose() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "glucose", 0.0)
 	return attribute_component.metabolism_component.get_current_glucose()
@@ -101,7 +101,7 @@ func _get_current_glucose() -> float:
 func _get_glucose_consume_rate() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "glucose_consume_rate", 0.0)
 	return attribute_component.metabolism_component.get_glucose_consume_rate()
@@ -110,7 +110,7 @@ func _get_glucose_consume_rate() -> float:
 func _get_atp_conversion_rate() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp_conversion_rate", 0.0)
 	return attribute_component.metabolism_component.get_atp_conversion_rate()
@@ -119,7 +119,7 @@ func _get_atp_conversion_rate() -> float:
 func _get_atp_production_rate() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "atp_production_rate", 0.0)
 	return attribute_component.metabolism_component.atp_production_rate
@@ -128,7 +128,7 @@ func _get_atp_production_rate() -> float:
 func _is_staggered() -> bool:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "toughness", 0.0) <= 0.0
 	# Fallback: old component chain
@@ -140,7 +140,7 @@ func _is_staggered() -> bool:
 func _get_current_health() -> int:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return int(stat_system.get_stat_value(eid, "health", 0.0))
 	return attribute_component.health_component.get_current_health()
@@ -149,7 +149,7 @@ func _get_current_health() -> int:
 func _set_current_health(new_hp: int) -> void:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			# Clamp to max
 			var max_hp: float = stat_system.get_stat_value(eid, "max_health", float(new_hp))
@@ -161,7 +161,7 @@ func _set_current_health(new_hp: int) -> void:
 func _get_current_speed() -> float:
 	var eid := _get_entity_id()
 	if eid >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			return stat_system.get_stat_value(eid, "speed", 250.0)
 	return attribute_component.speed_component.get_current_speed()
@@ -219,7 +219,7 @@ func _ready():
 		push_warning("Player: DodgeComponent not found - dodge functionality disabled")
 	
 	# --- Wave 4: Register with PlayerStateMachine ---
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	if psm:
 		psm.player_actor = self
 		psm.state_changed.connect(_on_player_state_changed)
@@ -228,7 +228,7 @@ func _ready():
 		push_warning("Player: PlayerStateMachine not available in _ready()")
 	
 	# --- Wave 3: Register with TargetResolverSystem ---
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	if target_resolver:
 		target_resolver.set_player_actor(self)
 		GameLogger.debug("player", "Registered with TargetResolverSystem")
@@ -243,7 +243,7 @@ func _ready():
 
 func _physics_process(delta: float) -> void:
 	# --- Wave 4: Check state machine for combat state transitions ---
-	var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+	var psm = ServiceRegistry.get_service("PlayerStateMachine")
 	
 	# Handle vehicle interaction input (still uses old input_component temporarily)
 	if input_component and input_component.should_interact:
@@ -271,7 +271,7 @@ func _handle_on_foot_logic(delta: float):
 	# --- Wave 5: Metabolism is now handled by MetabolismSystem ---
 	# Register movement context so MetabolismSystem can process ATP/glucose
 	# in its per-frame tick. This removes ALL metabolism logic from Player.gd.
-	var metabolism_system: MetabolismSystem = ServiceRegistry.get_service("MetabolismSystem")
+	var metabolism_system = ServiceRegistry.get_service("MetabolismSystem")
 	if metabolism_system:
 		var eid := _get_entity_id()
 		if eid >= 0:
@@ -316,7 +316,7 @@ func _handle_on_foot_logic(delta: float):
 	move_and_slide()
 
 	# --- Wave 3: Weapon orientation via TargetResolverSystem ---
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	var aim_target := Vector2.ZERO
 	if target_resolver:
 		aim_target = target_resolver.get_player_aim_target_world()
@@ -344,7 +344,7 @@ func _handle_in_vehicle_logic(delta: float):
 		global_position = current_vehicle.global_position
 	# --- Wave 5: Metabolism is now handled by MetabolismSystem ---
 	# Register in-vehicle context so MetabolismSystem processes basal metabolism.
-	var metabolism_system: MetabolismSystem = ServiceRegistry.get_service("MetabolismSystem")
+	var metabolism_system = ServiceRegistry.get_service("MetabolismSystem")
 	if metabolism_system:
 		var eid := _get_entity_id()
 		if eid >= 0:
@@ -374,7 +374,7 @@ func _handle_vehicle_interaction_legacy() -> void:
 					vehicle_name = nearby_vehicle.vehicle_data.vehicle_name
 				GameLogger.debug("player", "Entered vehicle: %s" % vehicle_name)
 				# Notify PlayerStateMachine of state change
-				var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+				var psm = ServiceRegistry.get_service("PlayerStateMachine")
 				if psm:
 					psm.transition_to_state(PlayerStateMachine.PlayerState.IN_VEHICLE, {"vehicle": nearby_vehicle})
 	elif current_state == PlayerState.IN_VEHICLE:
@@ -388,7 +388,7 @@ func _handle_vehicle_interaction_legacy() -> void:
 				current_state = PlayerState.ON_FOOT
 				GameLogger.debug("player", "Exited vehicle")
 				# Notify PlayerStateMachine of state change
-				var psm: PlayerStateMachine = ServiceRegistry.get_service("PlayerStateMachine")
+				var psm = ServiceRegistry.get_service("PlayerStateMachine")
 				if psm:
 					psm.transition_to_state(PlayerStateMachine.PlayerState.ON_FOOT, {})
 

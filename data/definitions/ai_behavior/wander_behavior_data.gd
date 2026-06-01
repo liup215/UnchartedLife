@@ -27,7 +27,7 @@ func execute(actor: Node, _delta: float):
 	# NEW: Prefer StatSystem for speed read (Wave 2 migration)
 	var speed: float = 0.0
 	if actor is Actor and actor.entity_id >= 0:
-		var stat_system: StatSystem = ServiceRegistry.get_service("StatSystem")
+		var stat_system = ServiceRegistry.get_service("StatSystem")
 		if stat_system:
 			speed = stat_system.get_stat_value(actor.entity_id, "speed", 250.0)
 	else:

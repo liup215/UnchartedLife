@@ -172,7 +172,7 @@ func fire_main_weapons():
 	if actor_attribute_component:
 		actor_attribute_component.consume_atp(total_atp_cost)
 	# Delegate target position to TargetResolverSystem (Wave 3)
-	var target_resolver: TargetResolverSystem = ServiceRegistry.get_service("TargetResolverSystem")
+	var target_resolver = ServiceRegistry.get_service("TargetResolverSystem")
 	var target_pos := Vector2.ZERO
 	if target_resolver:
 		target_pos = target_resolver.get_player_aim_target_world()
