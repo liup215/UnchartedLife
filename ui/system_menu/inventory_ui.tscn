@@ -2,12 +2,14 @@
 
 [ext_resource type="Script" uid="uid://c5jn0lcccle86" path="res://ui/system_menu/inventory_ui.gd" id="1_inventory_script"]
 [ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" uid="uid://brcjrf6lfrix8" path="res://ui/system_menu/item_slot.tscn" id="3_item_slot"]
 
 [node name="InventoryUI" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("2_theme")
 script = ExtResource("1_inventory_script")
+item_slot_scene = ExtResource("3_item_slot")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1

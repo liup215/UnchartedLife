@@ -2,10 +2,12 @@
 
 [ext_resource type="Script" path="res://scenes/story/prologue/prologue_scene_02.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://c5y8qhmmadkj2" path="res://features/prologue/target_cell.tscn" id="2_cell"]
+[ext_resource type="PackedScene" uid="uid://bvdl3v7x8qhml" path="res://features/interactive/molecule/molecule.tscn" id="3_molecule"]
 [ext_resource type="PackedScene" uid="uid://d3p8yqsafkl5n" path="res://ui/prologue/prologue_ui.tscn" id="4_ui"]
 
 [node name="PrologueScene02" type="Node2D"]
 script = ExtResource("1_game")
+molecule_scene = ExtResource("3_molecule")
 
 [node name="SpawnContainer" type="Node2D" parent="."]
 

@@ -34,7 +34,7 @@ func start_new_game() -> void:
 
 func _physics_process(_delta: float) -> void:
 	"""Update map chunks based on player position"""
-	if is_instance_valid(player_instance):
+	if is_instance_valid(player_instance) and is_instance_valid(game_scene):
 		MapManager.update_chunks(player_instance.global_position)
 
 # Public API for external access

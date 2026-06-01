@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://loading_screen_main"]
 
 [ext_resource type="Script" path="res://ui/loading_screen/loading_screen.gd" id="1_loading"]
-[ext_resource type="Texture2D" uid="uid://b0a3wuusv8qjh" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
 [ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
 [ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="4_bg_shader"]
 

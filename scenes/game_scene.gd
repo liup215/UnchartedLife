@@ -11,9 +11,10 @@ var map_container: Node2D = null
 var spawned_entities: Dictionary = {}  # spawn_id -> entity instance
 
 func _ready() -> void:
-	# If no data provided, try to get from external source or use default
+	# If no data provided, this node is likely a placeholder waiting to be
+	# configured by MainGameManager. Skip initialization silently.
 	if not game_scene_data:
-		push_warning("GameScene: No game_scene_data provided, cannot initialize scene")
+		GameLogger.debug("scene", "GameScene: No game_scene_data yet, skipping initialization")
 		return
 	
 	# Setup scene based on data

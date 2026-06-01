@@ -5,6 +5,8 @@ extends Node
 
 const SAVE_DIR = "user://saves/"
 const SAVE_FILE_EXTENSION = ".dat"
+const SAVE_VERSION = 1
+const MIN_SAVE_SIZE := 50
 
 var _pending_load_data: Dictionary = {}
 var _is_loading_save: bool = false  # Flag to track if we're loading from save
@@ -43,10 +45,13 @@ func save_game(slot_id: String):
 		if node.has_method("save_data"):
 			save_data[node.get_path()] = node.call("save_data")
 			
-	# Save the dictionary to a file using binary serialization
+	# Save the dictionary to a file using a versioned binary format
+	# Format: [version: u32][payload_len: u32][payload_bytes: buffer]
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
 	if file:
 		var binary_data = var_to_bytes(save_data)
+		file.store_32(SAVE_VERSION)
+		file.store_32(binary_data.size())
 		file.store_buffer(binary_data)
 		GameLogger.info("save", "Game saved to %s" % file_path)
 	else:
@@ -61,35 +66,54 @@ func load_game(slot_id: String):
 		return false
 		
 	var file = FileAccess.open(file_path, FileAccess.READ)
-	if file:
-		var binary_data = file.get_buffer(file.get_length())
-		var parse_result = bytes_to_var(binary_data)
-		if parse_result != null and typeof(parse_result) == TYPE_DICTIONARY:
-			_pending_load_data = parse_result
-			_is_loading_save = true  # Set flag when loading
-			
-			# Load global data immediately
-			if PlayerData and _pending_load_data.has("global_player_data"):
-				PlayerData.load_data(_pending_load_data["global_player_data"])
-				_pending_load_data.erase("global_player_data")
-			
-			if GameProperties and _pending_load_data.has("global_game_properties"):
-				GameProperties.load_data(_pending_load_data["global_game_properties"])
-				_pending_load_data.erase("global_game_properties")
-			
-			if MapManager and _pending_load_data.has("global_map_manager"):
-				MapManager.load_data(_pending_load_data["global_map_manager"])
-				_pending_load_data.erase("global_map_manager")
-			
-			GameLogger.info("save", "Save file loaded. Scene data is pending.")
-			return true
-		else:
-			GameLogger.error("save", "Failed to deserialize save file for slot: %s" % slot_id)
-			_pending_load_data = {}
-			_is_loading_save = false
-			return false
-	else:
+	if not file:
 		push_error("Failed to open save file for reading: %s" % file_path)
+		_is_loading_save = false
+		return false
+	
+	var file_size = file.get_length()
+	if file_size < MIN_SAVE_SIZE:
+		GameLogger.error("save", "Save file too small to be valid: %s (%d bytes)" % [file_path, file_size])
+		_is_loading_save = false
+		return false
+	
+	var version = file.get_32()
+	var payload_len = file.get_32()
+	
+	# Detect legacy format (no version header written by old save_game code)
+	var is_legacy: bool = false
+	if version > 1000 or version == 0 or payload_len > file_size:
+		is_legacy = true
+		file.seek(0)
+		payload_len = file_size
+	
+	var payload = file.get_buffer(payload_len)
+	var parse_result = bytes_to_var(payload)
+	if parse_result != null and typeof(parse_result) == TYPE_DICTIONARY:
+		_pending_load_data = parse_result
+		_is_loading_save = true  # Set flag when loading
+		
+		# Load global data immediately
+		if PlayerData and _pending_load_data.has("global_player_data"):
+			PlayerData.load_data(_pending_load_data["global_player_data"])
+			_pending_load_data.erase("global_player_data")
+		
+		if GameProperties and _pending_load_data.has("global_game_properties"):
+			GameProperties.load_data(_pending_load_data["global_game_properties"])
+			_pending_load_data.erase("global_game_properties")
+		
+		if MapManager and _pending_load_data.has("global_map_manager"):
+			MapManager.load_data(_pending_load_data["global_map_manager"])
+			_pending_load_data.erase("global_map_manager")
+		
+		if is_legacy:
+			GameLogger.info("save", "Legacy save file loaded. Scene data is pending.")
+		else:
+			GameLogger.info("save", "Save file loaded. Scene data is pending.")
+		return true
+	else:
+		GameLogger.error("save", "Failed to deserialize save file for slot: %s" % slot_id)
+		_pending_load_data = {}
 		_is_loading_save = false
 		return false
 
@@ -117,8 +141,39 @@ func reset_loading_flag():
 
 # --- Slot Management ---
 
+func _read_save_payload(file_path: String) -> Dictionary:
+	"""Read a save file and return its Dictionary payload, or {} on failure.
+	Handles both versioned format and legacy unversioned format."""
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if not file:
+		GameLogger.error("save", "Failed to open save for reading: %s" % file_path)
+		return {}
+	
+	var file_size = file.get_length()
+	if file_size < MIN_SAVE_SIZE:
+		GameLogger.warn("save", "Save file too small, skipping: %s" % file_path)
+		return {}
+	
+	var version: int = file.get_32()
+	var payload_len: int = file.get_32()
+	var is_legacy: bool = false
+
+	# Legacy files have no header; rewind if header looks invalid
+	if version != SAVE_VERSION or payload_len <= 0 or payload_len > file_size:
+		is_legacy = true
+		file.seek(0)
+		payload_len = file_size
+	
+	var payload: PackedByteArray = file.get_buffer(payload_len)
+	var data = bytes_to_var(payload)
+	if data == null or typeof(data) != TYPE_DICTIONARY:
+		GameLogger.warn("save", "Skipping corrupted or incompatible save file: %s" % file_path)
+		return {}
+	return data
+
+
 func get_save_slots_metadata() -> Array:
-	var metadata_list = []
+	var metadata_list: Array = []
 	var dir = DirAccess.open(SAVE_DIR)
 	if dir:
 		dir.list_dir_begin()
@@ -126,19 +181,13 @@ func get_save_slots_metadata() -> Array:
 		while file_name != "":
 			if not dir.current_is_dir() and file_name.ends_with(SAVE_FILE_EXTENSION):
 				var file_path = SAVE_DIR.path_join(file_name)
-				var file = FileAccess.open(file_path, FileAccess.READ)
-				if file:
-					var binary_data = file.get_buffer(file.get_length())
-					var data = bytes_to_var(binary_data)
-					# Check if deserialization was successful and data is valid
-					if data == null or typeof(data) != TYPE_DICTIONARY:
-						push_warning("Skipping corrupted or invalid save file: %s" % file_name)
-					elif data.has("metadata"):
-						var metadata = data["metadata"]
-						metadata["slot_id"] = file_name.get_basename()
-						metadata_list.append(metadata)
-					else:
-						push_warning("Save file missing metadata: %s" % file_name)
+				var data: Dictionary = _read_save_payload(file_path)
+				if data.has("metadata"):
+					var metadata = data["metadata"]
+					metadata["slot_id"] = file_name.get_basename()
+					metadata_list.append(metadata)
+				else:
+					GameLogger.warn("save", "Save file missing metadata: %s" % file_name)
 			file_name = dir.get_next()
 	else:
 		push_error("Failed to open saves directory: %s" % SAVE_DIR)

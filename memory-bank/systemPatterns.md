@@ -547,3 +547,6 @@ func reset_for_new_game() -> void:
 20. **Vehicle-map binding** - assign vehicles to specific maps via assigned_map_id
 21. **Map transitions** - use EventBus.map_changed for system notifications
 22. **Map-specific saves** - persist current_map_id in save data
+23. **Versioned save headers** - prepend `[version: u32][payload_len: u32]` for safe forward/backward compatibility
+24. **Export scene references** - always assign `@export PackedScene` fields in `.tscn` files, never leave them null
+25. **Silence transitional warnings** - `map_parent` null during `GameScene` swap and `game_scene_data` null in placeholder nodes are expected; use `debug` logs, not `push_warning`

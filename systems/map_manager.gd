@@ -148,7 +148,8 @@ func _load_full_map_scene(scene_path: String):
 
 func update_chunks(player_position: Vector2):
 	if not map_parent:
-		printerr("MapManager: map_parent not set! Cannot update chunks.")
+		# map_parent is set lazily by GameScene._setup_map_container during
+		# scene transitions; skip silently until the new scene is initialized.
 		return
 
 	var player_chunk_coords = _get_chunk_coords_from_position(player_position)

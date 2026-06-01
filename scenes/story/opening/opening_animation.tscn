@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cgr224u5yfwf7"]
 
 [ext_resource type="Script" uid="uid://d2vuund14llj8" path="res://scenes/story/opening/opening_animation.gd" id="1_opening"]
-[ext_resource type="Texture2D" uid="uid://b0a3wuusv8qjh" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
 
 [sub_resource type="Animation" id="Animation_RESET"]
 resource_name = "RESET"

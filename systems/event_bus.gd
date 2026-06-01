@@ -44,6 +44,10 @@ signal area_unlocked(area_id: String)
 # Carries the WeaponData resource.
 signal request_quiz_reload(weapon_data: Resource)
 
+# Emitted when a weapon tries to fire but has no ammo.
+# Carries the ItemData of the weapon.
+signal weapon_out_of_ammo(item_data: ItemData)
+
 # Signal emitted when a quiz is completed.
 # Carries whether the quiz was answered correctly.
 signal quiz_completed(success: bool)

@@ -94,6 +94,39 @@
 - **Dialogue System**: Complete NPC dialogue system with branching choices, conditions, quest integration, and typewriter effect.
 - **Quest System**: Hierarchical quest/objective system with runtime state management and event-based tracking.
 
+### June 1, 2026 Session — Runtime Bug Fixes & UX Polish
+
+A focused bug-fixing session resolved multiple startup and runtime errors discovered during playtesting:
+
+1. **Stale Resource UID Fixes**:
+   - `ui/loading_screen/loading_screen.tscn` and `scenes/story/opening/opening_animation.tscn` both referenced outdated `uid://b0a3wuusv8qjh` for `icon.svg`
+   - Corrected to `uid://df6ywaepewvs1` (matching the current `.import` file)
+
+2. **Save System Stabilization**:
+   - Root cause: old `.dat` files (56–1808 bytes) created with a previous Godot version's binary format were incompatible, causing engine-level `ERR_INVALID_DATA` in `bytes_to_var()`
+   - `save_manager.gd`: introduced **versioned binary format** `[version: u32][payload_len: u32][payload_bytes]` with `SAVE_VERSION = 1`
+   - Added `MIN_SAVE_SIZE` guard and shared `_read_save_payload()` helper that auto-detects legacy format
+   - Deleted all corrupted old save files from `%APPDATA%\Godot\app_userdata\UnchartedLife\saves\`
+
+3. **Scene Export / Assignment Fixes**:
+   - `inventory_ui.tscn`: added missing `@export` assign for `item_slot_scene` (`ui/system_menu/item_slot.tscn`)
+   - `prologue_scene_02.tscn`: added missing `@export` assign for `molecule_scene` (`features/interactive/molecule/molecule.tscn`)
+   - `game_scene.tscn`: removed static `game_scene_data = ExtResource("2_default_data")` assignment (empty resource caused false-positive warning)
+
+4. **MapManager Cleanup**:
+   - `game_scene.gd`: downgraded `push_warning` to `GameLogger.debug` when `game_scene_data` is null (normal during placeholder instantiation)
+   - `map_manager.gd`: silenced `printerr("map_parent not set")` in `update_chunks` — it's expected during scene transitions
+   - `main_game_manager.gd`: added `is_instance_valid(game_scene)` guard in `_physics_process` to avoid calling `update_chunks` while transitioning
+
+5. **Combat System Repair**:
+   - `attribute_component.gd`: added `get_current_atp()` and `consume_atp()` delegates to `MetabolismComponent`
+   - This fixed `Invalid call. Nonexistent function 'get_current_atp'` in `actor_combat_component.gd` during light/heavy attacks
+
+6. **Out-of-Ammo UX Improvement**:
+   - `weapon_component.gd`: replaced backend `GameLogger.warn` with `EventBus.weapon_out_of_ammo.emit(item_data)`
+   - `event_bus.gd`: added new `weapon_out_of_ammo(item_data: ItemData)` signal
+   - `hud.gd`: added `_show_notification()` overlay label for on-screen feedback (bottom-center, 2s duration)
+
 ## Next Steps
 - **BioBlitz Enhancement:**
   - Expand question bank with diverse biology topics

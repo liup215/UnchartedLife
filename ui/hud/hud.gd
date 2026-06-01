@@ -61,6 +61,8 @@ func _update_tank_status():
 		tank_defense_label.hide()
 		tank_load_label.hide()
 
+var _notification_label: Label = null
+
 func _ready():
 	# Wait until the scene tree is ready to find the player
 	get_tree().node_added.connect(_on_node_added)
@@ -68,6 +70,41 @@ func _ready():
 	
 	# Hide boss info by default
 	hide_boss_health()
+	
+	# Setup on-screen notification for ammo etc.
+	_setup_notification_label()
+	
+	# Listen for out-of-ammo events
+	EventBus.weapon_out_of_ammo.connect(_on_weapon_out_of_ammo)
+
+func _setup_notification_label():
+	_notification_label = Label.new()
+	_notification_label.theme_override_font_sizes/font_size = 24
+	_notification_label.theme_override_colors/font_color = Color(0.94, 0.27, 0.27)
+	_notification_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_notification_label.anchors_preset = Control.PRESET_CENTER_BOTTOM
+	_notification_label.anchor_left = 0.5
+	_notification_label.anchor_top = 1.0
+	_notification_label.anchor_right = 0.5
+	_notification_label.anchor_bottom = 1.0
+	_notification_label.offset_left = -200.0
+	_notification_label.offset_top = -120.0
+	_notification_label.offset_right = 200.0
+	_notification_label.offset_bottom = -80.0
+	_notification_label.visible = false
+	add_child(_notification_label)
+
+func _show_notification(text: String, duration: float = 2.0):
+	if not _notification_label:
+		return
+	_notification_label.text = text
+	_notification_label.visible = true
+	await get_tree().create_timer(duration).timeout
+	_notification_label.visible = false
+
+func _on_weapon_out_of_ammo(item_data: ItemData):
+	var weapon_name = item_data.item_name if item_data else "Weapon"
+	_show_notification(weapon_name + ": Out of ammo! (Press reload key)")
 
 func _find_player():
 	# Try to find the player in the scene

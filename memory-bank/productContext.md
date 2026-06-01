@@ -42,6 +42,7 @@ The game is built on a highly modular, data-driven architecture. Core entities l
 - Combo systems for sustained attacks
 - Visual feedback (damage numbers, muzzle effects)
 - BioBlitz mode: Combat pauses for biology questions when enemy health is low
+- On-screen HUD notifications for out-of-ammo feedback (instead of backend console warnings)
 
 ### Biology Knowledge Integration
 - **Cell Biology**: Understanding organelles, cellular respiration, ATP generation

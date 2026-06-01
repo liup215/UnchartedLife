@@ -14,6 +14,17 @@ func set_actor_data(data: ActorData):
 	if toughness_component:
 		toughness_component.set_actor_data(data)
 
+# ATP delegation (used by combat, dodge, and item systems)
+func get_current_atp() -> float:
+	if metabolism_component:
+		return metabolism_component.get_current_atp()
+	return 0.0
+
+func consume_atp(amount: float) -> bool:
+	if metabolism_component:
+		return metabolism_component.consume_atp(amount)
+	return false
+
 # 批量存档
 func to_dict() -> Dictionary:
 	var result = {

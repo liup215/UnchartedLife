@@ -21,6 +21,7 @@ This is the project's foundation.
 ### 2.2. Component-Based Design
 - **Principle:** Favor composition over inheritance. Game objects composed of multiple reusable small scenes/scripts (components).
 - **Examples:** `HealthComponent`, `MetabolismComponent`, `CombatComponent`, `VehicleCombatComponent`, `InventoryComponent`, `DialogueComponent`
+- **June 2026 Pattern:** AttributeComponent serves as a bridge, exposing sub-component methods (e.g., `get_current_atp()`, `consume_atp()`) via delegating wrappers to avoid callers needing direct sub-component paths
 
 ### 2.3. Global Event Bus
 - **`EventBus` Autoload:** Primary solution for decoupled system communication, broadcasting global events like `player_health_changed`, `glucose_collected`, `bioblitz_started`, etc.
@@ -125,6 +126,8 @@ else:
 - **Missing Metadata:** Log warning and continue
 - **Invalid Data Types:** Type checking before deserialization
 - **Null Safety:** Check for null after `bytes_to_var()`
+- **Versioned Save Headers:** Save format uses `[version: u32][payload_len: u32][payload_bytes]` for forward compatibility; legacy format auto-detected
+- **MIN_SAVE_SIZE guards:** Validate file size exceeds header size before calling `bytes_to_var()`
 
 ### 6.4. Deferred Loading Pattern
 For scene-dependent data (vehicles, map chunks):
@@ -411,3 +414,5 @@ func _on_body_entered(body: Node2D):
 19. **Vehicle Binding:** Assign vehicles to maps via assigned_map_id
 20. **Map Transitions:** Use EventBus.map_changed for system coordination
 21. **UI Theme Consistency:** Apply biocell_theme.tres to all UI scenes for visual coherence
+22. **Export Scene References:** Assign `@export PackedScene` in `.tscn` Inspector, never leave null
+23. **Component Delegation:** If multiple callers need sub-component methods, expose wrappers on the parent component (e.g., AttributeComponent → MetabolismComponent)

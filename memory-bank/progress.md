@@ -76,6 +76,7 @@ The project has completed several major development phases, establishing a robus
   - MapManager integration with chunk restoration
   - Vehicle state restoration with proper re-entry logic
   - Corrupted save file error handling
+  - **Versioned save format (June 2026):** `[version: u32][payload_len: u32][payload]` with legacy auto-detection, `MIN_SAVE_SIZE` guards, and cleanup of incompatible old `.dat` files
 
 - **UI & Menu Improvements:**
   - Fixed NewGameSettings visibility issue (menu container hiding)
@@ -137,6 +138,10 @@ The project has completed several major development phases, establishing a robus
    - ChargeComponent for universal charge management
    - ChargeDisplay UI in bottom-right corner with real-time feedback
    - Configurable per weapon via ComboAttackData and HeavyAttackData resources
+
+2. **June 2026 Fixes**:
+   - AttributeComponent now exposes `get_current_atp()` and `consume_atp()` delegates to MetabolismComponent (fixes combat crash)
+   - Weapon out-of-ammo: replaced backend warnings with EventBus-driven on-screen HUD notification
 
 2. **Comprehensive Damage Calculation:**
    - DamageCalculator static class considering all combat factors
