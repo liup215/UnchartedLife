@@ -64,6 +64,7 @@ func _ready():
 	_relay_ui_signals()
 
 func _relay_combat_signals() -> void:
+	# Forward: CombatBus → EventBus (subscribers to EventBus get notified)
 	combat.actor_health_changed.connect(func(a, c, m): actor_health_changed.emit(a, c, m))
 	combat.actor_died.connect(func(a): actor_died.emit(a))
 	combat.inventory_item_added.connect(func(i, q): inventory_item_added.emit(i, q))
@@ -75,32 +76,16 @@ func _relay_combat_signals() -> void:
 	combat.weapon_out_of_ammo.connect(func(i): weapon_out_of_ammo.emit(i))
 	combat.quiz_completed.connect(func(s): quiz_completed.emit(s))
 
-	# Reverse relay: EventBus emits forwarded to combat bus
-	actor_health_changed.connect(func(a, c, m): combat.actor_health_changed.emit(a, c, m))
-	actor_died.connect(func(a): combat.actor_died.emit(a))
-	inventory_item_added.connect(func(i, q): combat.inventory_item_added.emit(i, q))
-	item_used.connect(func(a, i, s): combat.item_used.emit(a, i, s))
-	equipment_changed.connect(func(a): combat.equipment_changed.emit(a))
-	item_use_failed.connect(func(a, i, r): combat.item_use_failed.emit(a, i, r))
-	buff_applied.connect(func(a, b, d): combat.buff_applied.emit(a, b, d))
-	request_quiz_reload.connect(func(w): combat.request_quiz_reload.emit(w))
-	weapon_out_of_ammo.connect(func(i): combat.weapon_out_of_ammo.emit(i))
-	quiz_completed.connect(func(s): combat.quiz_completed.emit(s))
-
 func _relay_quest_signals() -> void:
+	# Forward: QuestBus → EventBus
 	quest.quest_triggered.connect(func(id, s): quest_triggered.emit(id, s))
 	quest.quest_started.connect(func(id): quest_started.emit(id))
 	quest.objective_updated.connect(func(id, p, pr, c): objective_updated.emit(id, p, pr, c))
 	quest.quest_completed.connect(func(id): quest_completed.emit(id))
 	quest.quest_failed.connect(func(id, r): quest_failed.emit(id, r))
 
-	quest_triggered.connect(func(id, s): quest.quest_triggered.emit(id, s))
-	quest_started.connect(func(id): quest.quest_started.emit(id))
-	objective_updated.connect(func(id, p, pr, c): quest.objective_updated.emit(id, p, pr, c))
-	quest_completed.connect(func(id): quest.quest_completed.emit(id))
-	quest_failed.connect(func(id, r): quest.quest_failed.emit(id, r))
-
 func _relay_ui_signals() -> void:
+	# Forward: UIEventBus → EventBus
 	ui.dialogue_started.connect(func(d, n): dialogue_started.emit(d, n))
 	ui.dialogue_line.connect(func(l, i, t, n): dialogue_line.emit(l, i, t, n))
 	ui.dialogue_choices.connect(func(c, n): dialogue_choices.emit(c, n))
@@ -113,16 +98,3 @@ func _relay_ui_signals() -> void:
 	ui.story_scene_entered.connect(func(s): story_scene_entered.emit(s))
 	ui.story_milestone_reached.connect(func(m, d): story_milestone_reached.emit(m, d))
 	ui.request_scene_transition.connect(func(s, sp): request_scene_transition.emit(s, sp))
-
-	dialogue_started.connect(func(d, n): ui.dialogue_started.emit(d, n))
-	dialogue_line.connect(func(l, i, t, n): ui.dialogue_line.emit(l, i, t, n))
-	dialogue_choices.connect(func(c, n): ui.dialogue_choices.emit(c, n))
-	dialogue_choice_made.connect(func(c, n): ui.dialogue_choice_made.emit(c, n))
-	dialogue_ended.connect(func(n, r): ui.dialogue_ended.emit(n, r))
-	dialogue_event.connect(func(e, p): ui.dialogue_event.emit(e, p))
-	player_dodge_started.connect(func(p): ui.player_dodge_started.emit(p))
-	player_dodge_ended.connect(func(p): ui.player_dodge_ended.emit(p))
-	player_dodge_failed.connect(func(p, r): ui.player_dodge_failed.emit(p, r))
-	story_scene_entered.connect(func(s): ui.story_scene_entered.emit(s))
-	story_milestone_reached.connect(func(m, d): ui.story_milestone_reached.emit(m, d))
-	request_scene_transition.connect(func(s, sp): ui.request_scene_transition.emit(s, sp))

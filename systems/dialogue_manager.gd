@@ -25,6 +25,13 @@ func register_dialogues(dialogues: Array[DialogueData]) -> void:
 	for dlg in dialogues:
 		register_dialogue(dlg)
 
+func _ready() -> void:
+	# One-shot relay: internal signals → EventBus facade (avoids double-emit in runtime methods)
+	dialogue_started.connect(EventBus.dialogue_started.emit)
+	dialogue_line_requested.connect(func(l, i, t, n): EventBus.dialogue_line.emit(l, i, t, n))
+	dialogue_choices_requested.connect(func(c, n): EventBus.dialogue_choices.emit(c, n))
+	dialogue_ended.connect(func(n, r): EventBus.dialogue_ended.emit(n, r))
+
 func start_dialogue(dialogue: DialogueData, npc_id: String = "", context: Dictionary = {}) -> void:
 	if dialogue == null:
 		push_warning("DialogueManager.start_dialogue: dialogue is null")
@@ -37,7 +44,6 @@ func start_dialogue(dialogue: DialogueData, npc_id: String = "", context: Dictio
 	_active = true
 	_waiting_for_choice = false
 	dialogue_started.emit(dialogue, npc_id)
-	EventBus.dialogue_started.emit(dialogue, npc_id)
 	_emit_next_line()
 
 func is_active() -> bool:
@@ -91,7 +97,6 @@ func _emit_next_line() -> void:
 	var line: DialogueLineData = _current_dialogue.lines[_current_line_index]
 	_current_line_index += 1
 	dialogue_line_requested.emit(line, _current_line_index, _current_dialogue.lines.size(), _current_npc_id)
-	EventBus.dialogue_line.emit(line, _current_line_index, _current_dialogue.lines.size(), _current_npc_id)
 	# Auto advance if line demands it
 	if line.auto_advance and not _waiting_for_choice:
 		_emit_next_line()
@@ -109,7 +114,6 @@ func _emit_choices_or_end() -> void:
 		_end_dialogue("no_available_choices")
 		return
 	dialogue_choices_requested.emit(_available_choices, _current_npc_id)
-	EventBus.dialogue_choices.emit(_available_choices, _current_npc_id)
 
 func _conditions_pass(conditions: Array[DialogueConditionData]) -> bool:
 	for cond in conditions:
@@ -166,7 +170,6 @@ func _end_dialogue(reason: String) -> void:
 	_active = false
 	_waiting_for_choice = false
 	dialogue_ended.emit(_current_npc_id, reason)
-	EventBus.dialogue_ended.emit(_current_npc_id, reason)
 	_current_dialogue = null
 	_current_npc_id = ""
 	_current_line_index = 0
