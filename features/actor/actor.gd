@@ -15,6 +15,7 @@ signal inventory_item_added(item_data: ItemData) # Example for future use
 @onready var visuals: AnimatedSprite2D = %AnimatedSprite2D
 @onready var actor_combat_component: ActorCombatComponent = $ActorCombatComponent
 @onready var inventory_component: InventoryComponent = $InventoryComponent
+@onready var ai_controller: AIControllerComponent = $AIControllerComponent if has_node("AIControllerComponent") else null
 
 # This property will be set by the spawner.
 @export var actor_data: ActorData
@@ -59,7 +60,11 @@ func _ready():
 
 		# Initialize inventory component
 		inventory_component.set_data(actor_data)
-
+		
+		# Initialize AI controller if present
+		if ai_controller:
+			ai_controller.set_behaviors(actor_data.behaviors)
+		
 		# Sync components to runtime state (separates template from mutable state)
 		attribute_component.set_runtime_state(runtime_state)
 		attribute_component.health_component.health_changed.connect(
@@ -83,22 +88,14 @@ func _physics_process(delta: float):
 			move_and_slide()
 			return
 	
-	# Reset velocity before executing behaviors for AI-controlled actors
-	if actor_data and not actor_data.behaviors.is_empty():
-		velocity = Vector2.ZERO
-		# 优先级调度：只执行第一个满足条件的行为
-		for behavior in actor_data.behaviors:
-			if behavior:
-				# Check if the behavior should execute
-				# If it has a should_execute method, use it
-				# Otherwise, just execute it directly
-				if behavior.has_method("should_execute"):
-					if behavior.should_execute(self):
-						behavior.execute(self, delta)
-						break
-				elif not behavior.has_method("should_execute"):
-					behavior.execute(self, delta)
-					break
+	# Delegate AI control to the controller component if available
+	if ai_controller and ai_controller.is_ai_active():
+		var executed = ai_controller.execute(delta, self)
+		if executed:
+			# AI behaviors may have set velocity; move and animate
+			_update_animation()
+			move_and_slide()
+			return
 
 	# Player-controlled actors will have their velocity set in their own script.
 	# This ensures move_and_slide and animation updates run for ALL actors.

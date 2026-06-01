@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://cxisxun04ixka" path="res://features/components/inventory_component/inventory_component.tscn" id="5_bq51l"]
 [ext_resource type="PackedScene" uid="uid://df1grkhu8bf5u" path="res://features/components/combat_component/actor_combat_component.tscn" id="5_g21jm"]
 
+[ext_resource type="Script" uid="uid://50cb304677354323a068cb3d500acde4" path="res://features/components/ai_controller_component/ai_controller_component.gd" id="6_ai_ctrl"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_default"]
 radius = 100.0
 
@@ -28,3 +30,6 @@ shape = SubResource("CircleShape2D_default")
 [node name="ActorCombatComponent" parent="." instance=ExtResource("5_g21jm")]
 
 [node name="InventoryComponent" parent="." instance=ExtResource("5_bq51l")]
+
+[node name="AIControllerComponent" type="Node" parent="."]
+script = ExtResource("6_ai_ctrl")

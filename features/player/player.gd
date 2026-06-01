@@ -24,6 +24,9 @@ var interaction_ui_visible: bool = false
 # Dodge component (initialized in _ready)
 var dodge_component: DodgeComponent = null
 
+# Input component (autowired in _ready)
+var input_component: PlayerInputComponent = null
+
 # ATP depletion tracking
 var atp_depletion_timer: float = 0.0  # Time ATP has been at 0
 
@@ -46,6 +49,13 @@ func _ready():
 	# Get dodge component reference
 	dodge_component = get_node_or_null("DodgeComponent") as DodgeComponent
 	
+	# Get or create input component
+	input_component = get_node_or_null("PlayerInputComponent") as PlayerInputComponent
+	if not input_component:
+		input_component = PlayerInputComponent.new()
+		input_component.name = "PlayerInputComponent"
+		add_child(input_component)
+	
 	# Setup dodge component if present
 	if dodge_component:
 		dodge_component.dodge_started.connect(_on_dodge_started)
@@ -65,8 +75,14 @@ func _ready():
 
 func _physics_process(delta: float) -> void:
 	# Handle vehicle interaction input
-	if Input.is_action_just_pressed("enter_vehicle"):  # E key
+	if input_component and input_component.should_interact:
 		await _handle_vehicle_interaction()
+		input_component.consume_transient_intents()
+		return
+	
+	# Consume transient intents that may have been used elsewhere
+	if input_component:
+		input_component.consume_transient_intents()
 
 	# Different behavior based on current state
 	match current_state:
@@ -77,11 +93,9 @@ func _physics_process(delta: float) -> void:
 
 func _handle_on_foot_logic(delta: float):
 	# --- Biological Processes (Always run, even during stagger/dodge) ---
-	# Get movement input once for metabolism and movement logic (performance optimization)
-	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD  # Check if there's movement input
-	# Determine if sprinting for metabolism calculation
-	var is_sprinting = Input.is_action_pressed("shift")
+	var direction := input_component.desired_direction if input_component else Vector2.ZERO
+	var has_movement_input = direction.length() > MOVEMENT_INPUT_THRESHOLD
+	var is_sprinting = input_component.is_sprinting if input_component else false
 	_process_metabolism(delta, is_sprinting, has_movement_input)
 	
 	# Check if staggered - if so, no input allowed but metabolism continues
@@ -94,10 +108,9 @@ func _handle_on_foot_logic(delta: float):
 	if is_staggered or is_dodging:
 		return
 	
-	# Handle dodge input (reuse direction variable from above)
-	if Input.is_action_just_pressed("dodge") and dodge_component:
-		var dodge_direction = direction  # Use the direction already calculated
-		# If no input, use last direction or velocity direction
+	# Handle dodge input
+	if input_component and input_component.should_dodge and dodge_component:
+		var dodge_direction = direction
 		if dodge_direction.length() == 0:
 			if velocity.length() > 0:
 				dodge_direction = velocity.normalized()
@@ -105,9 +118,6 @@ func _handle_on_foot_logic(delta: float):
 				dodge_direction = last_direction
 		dodge_component.attempt_dodge(dodge_direction)
 	
-	# --- Input and Movement ---
-	# Note: direction was calculated above for metabolism to avoid duplicate Input.get_vector() calls
-
 	# Update last direction if moving
 	if direction.length() > 0:
 		last_direction = direction.normalized()
@@ -127,11 +137,14 @@ func _handle_on_foot_logic(delta: float):
 	# Handle combat input
 	_handle_combat_input()
 
-	var weapons = actor_combat_component.actor_weapons
-	for wc in weapons:
-		if wc and wc.has_method("look_at"):
-			wc.look_at(get_global_mouse_position())
-			wc.rotation_degrees += 90  # Adjust orientation
+	# Make weapons look at aim target
+	if input_component:
+		var aim_target = input_component.aim_target
+		var weapons = actor_combat_component.actor_weapons
+		for wc in weapons:
+			if wc and wc.has_method("look_at"):
+				wc.look_at(aim_target)
+				wc.rotation_degrees += 90  # Adjust orientation
 
 func _handle_in_vehicle_logic(delta: float):
 	# 进入载具后，player位置随vehicle同步
@@ -142,6 +155,8 @@ func _handle_in_vehicle_logic(delta: float):
 	_process_basal_metabolism(delta)
 
 func _handle_vehicle_interaction():
+	if not input_component or not input_component.should_interact:
+		return
 	if current_state == PlayerState.ON_FOOT:
 		# Try to enter nearby vehicle
 		if nearby_vehicle and nearby_vehicle.has_method("can_be_entered") and nearby_vehicle.can_be_entered():
@@ -282,19 +297,19 @@ func _process_metabolism(delta: float, is_sprinting: bool = false, has_movement_
 		atp_depletion_timer = 0.0
 
 func _handle_combat_input():
-	if not actor_combat_component:
+	if not actor_combat_component or not input_component:
 		return
 	
 	# Heavy attack - charge on hold, release on button up
-	if Input.is_action_just_pressed("heavy_attack"):
+	if input_component.should_heavy_attack:
 		GameLogger.debug("player", "Starting heavy attack charge")
 		actor_combat_component.start_heavy_attack_charge()
-	elif Input.is_action_just_released("heavy_attack"):
+	elif input_component.heavy_attack_released and actor_combat_component.is_charging_heavy:
 		GameLogger.debug("player", "Releasing heavy attack")
 		actor_combat_component.release_heavy_attack()
 	
 	# Light attack - Actor weapon fire (pistol/rifle etc)
-	if Input.is_action_just_pressed("light_attack"):
+	if input_component.should_light_attack:
 		GameLogger.debug("player", "Firing light attack")
 		actor_combat_component.perform_light_attack()
 
