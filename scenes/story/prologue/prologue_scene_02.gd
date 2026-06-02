@@ -39,6 +39,10 @@ var collected_glucose_count: int = 0
 var molecule_type_data: Dictionary = {
 	"alpha_glucose": preload("res://data/molecules/alpha_glucose.tres"),
 	"beta_glucose": preload("res://data/molecules/beta_glucose.tres"),
+	"alpha_galactose": preload("res://data/molecules/alpha_galactose.tres"),
+	"beta_galactose": preload("res://data/molecules/beta_galactose.tres"),
+	"alpha_fructose": preload("res://data/molecules/alpha_fructose.tres"),
+	"beta_fructose": preload("res://data/molecules/beta_fructose.tres"),
 	"fructose": preload("res://data/molecules/fructose.tres"),
 	"galactose": preload("res://data/molecules/galactose.tres"),
 	"sucrose": preload("res://data/molecules/sucrose.tres"),
@@ -46,9 +50,9 @@ var molecule_type_data: Dictionary = {
 	"maltose": preload("res://data/molecules/maltose.tres"),
 }
 
-# Fallback legacy mapping until all .tres files are created
-var _legacy_names := ["α-Glucose", "β-Glucose", "Fructose", "Galactose", "Sucrose", "Lactose", "Maltose"]
-var _legacy_colors := [Color.GREEN, Color.ORANGE, Color.YELLOW, Color.RED, Color.PURPLE, Color.BLUE]
+# Fallback legacy mapping for display names and fallback colors
+var _legacy_names := ["α-Glucose", "β-Glucose", "Fructose", "Galactose", "Sucrose", "Lactose", "Maltose", "Alpha-Galactose", "Beta-Galactose", "Alpha-Fructose", "Beta-Fructose"]
+var _legacy_colors := [Color.GREEN, Color.ORANGE, Color.YELLOW, Color.RED, Color.PURPLE, Color.BLUE, Color.CYAN, Color.CORAL, Color.GOLD, Color.MEDIUM_VIOLET_RED, Color.LIME_GREEN]
 
 func _ready():
 	player = get_tree().get_first_node_in_group("player")
@@ -86,12 +90,34 @@ func _spawn_molecules():
 		_spawn_molecule(key, name, positions[pos_idx])
 		pos_idx += 1
 	
-	# Spawn other sugar molecules randomly
+	# Spawn other sugar molecules (fructose and galactose variants)
 	for i in range(other_count):
-		var random_index := randi() % (_legacy_names.size() - 2) + 2
-		var mol_name: String = _legacy_names[random_index]
-		var key: String = mol_name.to_lower().replace("-", "_")
-		_spawn_molecule(key, mol_name, positions[pos_idx])
+		var other_type := randi() % 6
+		var key: String
+		var name: String
+		match other_type:
+			0:
+				key = "alpha_fructose"
+				name = "α-Fructose"
+			1:
+				key = "beta_fructose"
+				name = "β-Fructose"
+			2:
+				key = "alpha_galactose"
+				name = "α-Galactose"
+			3:
+				key = "beta_galactose"
+				name = "β-Galactose"
+			4:
+				key = "fructose"
+				name = "Fructose"
+			5:
+				key = "galactose"
+				name = "Galactose"
+			_:
+				key = "fructose"
+				name = "Fructose"
+		_spawn_molecule(key, name, positions[pos_idx])
 		pos_idx += 1
 
 func _spawn_molecule(molecule_key: String, display_name: String, pos: Vector2):
