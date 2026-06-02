@@ -43,16 +43,7 @@ var molecule_type_data: Dictionary = {
 	"beta_galactose": preload("res://data/molecules/beta_galactose.tres"),
 	"alpha_fructose": preload("res://data/molecules/alpha_fructose.tres"),
 	"beta_fructose": preload("res://data/molecules/beta_fructose.tres"),
-	"fructose": preload("res://data/molecules/fructose.tres"),
-	"galactose": preload("res://data/molecules/galactose.tres"),
-	"sucrose": preload("res://data/molecules/sucrose.tres"),
-	"lactose": preload("res://data/molecules/lactose.tres"),
-	"maltose": preload("res://data/molecules/maltose.tres"),
 }
-
-# Fallback legacy mapping for display names and fallback colors
-var _legacy_names := ["α-Glucose", "β-Glucose", "Fructose", "Galactose", "Sucrose", "Lactose", "Maltose", "Alpha-Galactose", "Beta-Galactose", "Alpha-Fructose", "Beta-Fructose"]
-var _legacy_colors := [Color.GREEN, Color.ORANGE, Color.YELLOW, Color.RED, Color.PURPLE, Color.BLUE, Color.CYAN, Color.CORAL, Color.GOLD, Color.MEDIUM_VIOLET_RED, Color.LIME_GREEN]
 
 func _ready():
 	player = get_tree().get_first_node_in_group("player")
@@ -90,9 +81,9 @@ func _spawn_molecules():
 		_spawn_molecule(key, name, positions[pos_idx])
 		pos_idx += 1
 	
-	# Spawn other sugar molecules (fructose and galactose variants)
+	# Spawn other sugar molecules (galactose and fructose variants)
 	for i in range(other_count):
-		var other_type := randi() % 6
+		var other_type := randi() % 4
 		var key: String
 		var name: String
 		match other_type:
@@ -108,15 +99,9 @@ func _spawn_molecules():
 			3:
 				key = "beta_galactose"
 				name = "β-Galactose"
-			4:
-				key = "fructose"
-				name = "Fructose"
-			5:
-				key = "galactose"
-				name = "Galactose"
 			_:
-				key = "fructose"
-				name = "Fructose"
+				key = "alpha_fructose"
+				name = "α-Fructose"
 		_spawn_molecule(key, name, positions[pos_idx])
 		pos_idx += 1
 
@@ -131,13 +116,9 @@ func _spawn_molecule(molecule_key: String, display_name: String, pos: Vector2):
 	if data != null:
 		molecule.molecule_data = data
 	else:
-		var fallback_data := MoleculeData.new()
-		fallback_data.molecule_name = molecule_key
-		fallback_data.display_name = display_name
-		var idx := _legacy_names.find(display_name)
-		if idx >= 0:
-			fallback_data.base_color = _legacy_colors[idx]
-		molecule.molecule_data = fallback_data
+		push_error("PrologueScene02: Unknown molecule key '%s'" % molecule_key)
+		molecule.queue_free()
+		return
 	
 	molecule.interaction_effects = _build_interaction_effects(molecule_key)
 	
