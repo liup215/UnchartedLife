@@ -5,7 +5,7 @@
 [ext_resource type="Shader" path="res://ui/themes/shaders/border_glow.gdshader" id="3_border"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rkcsm"]
-font_size = 24
+font_size = 28
 font_color = Color(0.176471, 0.831373, 0.74902, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dialogue"]
@@ -59,6 +59,8 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 theme_override_colors/default_color = Color(0.886275, 0.909804, 0.941176, 1)
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 26
 fit_content = true
 scroll_active = false
 
@@ -69,7 +71,7 @@ layout_mode = 2
 [node name="ContinuePrompt" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 0.7)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 text = "Press Space to Continue..."
 horizontal_alignment = 2
 
