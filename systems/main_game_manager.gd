@@ -17,6 +17,12 @@ var loading_screen_instance: Control = null
 ## Used by menus to quickly bail if the game is already quitting.
 var QuitOrQuitting: bool = false
 
+## Molecule data mapping for loading screen visuals per scene
+var _scene_loading_molecules: Dictionary = {
+	"prologue_scene_01": preload("res://data/molecules/alpha_glucose.tres"),
+	"prologue_scene_02": preload("res://data/molecules/alpha_glucose.tres"),
+}
+
 func quit_game() -> void:
 	QuitOrQuitting = true
 	get_tree().quit()
@@ -83,8 +89,11 @@ func load_game_scene(data: GameSceneData, spawn_point_id: String = "default"):
 	"""Load a game level with loading screen"""
 	GameLogger.debug("game", "MainGameManager: Loading game scene '%s'" % data.scene_name)
 	
-	# Show loading screen
-	_show_loading_screen(null, "Loading " + data.scene_name + "...")
+	# Determine loading screen molecule based on scene
+	var mol_data: Resource = _scene_loading_molecules.get(data.scene_id)
+	
+	# Show loading screen with molecule visual
+	_show_loading_screen(null, "Loading " + data.scene_name + "...", mol_data)
 	
 	# Wait a frame
 	await get_tree().process_frame
@@ -170,7 +179,7 @@ func _position_player_in_scene(data: GameSceneData, spawn_point_id: String = "de
 		elif "actor_data" in player_instance:
 			player_instance.actor_data = data.player_spawn.player_data
 
-func _show_loading_screen(image: Texture2D = null, text: String = "Loading..."):
+func _show_loading_screen(image: Texture2D = null, text: String = "Loading...", molecule_data: Resource = null):
 	"""Show the loading screen managed by main scene"""
 	if not loading_screen_instance:
 		# Load and instantiate loading screen
@@ -181,7 +190,9 @@ func _show_loading_screen(image: Texture2D = null, text: String = "Loading..."):
 	
 	# Configure and show
 	if loading_screen_instance:
-		if image and loading_screen_instance.has_method("set_image"):
+		if molecule_data and loading_screen_instance.has_method("set_molecule_data"):
+			loading_screen_instance.set_molecule_data(molecule_data)
+		elif image and loading_screen_instance.has_method("set_image"):
 			loading_screen_instance.set_image(image)
 		if text and loading_screen_instance.has_method("set_text"):
 			loading_screen_instance.set_text(text)

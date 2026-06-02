@@ -2,15 +2,20 @@ extends Control
 
 ## Loading Screen
 ## Displays a loading screen with configurable image and text
+## Supports molecule structure display for biology-themed loading screens
 ## Can be used during scene transitions or asset loading
 
 signal loading_complete
+
+const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
 
 @export var loading_image: Texture2D
 @export var loading_text: String = "Loading..."
 @export var show_progress_bar: bool = true
 
 @onready var center_image: TextureRect = $CenterContainer/VBoxContainer/CenterImage
+@onready var molvis_container: CenterContainer = $CenterContainer/VBoxContainer/MoleculeVisualContainer
+@onready var molecule_visual: Node2D = $CenterContainer/VBoxContainer/MoleculeVisualContainer/MoleculeVisual
 @onready var loading_label: Label = $CenterContainer/VBoxContainer/LoadingLabel
 @onready var progress_bar: ProgressBar = $CenterContainer/VBoxContainer/ProgressBar
 
@@ -34,6 +39,35 @@ func set_image(image: Texture2D) -> void:
 	loading_image = image
 	if center_image:
 		center_image.texture = image
+
+func set_molecule_data(molecule_data: MoleculeData) -> void:
+	"""Display a molecule structure instead of an image"""
+	if molecule_data == null:
+		_show_fallback_image()
+		return
+	
+	if molecule_visual and molecule_visual.has_method("set_molecule_data"):
+		molecule_visual.set_molecule_data(molecule_data)
+		_show_molecule_visual()
+	else:
+		_show_fallback_image()
+
+func _show_molecule_visual() -> void:
+	"""Switch to molecule visual display"""
+	if center_image:
+		center_image.visible = false
+	if molvis_container:
+		molvis_container.visible = true
+	# Trigger redraw
+	if molecule_visual:
+		molecule_visual.queue_redraw()
+
+func _show_fallback_image() -> void:
+	"""Switch back to image display (fallback)"""
+	if molvis_container:
+		molvis_container.visible = false
+	if center_image:
+		center_image.visible = true
 
 func set_text(text: String) -> void:
 	"""Set the loading screen text"""

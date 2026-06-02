@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://loading_screen_main"]
+[gd_scene load_steps=6 format=3 uid="uid://loading_screen_main"]
 
 [ext_resource type="Script" path="res://ui/loading_screen/loading_screen.gd" id="1_loading"]
 [ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
 [ext_resource type="Theme" path="res://ui/themes/biocell_theme.tres" id="3_theme"]
 [ext_resource type="Shader" path="res://ui/themes/shaders/background_pulse.gdshader" id="4_bg_shader"]
+[ext_resource type="Script" path="res://features/interactive/molecule/molecule_visual.gd" id="5_molvis"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_loading"]
 shader = ExtResource("4_bg_shader")
@@ -58,6 +59,17 @@ layout_mode = 2
 texture = ExtResource("2_icon")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="MoleculeVisualContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(300, 300)
+
+[node name="MoleculeVisual" type="Node2D" parent="CenterContainer/VBoxContainer/MoleculeVisualContainer"]
+position = Vector2(150, 150)
+script = ExtResource("5_molvis")
+ring_radius = 50.0
+perspective_y_scale = 0.45
 
 [node name="LoadingLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
