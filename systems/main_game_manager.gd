@@ -18,8 +18,9 @@ var loading_screen_instance: Control = null
 var QuitOrQuitting: bool = false
 
 ## Molecule data mapping for loading screen visuals per scene
+## Only the glucose tutorial shows glucose; other scenes show different molecules
 var _scene_loading_molecules: Dictionary = {
-	"prologue_scene_01": preload("res://data/molecules/alpha_glucose.tres"),
+	"prologue_scene_01": preload("res://data/molecules/alpha_fructose.tres"),
 	"prologue_scene_02": preload("res://data/molecules/alpha_glucose.tres"),
 }
 
