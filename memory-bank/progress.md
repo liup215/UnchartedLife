@@ -66,6 +66,29 @@ The project has completed several major development phases, establishing a robus
   - Event-based objective completion
   - Integration with dialogue for quest triggers
 
+### Phase 8b: Data-Driven Molecule System Refactor (Complete) ✅
+- **Problem**: Molecule system was hard-coded — `MoleculeType` enum in `molecule.gd`, glucose drawing logic in `molecule_visual.gd`, pickup effects tied to molecule type.
+- **Solution**: Full data-driven refactor with Resource-based molecular structures:
+  - `MoleculeAtomData`: Defines atoms with element, label, position, radius, color.
+  - `MoleculeBondData`: Defines bonds with atom indices, bond type (SOLID/DASHED/WEDGE), width, color.
+  - `MoleculeData`: Combines atoms + bonds into complete molecular structures.
+  - 6 sugar molecule `.tres` files created (glucose, fructose, galactose, sucrose, lactose, maltose).
+  - `MoleculeVisual` → pure data-driven `_draw()` renderer, supports perspective sorting and 3 bond types.
+  - `Molecule` → removed `MoleculeType` enum, exposed `@export molecule_data` (structure) + `@export interaction_effects` (gameplay effects).
+  - **Key design**: Structure and effects are decoupled — same `glucose.tres` can restore HP in scene A, ATP in scene B.
+  - **Editor preview**: `@tool` annotation on `MoleculeVisual` for in-editor structure visualization.
+  - **Godot technical note**: `class_name` caused cascade parse failures during refactor; migrated to `const TypeName = preload(...)` pattern.
+
+#### Molecule System Polish (Complete) ✅
+- **Glucose split into α/β anomers**: Old `glucose.tres` deleted. New `alpha_glucose.tres` (C1-OH opposite C6) and `beta_glucose.tres` (C1-OH same side as C6). Both count as correct "glucose" in the minigame.
+- **Prologue quest simplified**: Removed "dying cell" concept. Goal is now simply "collect all glucose molecules". Added `total_glucose_count` / `collected_glucose_count` tracking. Victory triggers when all glucose molecules are collected. UI shows "Glucose: X / Y" counter instead of cell health bar.
+- **All bonds rendered as SOLID**: Removed DASHED/WEDGE usage from molecular structure (only for hydrogen bonds in future). Bonds now start/end at atom disc edges (no more occlusion).
+- **Removed name labels**: Both programmatic `_draw_name_label()` and scene Label node removed — molecules now display purely as structural diagrams.
+- **Prologue spawn layout**: Replaced random rejection sampling with a golden-angle spiral (`radius = dead_radius + spacing * sqrt(i)`) for guaranteed, even spacing in infinite space. Removed 1160×460 rectangular boundary.
+- **Precise Haworth coordinates**: Glucose ring atoms at unit-circle positions scaled x3, with C6 at (-1.8, -5.1) straight down from C5, and C6-OH at (-0.9, -6.0).
+- **Player visuals**: Replaced sprite with `_draw()` smooth blue pill body + white direction indicator; `modulate` flashes apply to self so custom draw participates in hit feedback.
+- **Dodge afterimage fallback**: When sprite has no `sprite_frames`, generates a translucent ghost-rectangle from `self.modulate` color instead of crashing.
+
 ### Phase 9: Save System Completion & Bug Fixes (Complete) ✅
 - **Binary Serialization Save System:**
   - Complete save/load implementation with binary serialization (var_to_bytes/bytes_to_var)

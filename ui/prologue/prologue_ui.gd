@@ -2,8 +2,10 @@
 ## UI overlay for the prologue scene
 extends Control
 
+const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
+
 @onready var objective_label: Label = $VBoxContainer/ObjectiveLabel
-@onready var cell_health_label: Label = $VBoxContainer/CellHealthLabel
+@onready var counter_label: Label = $VBoxContainer/CounterLabel
 @onready var feedback_label: Label = $FeedbackLabel
 @onready var game_over_panel: Panel = $GameOverPanel
 @onready var game_over_label: Label = $GameOverPanel/VBoxContainer/MessageLabel
@@ -17,65 +19,52 @@ func _ready():
 	_hide_game_over()
 
 func _setup_ui():
-	# Set up objective text
 	if objective_label:
-		objective_label.text = "Objective: Collect GLUCOSE to refill ammo\nShoot the dying cell to heal it!\nAvoid other sugars - they hurt you!"
+		objective_label.text = "Objective: Collect all GLUCOSE molecules!"
 	
-	# Set up buttons
 	if restart_button:
 		restart_button.pressed.connect(_on_restart_pressed)
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_pressed)
 
 func _process(delta: float):
-	# Fade out feedback label over time
 	if feedback_timer > 0:
 		feedback_timer -= delta
 		if feedback_label:
 			feedback_label.modulate.a = feedback_timer / 2.0
 
-func update_cell_health(current: int, max_hp: int, percentage: float):
-	if cell_health_label:
-		cell_health_label.text = "Cell Health: %d / %d (%.1f%%)" % [current, max_hp, percentage * 100]
+func update_glucose_counter(collected: int, total: int):
+	if counter_label:
+		counter_label.text = "Glucose: %d / %d" % [collected, total]
 		
-		# Color code based on health
+		# Color code based on progress
+		var percentage := float(collected) / float(total) if total > 0 else 0.0
 		if percentage < 0.3:
-			cell_health_label.add_theme_color_override("font_color", Color.RED)
-		elif percentage < 0.5:
-			cell_health_label.add_theme_color_override("font_color", Color.ORANGE)
+			counter_label.add_theme_color_override("font_color", Color.RED)
 		elif percentage < 0.7:
-			cell_health_label.add_theme_color_override("font_color", Color.YELLOW)
+			counter_label.add_theme_color_override("font_color", Color.YELLOW)
 		else:
-			cell_health_label.add_theme_color_override("font_color", Color.GREEN)
+			counter_label.add_theme_color_override("font_color", Color.GREEN)
 
-func on_molecule_collected(type: int, is_glucose: bool):
+func on_molecule_collected(mol_data: MoleculeData, is_correct: bool):
 	if not feedback_label:
 		return
 	
-	if is_glucose:
-		feedback_label.text = "✓ GLUCOSE collected! Ammo refilled!"
+	var molecule_name := mol_data.display_name if mol_data != null and not mol_data.display_name.is_empty() else "Unknown"
+	
+	if is_correct:
+		feedback_label.text = "✓ %s collected!" % molecule_name
 		feedback_label.add_theme_color_override("font_color", Color.GREEN)
 	else:
-		var molecule_name = _get_molecule_name(type)
 		feedback_label.text = "✗ Wrong! %s is not glucose! (-10 HP)" % molecule_name
 		feedback_label.add_theme_color_override("font_color", Color.RED)
 	
 	feedback_label.modulate.a = 1.0
 	feedback_timer = 2.0
 
-func _get_molecule_name(type: int) -> String:
-	match type:
-		0: return "Glucose"
-		1: return "Fructose"
-		2: return "Galactose"
-		3: return "Sucrose"
-		4: return "Lactose"
-		5: return "Maltose"
-		_: return "Unknown"
-
 func show_victory():
 	if game_over_panel and game_over_label:
-		game_over_label.text = "VICTORY!\nYou've healed the cell!"
+		game_over_label.text = "VICTORY!\nYou found all the glucose molecules!"
 		game_over_label.add_theme_color_override("font_color", Color.GREEN)
 		game_over_panel.visible = true
 
@@ -90,9 +79,7 @@ func _hide_game_over():
 		game_over_panel.visible = false
 
 func _on_restart_pressed():
-	# Restart the scene
 	get_tree().reload_current_scene()
 
 func _on_menu_pressed():
-	# Return to main menu
 	get_tree().change_scene_to_file(ScenePaths.MAIN_MENU)

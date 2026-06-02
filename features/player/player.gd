@@ -30,6 +30,66 @@ var interaction_ui_visible: bool = false
 # During Wave 2 migration, these resolve to the new StatSystem if available.
 # After Wave 7 (old component deletion), they resolve to StatSystem only.
 
+#region Custom Polygon Visuals
+## Draws a smooth rounded polygon as the player's visual instead of a sprite texture.
+## The shape is a "pill" / rounded-rectangle with a directional indicator (nose).
+func _draw() -> void:
+	# Smooth pill-like body using a polygon with many segments
+	var body_points: PackedVector2Array = _build_smooth_body(20.0, 14.0, 16)
+	# Fill
+	draw_colored_polygon(body_points, Color(0.25, 0.62, 0.95, 1.0))
+	# Outline
+	for i in range(body_points.size()):
+		var a: Vector2 = body_points[i]
+		var b: Vector2 = body_points[(i + 1) % body_points.size()]
+		draw_line(a, b, Color(0.1, 0.35, 0.65, 1.0), 2.0)
+	# Direction indicator (nose) pointing toward last_direction
+	var nose: Vector2 = last_direction.normalized() * 14.0
+	draw_circle(nose, 4.5, Color(1.0, 1.0, 1.0, 0.9))
+	# Nose outline drawn as small circle segment
+	var nose_outline_points: PackedVector2Array = PackedVector2Array()
+	var nose_seg: int = 14
+	for i in range(nose_seg + 1):
+		var angle: float = TAU * float(i) / float(nose_seg)
+		nose_outline_points.append(nose + Vector2(cos(angle), sin(angle)) * 4.5)
+	for i in range(nose_outline_points.size() - 1):
+		draw_line(nose_outline_points[i], nose_outline_points[i + 1], Color(0.1, 0.35, 0.65, 1.0), 1.5)
+
+
+## Builds a smooth rounded polygon (pill shape) with `radius` corners and `w`/`h` dimensions.
+func _build_smooth_body(half_width: float, half_height: float, segments_per_corner: int) -> PackedVector2Array:
+	var points: PackedVector2Array = PackedVector2Array()
+	var corners: Array[Vector2] = [
+		Vector2(half_width, -half_height),   # top-right
+		Vector2(half_width, half_height),    # bottom-right
+		Vector2(-half_width, half_height),   # bottom-left
+		Vector2(-half_width, -half_height),  # top-left
+	]
+	var radius: float = min(half_width, half_height)
+	for c in range(corners.size()):
+		var corner: Vector2 = corners[c]
+		var prev: Vector2 = corners[(c + 3) % 4]
+		var next: Vector2 = corners[(c + 1) % 4]
+		# Start and end of the rounded corner arc
+		var start: Vector2 = corner + (prev - corner).normalized() * radius
+		var end: Vector2 = corner + (next - corner).normalized() * radius
+		# Straight segment before this corner
+		points.append(start)
+		# Arc for the corner
+		var center: Vector2 = corner + (start - corner).normalized() * radius + (end - corner).normalized() * radius
+		var start_angle: float = (start - center).angle()
+		var end_angle: float = (end - center).angle()
+		# Ensure we go the shorter way around
+		if end_angle < start_angle:
+			end_angle += TAU
+		for i in range(1, segments_per_corner):
+			var t: float = float(i) / float(segments_per_corner)
+			var angle: float = start_angle + (end_angle - start_angle) * t
+			points.append(center + Vector2(cos(angle), sin(angle)) * radius)
+	return points
+#endregion
+
+
 ## Returns the player's entity_id in the new ECS-lite architecture.
 func _get_entity_id() -> int:
 	if entity_id < 0:
@@ -238,6 +298,14 @@ func _ready():
 
 	# Programmatically add to groups to ensure timing is correct.
 	add_to_group("player")
+
+	# --- Custom polygon visuals (replaces sprite) ---
+	# Hide the default AnimatedSprite2D; we draw a smooth polygon instead.
+	if visuals:
+		visuals.visible = false
+		visuals.sprite_frames = null  # Stop any animation playback
+	# Trigger initial draw
+	queue_redraw()
 	add_to_group("saveable")
 	# After becoming ready, claim any pending save data
 	SaveManager.claim_data_for_node(self)

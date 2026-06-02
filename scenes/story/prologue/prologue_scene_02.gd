@@ -1,7 +1,11 @@
 ## prologue_scene_02.gd
-## Glucose identification mini-game
-## Spawns molecules and manages game state
+## Glucose collection mini-game
+## Spawns molecules; player must collect ALL glucose molecules to win.
+## Wrong sugars damage the player.
 extends Node2D
+
+const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
+const ItemEffectData = preload("res://data/definitions/item/item_effect_data.gd")
 
 # Signals
 signal prologue_completed()
@@ -9,150 +13,176 @@ signal prologue_completed()
 # Preload scenes
 @export var molecule_scene: PackedScene
 
-# ... (rest of file unchanged except replacing MOLECULE_SCENE usage)
-
 # Constants
-const GAME_OVER_DELAY: float = 3.0  # Seconds to wait before completing/restarting
+const GAME_OVER_DELAY: float = 3.0
 
-@export var spawn_area_size: Vector2 = Vector2(1600, 900)
-@export var molecule_count: int = 30
+@export var molecule_count: int = 20
 @export var glucose_percentage: float = 0.4  # 40% glucose, 60% other sugars
 
+## Minimum distance from the center (molecules won't spawn closer than this).
+@export var dead_radius: float = 450.0
+## Target distance between adjacent molecules.
+@export var min_molecule_spacing: float = 350.0
+
 @onready var spawn_container: Node2D = $SpawnContainer
-@onready var target_cell: TargetCell = $TargetCell
 @onready var ui: Control = $UI/PrologueUI
 
-var player: Actor = null  # Will be found in the scene tree
+var player: Actor = null
 var game_over: bool = false
 var victory: bool = false
 
-# Molecule type mapping
-var molecule_types = [
-	{"type": Molecule.MoleculeType.GLUCOSE, "name": "Glucose"},
-	{"type": Molecule.MoleculeType.FRUCTOSE, "name": "Fructose"},
-	{"type": Molecule.MoleculeType.GALACTOSE, "name": "Galactose"},
-	{"type": Molecule.MoleculeType.SUCROSE, "name": "Sucrose"},
-	{"type": Molecule.MoleculeType.LACTOSE, "name": "Lactose"},
-	{"type": Molecule.MoleculeType.MALTOSE, "name": "Maltose"},
-]
+# Progress tracking
+var total_glucose_count: int = 0
+var collected_glucose_count: int = 0
+
+# Molecule data mapping — references MoleculeData resources in data/molecules/
+var molecule_type_data: Dictionary = {
+	"alpha_glucose": preload("res://data/molecules/alpha_glucose.tres"),
+	"beta_glucose": preload("res://data/molecules/beta_glucose.tres"),
+	"fructose": preload("res://data/molecules/fructose.tres"),
+	"galactose": preload("res://data/molecules/galactose.tres"),
+	"sucrose": preload("res://data/molecules/sucrose.tres"),
+	"lactose": preload("res://data/molecules/lactose.tres"),
+	"maltose": preload("res://data/molecules/maltose.tres"),
+}
+
+# Fallback legacy mapping until all .tres files are created
+var _legacy_names := ["α-Glucose", "β-Glucose", "Fructose", "Galactose", "Sucrose", "Lactose", "Maltose"]
+var _legacy_colors := [Color.GREEN, Color.ORANGE, Color.YELLOW, Color.RED, Color.PURPLE, Color.BLUE]
 
 func _ready():
-	# Find the player in the scene tree (it should be in the parent Main scene)
 	player = get_tree().get_first_node_in_group("player")
 	if not player:
 		push_warning("Player not found in scene tree!")
 	
-	_setup_game()
 	_spawn_molecules()
 	_connect_signals()
-
-func _setup_game():
-	# Position target cell at center
-	if target_cell:
-		target_cell.position = Vector2(spawn_area_size.x / 2, spawn_area_size.y / 2)
 	
-	# Note: Player positioning is handled by the main scene, not here
+	# Initialize UI counter
+	if ui:
+		ui.update_glucose_counter(0, total_glucose_count)
 
 func _spawn_molecules():
 	if not spawn_container:
 		push_error("SpawnContainer not found!")
 		return
 	
-	var glucose_count = int(molecule_count * glucose_percentage)
-	var other_count = molecule_count - glucose_count
+	var positions := _compute_spiral_positions()
+	positions.shuffle()
 	
-	# Spawn glucose molecules
+	var actual_count: int = mini(molecule_count, positions.size())
+	var glucose_count: int = int(actual_count * glucose_percentage)
+	var other_count: int = actual_count - glucose_count
+	
+	total_glucose_count = glucose_count
+	
+	var pos_idx: int = 0
+	
+	# Spawn glucose molecules (split evenly between α and β anomers)
 	for i in range(glucose_count):
-		_spawn_molecule(Molecule.MoleculeType.GLUCOSE, "Glucose")
+		var is_alpha: bool = (i % 2 == 0)
+		var key: String = "alpha_glucose" if is_alpha else "beta_glucose"
+		var name: String = "α-Glucose" if is_alpha else "β-Glucose"
+		_spawn_molecule(key, name, positions[pos_idx])
+		pos_idx += 1
 	
 	# Spawn other sugar molecules randomly
 	for i in range(other_count):
-		var random_index = randi() % (molecule_types.size() - 1) + 1  # Skip glucose (index 0)
-		var mol_data = molecule_types[random_index]
-		_spawn_molecule(mol_data["type"], mol_data["name"])
+		var random_index := randi() % (_legacy_names.size() - 2) + 2
+		var mol_name: String = _legacy_names[random_index]
+		var key: String = mol_name.to_lower().replace("-", "_")
+		_spawn_molecule(key, mol_name, positions[pos_idx])
+		pos_idx += 1
 
-func _spawn_molecule(type: Molecule.MoleculeType, name: String):
+func _spawn_molecule(molecule_key: String, display_name: String, pos: Vector2):
 	if not molecule_scene:
 		push_error("PrologueScene02: molecule_scene is not assigned")
 		return
 	
-	var molecule = molecule_scene.instantiate()
+	var molecule: Molecule = molecule_scene.instantiate()
 	
-	# Set molecule properties
-	molecule.molecule_type = type
-	molecule.molecule_name = name
+	var data := molecule_type_data.get(molecule_key) as MoleculeData
+	if data != null:
+		molecule.molecule_data = data
+	else:
+		var fallback_data := MoleculeData.new()
+		fallback_data.molecule_name = molecule_key
+		fallback_data.display_name = display_name
+		var idx := _legacy_names.find(display_name)
+		if idx >= 0:
+			fallback_data.base_color = _legacy_colors[idx]
+		molecule.molecule_data = fallback_data
 	
-	# Random position, avoid center where cell is
-	var position = _get_random_spawn_position()
-	molecule.position = position
+	molecule.interaction_effects = _build_interaction_effects(molecule_key)
 	
+	molecule.position = pos
 	spawn_container.add_child(molecule)
 
-func _get_random_spawn_position() -> Vector2:
-	var center = Vector2(spawn_area_size.x / 2, spawn_area_size.y / 2)
-	var min_distance_from_center = 200.0  # Don't spawn too close to cell
+func _build_interaction_effects(molecule_key: String) -> Array[ItemEffectData]:
+	var effects: Array[ItemEffectData] = []
 	
-	var pos = Vector2.ZERO
-	var attempts = 0
-	while attempts < 100:
-		pos = Vector2(
-			randf_range(100, spawn_area_size.x - 100),
-			randf_range(100, spawn_area_size.y - 100)
-		)
-		
-		if pos.distance_to(center) > min_distance_from_center:
-			break
-		attempts += 1
+	if molecule_key in ["alpha_glucose", "beta_glucose"]:
+		# Correct answer: restore ammo
+		var ammo_effect := ItemEffectData.new()
+		ammo_effect.effect_type = ItemEffectData.EffectType.RESTORE_RESOURCE
+		ammo_effect.params = {"resource_type": "ammo", "amount": 5.0}
+		effects.append(ammo_effect)
+	else:
+		# Wrong answer: damage player
+		var damage_effect := ItemEffectData.new()
+		damage_effect.effect_type = ItemEffectData.EffectType.HEAL
+		damage_effect.params = {"amount": -10.0}
+		effects.append(damage_effect)
 	
-	return pos
+	return effects
+
+func _compute_spiral_positions() -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	const GOLDEN_ANGLE: float = 2.39996322972865332
+	
+	for i in range(molecule_count):
+		var radius: float = dead_radius + min_molecule_spacing * sqrt(float(i))
+		var angle: float = GOLDEN_ANGLE * float(i)
+		positions.append(Vector2(radius * cos(angle), radius * sin(angle)))
+	
+	return positions
 
 func _connect_signals():
-	if target_cell:
-		target_cell.cell_healed.connect(_on_cell_healed)
-		target_cell.cell_died.connect(_on_cell_died)
-		target_cell.health_changed.connect(_on_cell_health_changed)
-	
 	if player:
 		player.actor_died.connect(_on_player_died)
 	
-	# Connect molecule collection events
 	EventBus.molecule_collected.connect(_on_molecule_collected)
-
-func _on_cell_healed():
-	victory = true
-	game_over = true
-	_show_victory_screen()
-
-func _on_cell_died():
-	game_over = true
-	_show_game_over_screen("The cell died!")
 
 func _on_player_died():
 	game_over = true
 	_show_game_over_screen("You died!")
 
-func _on_cell_health_changed(current: int, max_hp: int, percentage: float):
-	# Update UI with cell health
+func _on_molecule_collected(mol_data: MoleculeData, is_correct: bool):
+	if game_over:
+		return
+	
+	if is_correct:
+		collected_glucose_count += 1
+		if ui:
+			ui.update_glucose_counter(collected_glucose_count, total_glucose_count)
+		
+		if collected_glucose_count >= total_glucose_count:
+			victory = true
+			game_over = true
+			_show_victory_screen()
+	
 	if ui:
-		ui.update_cell_health(current, max_hp, percentage)
-
-func _on_molecule_collected(type: Molecule.MoleculeType, is_glucose: bool):
-	# Update UI with collection feedback
-	if ui:
-		ui.on_molecule_collected(type, is_glucose)
+		ui.on_molecule_collected(mol_data, is_correct)
 
 func _show_victory_screen():
 	GameLogger.info("story", "=== VICTORY ===")
-	GameLogger.info("story", "Congratulations! You've healed the cell!")
-	GameLogger.info("story", "You successfully identified glucose and restored the cell to health.")
+	GameLogger.info("story", "All glucose molecules collected! Great job!")
 	
 	if ui:
 		ui.show_victory()
 	
-	# Mark as completed
 	PlayerData.completed_glucose_tutorial = true
 	
-	# Wait then emit completion signal
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout
 	prologue_completed.emit()
 
@@ -163,7 +193,5 @@ func _show_game_over_screen(reason: String):
 	if ui:
 		ui.show_game_over(reason)
 	
-	# Wait before restarting (player can try again)
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout
-	# Restart the prologue by reloading
 	get_tree().reload_current_scene()

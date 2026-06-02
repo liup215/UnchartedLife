@@ -10,8 +10,8 @@
 
 [sub_resource type="Resource" id="Resource_vl3tq"]
 script = ExtResource("4_c35up")
-speaker_name = "Dying Cell"
-dialog_text = "I'm dying. Get the glucose gun, get the glucose and shot me to save my Life."
+speaker_name = "Guide"
+dialog_text = "Find and collect all the GLUCOSE molecules scattered around! Be careful — other sugars will hurt you."
 metadata/_custom_type_script = "uid://fy18alg83r"
 
 [sub_resource type="Resource" id="Resource_h0o4r"]

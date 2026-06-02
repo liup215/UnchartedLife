@@ -188,6 +188,9 @@ func _update_animation():
 	elif visuals.sprite_frames and visuals.sprite_frames.has_animation(anim_name):
 		if visuals.animation != anim_name or not visuals.is_playing():
 			visuals.play(anim_name)
+	
+	# Trigger custom draw for polygon-based actors (e.g. player)
+	queue_redraw()
 
 func play_combat_animation(anim_name: String):
 	"""Play a combat animation (combo or heavy attack)"""
@@ -257,29 +260,24 @@ func _on_stagger_started():
 			_play_stagger_flash_effect()
 	
 	# Visual indicator - tint red
-	if visuals:
-		visuals.modulate = Color(1.0, 0.5, 0.5)  # Reddish tint
+	self.modulate = Color(1.0, 0.5, 0.5)  # Reddish tint
 
 ## Called when actor exits stagger state
 func _on_stagger_ended():
 	GameLogger.debug("actor", "[ACTOR] %s recovered from stagger!" % (actor_data.actor_name if actor_data else "Actor"))
 	
 	# Restore normal color
-	if visuals:
-		visuals.modulate = Color.WHITE
+	self.modulate = Color.WHITE
 	
 	# Resume normal animation
 	_update_animation()
 
 ## Flash effect during stagger
 func _play_stagger_flash_effect():
-	if not visuals:
-		return
-	
 	var tween = create_tween()
 	tween.set_loops(3)
-	tween.tween_property(visuals, "modulate:a", 0.3, 0.2)
-	tween.tween_property(visuals, "modulate:a", 1.0, 0.2)
+	tween.tween_property(self, "modulate:a", 0.3, 0.2)
+	tween.tween_property(self, "modulate:a", 1.0, 0.2)
 
 func _connect_new_system_signals() -> void:
 	if _system_signals_connected:

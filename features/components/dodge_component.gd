@@ -146,54 +146,52 @@ func _apply_dodge_movement(direction: Vector2):
 	current_dodge_tween.tween_property(actor, "global_position", target_position, dodge_duration)
 
 func _create_afterimage():
-	"""Create an afterimage at the current position"""
+	"""Create an afterimage at the current position.
+	Works for both sprite-based and custom-drawn (Node2D) actors."""
 	if not actor:
 		return
 	
-	# Find the visual sprite
+	var parent = actor.get_parent()
+	if not parent:
+		return
+	
+	# Try sprite-based afterimage first
 	var sprite: AnimatedSprite2D = null
 	if actor.has_node("%AnimatedSprite2D"):
 		sprite = actor.get_node("%AnimatedSprite2D")
 	elif actor.get("visuals"):
 		sprite = actor.visuals
 	
-	if not sprite:
+	var afterimage: Node2D = null
+	
+	if sprite and sprite.sprite_frames and sprite.animation and sprite.sprite_frames.get_frame_count(sprite.animation) > 0:
+		# Sprite-based actor — clone the current frame
+		var s := Sprite2D.new()
+		s.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+		s.global_position = sprite.global_position
+		s.scale = sprite.scale
+		s.rotation = sprite.rotation
+		s.flip_h = sprite.flip_h
+		s.flip_v = sprite.flip_v
+		afterimage = s
+	elif actor is Node2D:
+		# Custom-drawn actor (e.g. Player with _draw polygon) — ghost outline
+		var g := Polygon2D.new()
+		g.polygon = PackedVector2Array([
+			Vector2(-18, -18), Vector2(18, -18),
+			Vector2(18, 18), Vector2(-18, 18)
+		])
+		g.global_position = actor.global_position
+		g.rotation = actor.rotation
+		g.scale = actor.scale
+		afterimage = g
+	else:
 		return
 	
-	# Validate sprite data before accessing
-	if not sprite.sprite_frames:
-		push_warning("Cannot create afterimage: sprite has no sprite_frames")
-		return
-	
-	if not sprite.animation or sprite.animation == "":
-		push_warning("Cannot create afterimage: sprite has no valid animation")
-		return
-	
-	if sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
-		push_warning("Cannot create afterimage: animation has no frames")
-		return
-	
-	# Get parent for afterimage
-	var parent = actor.get_parent()
-	if not parent:
-		push_warning("Cannot create afterimage: actor has no parent")
-		return
-	
-	# Create afterimage sprite
-	var afterimage = Sprite2D.new()
-	afterimage.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
-	afterimage.global_position = sprite.global_position
-	afterimage.scale = sprite.scale
-	afterimage.rotation = sprite.rotation
-	afterimage.flip_h = sprite.flip_h
-	afterimage.flip_v = sprite.flip_v
 	afterimage.modulate = afterimage_modulate
-	
-	# Add to scene tree (not as child of actor, so it stays in place)
 	parent.add_child(afterimage)
 	
 	# Fade out and remove afterimage
-	# Use afterimage's own tween to ensure it completes even if component is freed
 	var tween = afterimage.create_tween()
 	tween.tween_property(afterimage, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(afterimage.queue_free)

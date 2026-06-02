@@ -1,0 +1,39 @@
+<svg width="512" height="512" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="-200" y="-200" width="400" height="400" fill="#0A0A1A" rx="0"/>
+  <line x1="-19.38" y1="35.00" x2="-80.00" y2="70.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-80.00" y1="70.00" x2="-140.62" y2="35.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-140.62" y1="35.00" x2="-140.62" y2="-35.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-140.62" y1="-35.00" x2="-80.00" y2="-70.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-80.00" y1="-70.00" x2="-19.38" y2="-35.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-19.38" y1="-35.00" x2="-19.38" y2="35.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="132.31" y1="17.00" x2="80.00" y2="55.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="80.00" y1="55.00" x2="27.69" y2="17.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="27.69" y1="17.00" x2="47.67" y2="-44.50" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="47.67" y1="-44.50" x2="112.33" y2="-44.50" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="112.33" y1="-44.50" x2="132.31" y2="17.00" stroke="#FF4444" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+  <line x1="-19.38" y1="35.00" x2="27.69" y2="17.00" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" filter="url(#strongGlow)" />
+  <circle cx="-80.00" cy="0.00" r="14.00" fill="#FF4444" stroke="#00FFFF" stroke-width="2" filter="url(#glow)" />
+  <text x="-80.00" y="0.00" fill="#000000" font-size="14px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">O</text>
+  <circle cx="80.00" cy="0.00" r="14.00" fill="#FF4444" stroke="#00FFFF" stroke-width="2" filter="url(#glow)" />
+  <text x="80.00" y="0.00" fill="#000000" font-size="14px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">O</text>
+  <text x="-80.00" y="95.00" fill="#FF8888" font-size="16px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">Glc</text>
+  <text x="80.00" y="75.00" fill="#FF8888" font-size="16px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">Fru</text>
+  <text x="0.00" y="140.00" fill="#FF4444" font-size="28px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">Sucrose</text>
+  <text x="0.00" y="170.00" fill="#888888" font-size="14px" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">α-1,2 β-glycosidic bond</text>
+</svg>

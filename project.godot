@@ -10,12 +10,16 @@ config_version=5
 
 name="UnchartedLife"
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="UnchartedLife"
 config/version="0.0.1"
 run/main_scene="uid://bkyay8w7v6u5t"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 
 [autoload]
 
@@ -35,10 +39,6 @@ ServiceRegistry="*res://systems/core/service_registry.gd"
 Bootstrap="*res://systems/core/bootstrap.gd"
 CommandBus="*res://systems/core/command_bus.gd"
 
-[gui]
-
-theme/custom="res://ui/themes/biocell_theme.tres"
-
 [display]
 
 window/size/viewport_width=1920
@@ -49,6 +49,10 @@ window/stretch/mode="canvas_items"
 
 player="&\"player\""
 saveable="&\"saveable\""
+
+[gui]
+
+theme/custom="res://ui/themes/biocell_theme.tres"
 
 [input]
 

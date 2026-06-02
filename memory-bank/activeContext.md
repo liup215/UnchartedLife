@@ -127,6 +127,67 @@ A focused bug-fixing session resolved multiple startup and runtime errors discov
    - `event_bus.gd`: added new `weapon_out_of_ammo(item_data: ItemData)` signal
    - `hud.gd`: added `_show_notification()` overlay label for on-screen feedback (bottom-center, 2s duration)
 
+### June 2, 2026 Session — Molecule System Data-Driven Refactor
+
+Comprehensive refactor of the interactive molecule system from hard-coded enum-based logic to fully data-driven Resource architecture.
+
+**Core Architecture Changes**:
+1.  **MoleculeData Resource** (`data/definitions/molecule/molecule_data.gd`): Pure data resource containing atom positions, bond connections, and visual identity. Reusable across scenes.
+2.  **MoleculeAtomData / MoleculeBondData**: Separate resources defining individual atoms and bonds. Bonds reference atoms by index.
+3.  **Structure-Effect Decoupling**: `molecule_data` defines what molecule it IS; `interaction_effects: Array[ItemEffectData]` defines what it DOES per-scene.
+4.  **Visual Renderer**: `molecule_visual.gd` rewritten as pure data-driven renderer using `_draw()` API. Supports SOLID, DASHED, and WEDGE bond types with perspective scaling.
+
+**Files Created**:
+- `data/definitions/molecule/molecule_atom_data.gd` — Atom data (element, position, radius, color)
+- `data/definitions/molecule/molecule_bond_data.gd` — Bond data (atom indices, bond type, width, color)
+- `data/definitions/molecule/molecule_data.gd` — Molecule structure container with validation
+- `data/molecules/{glucose,fructose,galactose,sucrose,lactose,maltose}.tres` — 6 sugar molecule structure files
+
+**Files Modified**:
+- `molecule.gd`: Removed `MoleculeType` enum, added `molecule_data` + `interaction_effects` exports, effect application via `ItemEffectData`
+- `molecule_visual.gd`: Completely rewritten — reads `MoleculeData` atoms/bonds arrays to render procedurally
+- `event_bus.gd`: Updated `molecule_collected` signal signature to `(MoleculeData, bool)`
+- `prologue_scene_02.gd`: Spawning uses preloaded `.tres` resources with `ItemEffectData`-based interaction effects
+- `prologue_ui.gd`: Updated to accept `MoleculeData` parameter
+- `molecule.tscn`: Removed hardcoded "Glucose" label, updated visual properties
+
+**Key Design Decisions**:
+- Atoms and bonds as separate arrays (rejected adjacency-table approach per user preference)
+- Single `interaction_effects` array (rejected separate pickup/consume effects — only one interaction entry point in current scene context)
+- Preload-based type references added to all scripts using `MoleculeData` and `ItemEffectData` to avoid `class_name` cache issues during hot reload
+
+### June 2, 2026 Session — Molecule System Polish & Prologue Simplification
+
+1. **Glucose Split into α/β Anomers**:
+   - Deleted old `glucose.tres`; created `alpha_glucose.tres` and `beta_glucose.tres` with correct Haworth-ring stereochemistry
+   - Both anomers count as correct "glucose" in the minigame (`_is_correct_molecule()`)
+   - Prologue scene alternates α/β when spawning glucose molecules
+
+2. **Molecule Correctness Fix**:
+   - **Root cause**: `.tres` files used `name = "alpha_glucose"` but `molecule_data.gd` exports `molecule_name`
+   - This caused `molecule_name` to always be the default value `"molecule"`, failing the `in ["alpha_glucose", "beta_glucose"]` check
+   - **Fix**: Renamed field to `molecule_name` in both `.tres` files
+
+3. **Prologue Quest Simplified**:
+   - Removed "dying cell" concept entirely (`TargetCell` node deleted from scenes, cell-health logic removed)
+   - New objective: **collect ALL glucose molecules** to win
+   - Added `total_glucose_count` / `collected_glucose_count` tracking
+   - UI now shows a "Glucose: X / Y" counter (replaces cell health bar)
+   - Victory triggers when `collected_glucose_count >= total_glucose_count`
+   - Opening dialogue updated to new guide prompt
+
+4. **Visual Polish**:
+   - Removed molecule name labels (both drawn labels and scene Label nodes)
+   - All intramolecular bonds unified to SOLID type (DASHED/WEDGE reserved for future hydrogen bonds)
+   - Bond lines now start/end at atom disc edges to avoid occlusion
+   - Player replaced AnimatedSprite2D with `_draw()` smooth blue pill body + white direction indicator
+   - Dodge afterimage now has a sprite-less fallback (ghost rectangle)
+
+5. **Prologue Spawn Layout**:
+   - Replaced random rejection sampling with **golden-angle spiral** around the origin
+   - Formula: `radius = 450 + 350 * sqrt(i)`, no rectangular boundary (infinite space)
+   - 20 molecules with ~40% glucose distribution
+
 ### June 1, 2026 Session — Input System Fix & Combat Feedback UI
 
 1. **Player Attack/Dodge Input Fix (Root Cause: consume_transient_intents)**:

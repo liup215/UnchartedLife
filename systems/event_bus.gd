@@ -4,6 +4,8 @@
 # New code should prefer CombatBus, QuestBus, or UIEventBus directly for clarity.
 extends Node
 
+const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
+
 # Sub-buses (created in _ready so they are available for relaying)
 var combat: CombatBus
 var quest: QuestBus
@@ -46,7 +48,7 @@ signal request_scene_transition(scene_id: String, spawn_point_id: String)
 # --- Map & Misc signals (kept on EventBus itself) ---
 signal map_changed(map_id: String, spawn_position: Vector2)
 signal area_unlocked(area_id: String)
-signal molecule_collected(molecule_type: int, is_glucose: bool)
+signal molecule_collected(molecule_data: MoleculeData, is_correct: bool)
 
 func _ready():
 	combat = CombatBus.new()
