@@ -1,12 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://dbscgytmkqyn7"]
+[gd_scene load_steps=6 format=3 uid="uid://dbscgytmkqyn7"]
 
 [ext_resource type="PackedScene" path="res://features/actor/base_actor.tscn" id="1_abcde"]
 [ext_resource type="Script" uid="uid://b7mvf6axkwtiv" path="res://features/player/player.gd" id="2_fghij"]
 [ext_resource type="PackedScene" uid="uid://dodge_comp_uid_123" path="res://features/components/dodge_component.tscn" id="3_dodge"]
+[ext_resource type="Shader" path="res://features/player/player_body.gdshader" id="4_bshdr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_body"]
+shader = ExtResource("4_bshdr")
+shader_parameter/cell_radius = 65.0
+shader_parameter/base_alpha = 0.45
+shader_parameter/glow_width = 0.55
+shader_parameter/glow_intensity = 1.1
+shader_parameter/center_dark = 0.82
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_abcde"]
 radius = 25.0
 height = 70.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_body"]
+size = Vector2(160, 160)
 
 [node name="Player" instance=ExtResource("1_abcde")]
 z_index = 20
@@ -14,6 +26,14 @@ y_sort_enabled = true
 collision_mask = 12
 script = ExtResource("2_fghij")
 save_id = "player"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+visible = false
+
+[node name="BodyVisual" type="MeshInstance2D" parent="." index="1"]
+z_index = -1
+material = SubResource("ShaderMaterial_body")
+mesh = SubResource("QuadMesh_body")
 
 [node name="CollisionShape2D" parent="." index="2"]
 shape = SubResource("CapsuleShape2D_abcde")

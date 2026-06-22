@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cgr224u5yfwf7"]
+[gd_scene format=3 uid="uid://cgr224u5yfwf7"]
 
 [ext_resource type="Script" uid="uid://d2vuund14llj8" path="res://scenes/story/opening/opening_animation.gd" id="1_opening"]
-[ext_resource type="Texture2D" uid="uid://df6ywaepewvs1" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Script" uid="uid://v36q1j8ycec6" path="res://features/interactive/molecule/molecule_visual.gd" id="5_molvis"]
 
 [sub_resource type="Animation" id="Animation_RESET"]
 resource_name = "RESET"
@@ -9,7 +9,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CenterContainer/VBoxContainer/CenterImage:modulate")
+tracks/0/path = NodePath("CenterContainer/VBoxContainer/MoleculeVisualContainer:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -61,7 +61,7 @@ length = 8.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CenterContainer/VBoxContainer/CenterImage:modulate")
+tracks/0/path = NodePath("CenterContainer/VBoxContainer/MoleculeVisualContainer:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -113,7 +113,7 @@ _data = {
 &"opening": SubResource("Animation_opening")
 }
 
-[node name="OpeningAnimation" type="Control"]
+[node name="OpeningAnimation" type="Control" unique_id=1099737173]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -122,7 +122,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_opening")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1098746109]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -132,7 +132,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.1, 0.1, 0.15, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=907519221]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -140,49 +140,39 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=551672626]
+custom_minimum_size = Vector2(1200, 0)
 layout_mode = 2
 theme_override_constants/separation = 30
+alignment = 1
 
-[node name="CenterImage" type="TextureRect" parent="CenterContainer/VBoxContainer"]
+[node name="MoleculeVisualContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer" unique_id=385532372]
 modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
-texture = ExtResource("2_icon")
-expand_mode = 1
-stretch_mode = 5
+size_flags_horizontal = 4
 
-[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="MoleculeVisual" type="Node2D" parent="CenterContainer/VBoxContainer/MoleculeVisualContainer" unique_id=1384121327]
+position = Vector2(150, 150)
+script = ExtResource("5_molvis")
+ring_radius = 50.0
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1919707427]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 28
-text = "Help the cells in the petri dish survive"
+text = "Glucose — C₆H₁₂O₆
+
+The most important simple sugar in biology. Found in fruits, honey, and plants. Your cells convert it into ATP for energy."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="PromptLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="PromptLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1223079048]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Press any key to continue"
 horizontal_alignment = 1
 
-[node name="SkipButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -150.0
-offset_top = -50.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "Skip >>"
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_nrcsc")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=16831739]
+libraries/ = SubResource("AnimationLibrary_nrcsc")

@@ -198,5 +198,3 @@ func _draw_text_centered(pos: Vector2, text: String, size: int, color: Color) ->
 	var baseline_shift: float = (ascent - descent) * 0.5
 	var draw_pos := Vector2(pos.x - sz.x * 0.5, pos.y + baseline_shift)
 	draw_string(font, draw_pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
-
-

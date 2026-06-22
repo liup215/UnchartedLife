@@ -21,6 +21,7 @@ const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
 
 var _progress: float = 0.0
 var _is_loading: bool = false
+var _pending_molecule_data: Resource = null
 
 func _ready() -> void:
 	# Apply exported configuration
@@ -33,6 +34,11 @@ func _ready() -> void:
 	if progress_bar:
 		progress_bar.visible = show_progress_bar
 		progress_bar.value = 0
+	
+	# If set_molecule_data was called before _ready(), apply it now
+	if _pending_molecule_data != null:
+		set_molecule_data(_pending_molecule_data)
+		_pending_molecule_data = null
 
 func set_image(image: Texture2D) -> void:
 	"""Set the loading screen image"""

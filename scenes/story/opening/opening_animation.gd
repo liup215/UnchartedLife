@@ -1,15 +1,16 @@
 extends Control
 
 ## Opening Animation Scene
-## Plays the opening cutscene/animation when starting a new game
+## Displays the glucose molecule and mission introduction
 ## Automatically transitions to prologue after completion
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-@onready var skip_button: Button = $SkipButton
 @onready var background: ColorRect = $Background
-@onready var center_image: TextureRect = $CenterContainer/VBoxContainer/CenterImage
+@onready var molecule_visual: Node2D = $CenterContainer/VBoxContainer/MoleculeVisualContainer/MoleculeVisual
 @onready var description_label: Label = $CenterContainer/VBoxContainer/DescriptionLabel
 @onready var prompt_label: Label = $CenterContainer/VBoxContainer/PromptLabel
+
+const GLUCOSE_DATA = preload("res://data/molecules/alpha_glucose.tres")
 
 var can_skip: bool = true
 var animation_finished: bool = false
@@ -18,9 +19,10 @@ func _ready() -> void:
 	# Ensure full screen visibility
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
-	# Setup skip button
-	if skip_button:
-		skip_button.pressed.connect(_on_skip_pressed)
+	# Setup molecule visual with glucose data
+	if molecule_visual and molecule_visual.has_method("set_molecule_data"):
+		molecule_visual.set_molecule_data(GLUCOSE_DATA)
+		molecule_visual.queue_redraw()
 	
 	# Connect animation finished signal
 	if animation_player:

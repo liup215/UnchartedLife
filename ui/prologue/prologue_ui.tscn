@@ -25,9 +25,9 @@ grow_horizontal = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.176471, 0.831373, 0.74902, 1)
-text = "Objective: Collect GLUCOSE to refill ammo
-Shoot the dying cell to heal it!
-Avoid other sugars - they hurt you!"
+text = "Objective: Collect all the GLUCOSE molecules!
+Avoid other sugars - they hurt you!
+Only glucose gives you energy!"
 horizontal_alignment = 1
 
 [node name="CounterLabel" type="Label" parent="VBoxContainer"]

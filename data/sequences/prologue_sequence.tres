@@ -22,10 +22,10 @@ script = ExtResource("2_transition")
 scene_path = "res://scenes/story/prologue/prologue_scene_02.tscn"
 scene_id = "prologue_02"
 scene_name = "Glucose Tutorial"
-loading_text = "Glucose Tutorial
+loading_text = "Glucose Mission
 
-Learn to identify glucose molecules
-Essential for survival"
+Learn to identify GLUCOSE molecules
+Essential for your survival!"
 completion_signal = "prologue_completed"
 completion_flag = "completed_glucose_tutorial"
 

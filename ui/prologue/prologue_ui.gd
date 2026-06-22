@@ -20,7 +20,9 @@ func _ready():
 
 func _setup_ui():
 	if objective_label:
-		objective_label.text = "Objective: Collect all GLUCOSE molecules!"
+		objective_label.text = "Objective: Collect all the GLUCOSE molecules!
+Avoid other sugars - they hurt you!
+Only glucose gives you energy!"
 	
 	if restart_button:
 		restart_button.pressed.connect(_on_restart_pressed)

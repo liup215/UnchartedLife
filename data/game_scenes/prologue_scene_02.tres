@@ -11,7 +11,7 @@
 [sub_resource type="Resource" id="Resource_vl3tq"]
 script = ExtResource("4_c35up")
 speaker_name = "Guide"
-dialog_text = "Find and collect all the GLUCOSE molecules scattered around! Be careful — other sugars will hurt you."
+dialog_text = "Your mission: Find and collect all the GLUCOSE molecules! Only glucose provides the energy you need. Other sugars are toxic — avoid them!"
 metadata/_custom_type_script = "uid://fy18alg83r"
 
 [sub_resource type="Resource" id="Resource_h0o4r"]

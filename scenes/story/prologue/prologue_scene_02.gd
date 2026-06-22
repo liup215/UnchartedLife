@@ -2,6 +2,7 @@
 ## Glucose collection mini-game
 ## Spawns molecules; player must collect ALL glucose molecules to win.
 ## Wrong sugars damage the player.
+class_name PrologueScene02
 extends Node2D
 
 const MoleculeData = preload("res://data/definitions/molecule/molecule_data.gd")
@@ -16,6 +17,17 @@ signal prologue_completed()
 # Constants
 const GAME_OVER_DELAY: float = 3.0
 
+# Node references
+@onready var background_layer: CanvasLayer = $BackgroundLayer
+@onready var microscope_bg: ColorRect = $BackgroundLayer/MicroscopeBackground
+
+@onready var spawn_container: Node2D = $SpawnContainer
+@onready var ui: Control = $UI/PrologueUI
+
+# Background shader material reference (set in _ready)
+var background_material: ShaderMaterial = null
+
+# Gameplay settings
 @export var molecule_count: int = 20
 @export var glucose_percentage: float = 0.4  # 40% glucose, 60% other sugars
 
@@ -24,9 +36,7 @@ const GAME_OVER_DELAY: float = 3.0
 ## Target distance between adjacent molecules.
 @export var min_molecule_spacing: float = 350.0
 
-@onready var spawn_container: Node2D = $SpawnContainer
-@onready var ui: Control = $UI/PrologueUI
-
+# Game state
 var player: Actor = null
 var game_over: bool = false
 var victory: bool = false
@@ -49,13 +59,30 @@ func _ready():
 	player = get_tree().get_first_node_in_group("player")
 	if not player:
 		push_warning("Player not found in scene tree!")
-	
+
+	_init_background()
 	_spawn_molecules()
 	_connect_signals()
-	
+
 	# Initialize UI counter
 	if ui:
 		ui.update_glucose_counter(0, total_glucose_count)
+
+func _init_background() -> void:
+	if microscope_bg:
+		background_material = microscope_bg.material as ShaderMaterial
+		if background_material:
+			GameLogger.debug("scene", "Microscope background shader initialized")
+		else:
+			push_warning("PrologueScene02: MicroscopeBackground has no ShaderMaterial")
+
+func _process(_delta: float) -> void:
+	if not background_material:
+		return
+	if player and player is Node2D:
+		var player_pos: Vector2 = player.global_position
+		background_material.set_shader_parameter("camera_offset", player_pos)
+
 
 func _spawn_molecules():
 	if not spawn_container:

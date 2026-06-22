@@ -34,26 +34,19 @@ var interaction_ui_visible: bool = false
 ## Draws a smooth rounded polygon as the player's visual instead of a sprite texture.
 ## The shape is a "pill" / rounded-rectangle with a directional indicator (nose).
 func _draw() -> void:
-	# Smooth pill-like body using a polygon with many segments
-	var body_points: PackedVector2Array = _build_smooth_body(20.0, 14.0, 16)
-	# Fill
-	draw_colored_polygon(body_points, Color(0.25, 0.62, 0.95, 1.0))
-	# Outline
-	for i in range(body_points.size()):
-		var a: Vector2 = body_points[i]
-		var b: Vector2 = body_points[(i + 1) % body_points.size()]
-		draw_line(a, b, Color(0.1, 0.35, 0.65, 1.0), 2.0)
-	# Direction indicator (nose) pointing toward last_direction
-	var nose: Vector2 = last_direction.normalized() * 14.0
-	draw_circle(nose, 4.5, Color(1.0, 1.0, 1.0, 0.9))
-	# Nose outline drawn as small circle segment
-	var nose_outline_points: PackedVector2Array = PackedVector2Array()
-	var nose_seg: int = 14
-	for i in range(nose_seg + 1):
-		var angle: float = TAU * float(i) / float(nose_seg)
-		nose_outline_points.append(nose + Vector2(cos(angle), sin(angle)) * 4.5)
-	for i in range(nose_outline_points.size() - 1):
-		draw_line(nose_outline_points[i], nose_outline_points[i + 1], Color(0.1, 0.35, 0.65, 1.0), 1.5)
+	# Body visual is now handled by MeshInstance2D + shader (BodyVisual node).
+	# Only draw the direction indicator (nose) on top.
+	var nose: Vector2 = last_direction.normalized() * 18.0
+	draw_circle(nose, 6.0, Color(1.0, 1.0, 1.0, 0.9))
+	# Nose outline
+	var nose_seg: int = 16
+	for i in range(nose_seg):
+		var a: float = TAU * float(i) / float(nose_seg)
+		var b: float = TAU * float(i + 1) / float(nose_seg)
+		draw_line(
+			nose + Vector2(cos(a), sin(a)) * 6.0,
+			nose + Vector2(cos(b), sin(b)) * 6.0,
+			Color(0.1, 0.35, 0.65, 1.0), 1.5)
 
 
 ## Builds a smooth rounded polygon (pill shape) with `radius` corners and `w`/`h` dimensions.
